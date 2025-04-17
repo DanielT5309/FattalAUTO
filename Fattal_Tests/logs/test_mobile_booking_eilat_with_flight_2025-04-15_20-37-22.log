@@ -1,0 +1,8 @@
+2025-04-15 20:37:09,476 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 20:37:09,590 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 20:37:10,718 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 20:37:11,076 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 20:37:11,375 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 20:37:11,375 - INFO - 📅 Selecting specific range: 25 יוני ➡ 30 יוני
+2025-04-15 20:37:22,262 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\select_specific_date_range_fail_2025-04-15_20-37-22.png
+2025-04-15 20:37:22,263 - ERROR - ❌ Failed selecting specific date range: ❌ Could not locate date 25 יוני in calendar.

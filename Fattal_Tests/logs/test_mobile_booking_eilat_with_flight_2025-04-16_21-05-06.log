@@ -1,0 +1,25 @@
+2025-04-16 21:04:48,515 - INFO - Generated Israeli ID: 273213355
+2025-04-16 21:04:48,516 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 21:04:48,640 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 21:04:49,941 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 21:04:50,401 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 21:04:51,260 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 21:04:51,260 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 21:05:02,055 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 21:05:02,055 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 21:05:02,724 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 21:05:02,725 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 21:05:03,782 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 21:05:03,783 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 21:05:03,783 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 21:05:05,131 - INFO - 👤 Set adults: 2
+2025-04-16 21:05:05,192 - INFO - 👤 Set children: 0
+2025-04-16 21:05:05,229 - INFO - 👤 Set infants: 0
+2025-04-16 21:05:05,236 - INFO - 🧩 Room modal still present — continuing to click 'המשך'.
+2025-04-16 21:05:05,837 - INFO - 👉 Dynamically searching for room continue button (updated logic)...
+2025-04-16 21:05:06,252 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_button_xpath_fail_2025-04-16_21-05-06.png
+2025-04-16 21:05:06,252 - ERROR - ❌ Could not click room continue button: Message: ❌ No room continue button with 'המשך' text was found.
+
+2025-04-16 21:05:06,253 - ERROR - ❌ set_mobile_room_occupants crashed: Message: ❌ No room continue button with 'המשך' text was found.
+
+2025-04-16 21:05:06,476 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_21-05-06.png

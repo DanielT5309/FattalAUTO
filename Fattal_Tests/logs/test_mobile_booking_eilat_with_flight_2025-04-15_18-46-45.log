@@ -1,0 +1,106 @@
+2025-04-15 18:43:36,736 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 18:43:37,125 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 18:43:38,610 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 18:43:39,583 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 18:43:39,894 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 18:43:39,895 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 18:43:42,036 - INFO - 🗓️ Attempting to select: 1 ביוני 2025 ➡ 4 ביוני 2025 (3 לילות)
+2025-04-15 18:43:45,254 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 18:43:46,058 - INFO - ✅ Selected check-in: 1 ביוני 2025 → check-out: 4 ביוני 2025
+2025-04-15 18:43:46,059 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 18:43:46,059 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 18:43:47,389 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 18:43:47,699 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 18:43:47,699 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 18:43:49,341 - INFO - 👤 Set adults: 2
+2025-04-15 18:43:49,487 - INFO - 👤 Set children: 0
+2025-04-15 18:43:49,656 - INFO - 👤 Set infants: 0
+2025-04-15 18:43:49,904 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 18:43:49,905 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 18:43:49,958 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 18:43:50,335 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 18:43:50,335 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 18:43:55,517 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 18:43:55,517 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים' לפי טקסט או ID...
+2025-04-15 18:44:00,638 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה (fallback by text).
+2025-04-15 18:44:00,638 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-15 18:44:00,900 - INFO - ✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.
+2025-04-15 18:44:00,900 - INFO - 🕒 [Mobile] Trying flight time tab: בוקר (Attempt 1)
+2025-04-15 18:44:00,901 - INFO - 📌 [Mobile] Clicking time tab 'בוקר'...
+2025-04-15 18:44:10,954 - WARNING - ⚠️ Could not click time tab 'בוקר': Message: no such element: Unable to locate element: {"method":"xpath","selector":"//button[contains(.,'בוקר')]"}
+  (Session info: chrome=135.0.7049.85); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 18:44:10,955 - INFO - 🛫 [Mobile] Clicking 'עריכה' for departure flight
+2025-04-15 18:44:11,095 - INFO - ✅ 'עריכה' clicked for departure flight
+2025-04-15 18:44:11,095 - INFO - 📍 Selecting first mobile departure option
+2025-04-15 18:44:11,153 - INFO - ✅ Clicked departure radio button via JS.
+2025-04-15 18:44:11,153 - INFO - 🛬 [Mobile] Clicking 'עריכה' for return flight
+2025-04-15 18:44:11,239 - INFO - ✅ 'עריכה' clicked for return flight
+2025-04-15 18:44:11,240 - INFO - 📍 Selecting first mobile return option
+2025-04-15 18:44:11,301 - INFO - ✅ Clicked return radio button via JS.
+2025-04-15 18:44:11,301 - INFO - 🆗 Confirming flight selection (Mobile)
+2025-04-15 18:44:12,314 - INFO - ✈️ Confirm button clicked
+2025-04-15 18:44:22,403 - INFO - 🕒 [Mobile] Trying flight time tab: צהריים (Attempt 1)
+2025-04-15 18:44:22,403 - INFO - 📌 [Mobile] Clicking time tab 'צהריים'...
+2025-04-15 18:44:32,469 - WARNING - ⚠️ Could not click time tab 'צהריים': Message: no such element: Unable to locate element: {"method":"xpath","selector":"//button[contains(.,'צהריים')]"}
+  (Session info: chrome=135.0.7049.85); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 18:44:32,470 - INFO - 🛫 [Mobile] Clicking 'עריכה' for departure flight
+2025-04-15 18:44:34,733 - INFO - ✅ 'עריכה' clicked for departure flight
+2025-04-15 18:44:34,733 - INFO - 📍 Selecting first mobile departure option
+2025-04-15 18:44:34,764 - INFO - ✅ Clicked departure radio button via JS.
+2025-04-15 18:44:34,764 - INFO - 🛬 [Mobile] Clicking 'עריכה' for return flight
+2025-04-15 18:44:34,809 - INFO - ✅ 'עריכה' clicked for return flight
+2025-04-15 18:44:34,809 - INFO - 📍 Selecting first mobile return option
+2025-04-15 18:44:34,845 - INFO - ✅ Clicked return radio button via JS.
+2025-04-15 18:44:34,845 - INFO - 🆗 Confirming flight selection (Mobile)
+2025-04-15 18:44:35,313 - INFO - ✈️ Confirm button clicked
+2025-04-15 18:44:41,382 - INFO - 🎉 [Mobile] Flight booking succeeded with tab: צהריים
+2025-04-15 18:44:41,383 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 18:46:45,945 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\mobile_personal_form_timeout_2025-04-15_18-46-45.png
+2025-04-15 18:46:45,945 - ERROR - ❌ Personal form did not load in time: Message: 🛑 Could not locate visible email input after scrolling.
+

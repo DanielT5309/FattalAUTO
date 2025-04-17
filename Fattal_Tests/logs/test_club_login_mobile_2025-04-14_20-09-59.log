@@ -1,0 +1,50 @@
+2025-04-14 20:09:16,944 - INFO - 🧪 Starting test: CLUB user hotel search and booking flow (mobile)
+2025-04-14 20:09:16,944 - INFO - 👤 Opening personal zone (mobile login)...
+2025-04-14 20:09:17,170 - INFO - ✅ Login menu opened via JavaScript interaction.
+2025-04-14 20:09:17,542 - INFO - 🔐 Clicking login button (mobile)...
+2025-04-14 20:09:17,881 - INFO - ✅ Login button clicked.
+2025-04-14 20:09:17,882 - INFO - 📦 Checking for post-login popup...
+2025-04-14 20:09:19,960 - INFO - ✅ Post-login popup closed.
+2025-04-14 20:09:19,960 - INFO - ✅ Logged in successfully.
+2025-04-14 20:09:20,076 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-14 20:09:21,432 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-14 20:09:21,798 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-14 20:09:22,093 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-14 20:09:22,093 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-14 20:09:26,327 - INFO - ✅ Selected check-in: 12 ביוני 2025 → check-out: 15 ביוני 2025
+2025-04-14 20:09:27,100 - INFO - ✅ Confirmed calendar selection.
+2025-04-14 20:09:27,446 - INFO - ✅ Opened mobile room selection modal.
+2025-04-14 20:09:28,750 - INFO - 👨‍👩‍👧 Set adults: 2
+2025-04-14 20:09:29,333 - INFO - 👨‍👩‍👧 Set children: 1
+2025-04-14 20:09:29,438 - INFO - 👨‍👩‍👧 Set infants: 0
+2025-04-14 20:09:29,701 - INFO - ✅ Closed room modal by re-clicking הרכב.
+2025-04-14 20:09:29,701 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-14 20:09:39,711 - WARNING - ⚠️ לא נמצא כפתור לפי ID — מנסה לפי class...
+2025-04-14 20:09:39,742 - INFO - 🔍 כפתור 'המשך' נמצא לפי class
+2025-04-14 20:09:40,045 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-14 20:09:40,046 - INFO - 🔎 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-14 20:09:46,906 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-04-14 20:09:46,907 - INFO - 🏨 מנסה ללחוץ על כפתור 'להזמנת חדר'...
+2025-04-14 20:09:47,365 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-14 20:09:47,365 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-14 20:09:49,855 - INFO - ✅ Personal form is present and visible.
+2025-04-14 20:09:49,855 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-14 20:09:49,893 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-14 20:09:49,893 - INFO - 💳 Scrolling iframe into view...
+2025-04-14 20:09:49,941 - INFO - 💳 Switching into payment iframe...
+2025-04-14 20:09:49,965 - INFO - ✅ Switched into iframe.
+2025-04-14 20:09:50,955 - INFO - ✅ Card Number filled correctly.
+2025-04-14 20:09:51,093 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-14 20:09:51,217 - INFO - ✅ Expiry Month selected: 08
+2025-04-14 20:09:51,302 - INFO - ✅ Expiry Year selected: 2025
+2025-04-14 20:09:51,414 - INFO - ✅ CVV filled correctly.
+2025-04-14 20:09:51,537 - INFO - ✅ Card ID Number filled correctly.
+2025-04-14 20:09:51,538 - INFO - 🎯 Payment form filled successfully.
+2025-04-14 20:09:51,541 - INFO - 🔙 Switched back to main content.
+2025-04-14 20:09:51,541 - INFO - 🚀 Trying to click the payment submit button inside iframe...
+2025-04-14 20:09:51,929 - INFO - ✅ Payment submit button clicked successfully via JS.
+2025-04-14 20:09:51,932 - INFO - 🔙 Switched back to main content after payment submission.
+2025-04-14 20:09:51,933 - INFO - 🔍 Verifying mobile confirmation page contents...
+2025-04-14 20:09:59,491 - INFO - 📸 Screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-14_20-09-59.png
+2025-04-14 20:09:59,491 - INFO - ✅ Confirmation screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-14_20-09-59.png
+2025-04-14 20:09:59,491 - INFO - ✅ Order Number (mobile): 980023859

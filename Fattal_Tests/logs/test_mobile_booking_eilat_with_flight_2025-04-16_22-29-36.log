@@ -1,0 +1,36 @@
+2025-04-16 22:27:35,584 - INFO - Generated Israeli ID: 372206128
+2025-04-16 22:27:35,584 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 22:27:35,713 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 22:27:37,005 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 22:27:37,580 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 22:27:38,455 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 22:27:38,455 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 22:27:49,106 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 22:27:49,107 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 22:27:49,768 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 22:27:49,784 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-16 22:27:49,784 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-16 22:27:49,784 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-16 22:27:49,796 - INFO - 🧩 Room modal confirmed present.
+2025-04-16 22:27:49,796 - INFO - 🔧 Setting adults to 2...
+2025-04-16 22:27:49,834 - INFO - 👤 Adults set to: 2
+2025-04-16 22:27:49,835 - INFO - 🔧 Setting children to 0...
+2025-04-16 22:27:49,875 - INFO - 👤 Children set to: 0
+2025-04-16 22:27:49,875 - INFO - 🔧 Setting infants to 0...
+2025-04-16 22:27:49,916 - INFO - 👤 Infants set to: 0
+2025-04-16 22:27:49,916 - INFO - ✅ Room occupant adjustment completed.
+2025-04-16 22:27:50,917 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-16 22:27:50,926 - INFO - 🧩 Room modal is visible and ready.
+2025-04-16 22:27:51,465 - INFO - ✅ Clicked room continue button (native click).
+2025-04-16 22:27:51,466 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 22:27:52,434 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 22:27:52,434 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-16 22:27:57,784 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-16 22:27:57,815 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-16 22:27:58,364 - INFO - ✅ Clicked search button (JS click).
+2025-04-16 22:27:58,364 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-16 22:28:02,159 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-16 22:28:02,161 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-16 22:29:36,879 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\click_show_prices_regional_fail_2025-04-16_22-29-36.png
+2025-04-16 22:29:36,880 - ERROR - ❌ [REGIONAL] Failed to click 'הצג מחירים': Message: 
+

@@ -1,0 +1,55 @@
+2025-04-16 22:20:09,688 - INFO - Generated Israeli ID: 105422604
+2025-04-16 22:20:09,688 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 22:20:09,911 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 22:20:10,956 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 22:20:11,348 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 22:20:11,622 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 22:20:11,622 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 22:20:21,426 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 22:20:21,426 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 22:20:22,117 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 22:20:22,171 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-16 22:20:22,172 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-16 22:20:22,172 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-16 22:20:22,184 - INFO - 🧩 Room modal confirmed present.
+2025-04-16 22:20:22,184 - INFO - 🔧 Setting adults to 2...
+2025-04-16 22:20:22,221 - INFO - 👤 Adults set to: 2
+2025-04-16 22:20:22,221 - INFO - 🔧 Setting children to 0...
+2025-04-16 22:20:22,259 - INFO - 👤 Children set to: 0
+2025-04-16 22:20:22,259 - INFO - 🔧 Setting infants to 0...
+2025-04-16 22:20:22,300 - INFO - 👤 Infants set to: 0
+2025-04-16 22:20:22,300 - INFO - ✅ Room occupant adjustment completed.
+2025-04-16 22:20:23,301 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-16 22:20:23,309 - INFO - 🧩 Room modal is visible and ready.
+2025-04-16 22:20:23,868 - INFO - ✅ Clicked room continue button (native click).
+2025-04-16 22:20:23,868 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 22:20:24,840 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 22:20:24,840 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-16 22:20:30,084 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-16 22:20:30,130 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-16 22:20:30,678 - INFO - ✅ Clicked search button (JS click).
+2025-04-16 22:20:41,078 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\search_button_click_fail_2025-04-16_22-20-40.png
+2025-04-16 22:20:41,079 - ERROR - ❌ Failed to click 'חפש חופשה': Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF768105355+78597]
+	GetHandleVerifier [0x00007FF7681053B0+78688]
+	(No symbol) [0x00007FF767EB91AA]
+	(No symbol) [0x00007FF767F0F149]
+	(No symbol) [0x00007FF767F0F3FC]
+	(No symbol) [0x00007FF767F62467]
+	(No symbol) [0x00007FF767F3712F]
+	(No symbol) [0x00007FF767F5F2BB]
+	(No symbol) [0x00007FF767F36EC3]
+	(No symbol) [0x00007FF767F003F8]
+	(No symbol) [0x00007FF767F01163]
+	GetHandleVerifier [0x00007FF7683AEF0D+2870973]
+	GetHandleVerifier [0x00007FF7683A96B8+2848360]
+	GetHandleVerifier [0x00007FF7683C6993+2967875]
+	GetHandleVerifier [0x00007FF76812019A+188746]
+	GetHandleVerifier [0x00007FF76812847F+222255]
+	GetHandleVerifier [0x00007FF76810D2D4+111236]
+	GetHandleVerifier [0x00007FF76810D482+111666]
+	GetHandleVerifier [0x00007FF7680F35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

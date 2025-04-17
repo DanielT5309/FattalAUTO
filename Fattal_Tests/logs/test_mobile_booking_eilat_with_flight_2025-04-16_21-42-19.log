@@ -1,0 +1,47 @@
+2025-04-16 21:41:51,962 - INFO - Generated Israeli ID: 830973269
+2025-04-16 21:41:51,962 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 21:41:52,099 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 21:41:53,350 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 21:41:53,847 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 21:41:54,711 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 21:41:54,711 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 21:42:04,957 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 21:42:04,957 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 21:42:05,681 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 21:42:05,681 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 21:42:06,680 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 21:42:06,680 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 21:42:06,681 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 21:42:08,065 - INFO - 👤 Set adults: 2
+2025-04-16 21:42:08,110 - INFO - 👤 Set children: 0
+2025-04-16 21:42:08,149 - INFO - 👤 Set infants: 0
+2025-04-16 21:42:08,157 - INFO - 🧩 Room modal still present — clicking 'המשך'...
+2025-04-16 21:42:08,758 - INFO - 👉 Searching for room continue button...
+2025-04-16 21:42:19,001 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_click_fail_2025-04-16_21-42-18.png
+2025-04-16 21:42:19,002 - ERROR - ❌ Could not click room continue button: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF768105355+78597]
+	GetHandleVerifier [0x00007FF7681053B0+78688]
+	(No symbol) [0x00007FF767EB91AA]
+	(No symbol) [0x00007FF767F0F149]
+	(No symbol) [0x00007FF767F0F3FC]
+	(No symbol) [0x00007FF767F62467]
+	(No symbol) [0x00007FF767F3712F]
+	(No symbol) [0x00007FF767F5F2BB]
+	(No symbol) [0x00007FF767F36EC3]
+	(No symbol) [0x00007FF767F003F8]
+	(No symbol) [0x00007FF767F01163]
+	GetHandleVerifier [0x00007FF7683AEF0D+2870973]
+	GetHandleVerifier [0x00007FF7683A96B8+2848360]
+	GetHandleVerifier [0x00007FF7683C6993+2967875]
+	GetHandleVerifier [0x00007FF76812019A+188746]
+	GetHandleVerifier [0x00007FF76812847F+222255]
+	GetHandleVerifier [0x00007FF76810D2D4+111236]
+	GetHandleVerifier [0x00007FF76810D482+111666]
+	GetHandleVerifier [0x00007FF7680F35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-16 21:42:19,002 - ERROR - ❌ set_mobile_room_occupants crashed: Message: ❌ No usable 'המשך' button was found or clickable.
+
+2025-04-16 21:42:19,163 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_21-42-19.png

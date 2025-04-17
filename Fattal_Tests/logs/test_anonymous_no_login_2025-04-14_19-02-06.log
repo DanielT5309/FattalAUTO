@@ -1,0 +1,45 @@
+2025-04-14 19:01:12,320 - INFO -  Starting test: hotel search and booking flow
+2025-04-14 19:01:15,519 - INFO - ✅ Popup closed.
+2025-04-14 19:01:15,647 - INFO - ✅ Cleared hotel input field.
+2025-04-14 19:01:16,585 - INFO - ✅ Typed city name: לאונרדו נגב, באר שבע
+2025-04-14 19:01:18,089 - INFO - ✅ נבחרה ההצעה הראשונה: לאונרדו נגב באר שבע, באר שבע, ישראל
+2025-04-14 19:01:18,449 - INFO - ✅ Clicked calendar button using ID.
+2025-04-14 19:01:18,470 - INFO - ✅ Calendar is now visible and ready for selection.
+2025-04-14 19:01:28,482 - INFO - ℹ️ Arrival date wasn't chosen
+2025-04-14 19:01:28,673 - INFO - ✅ Clicked next month.
+2025-04-14 19:01:33,324 - INFO - ✅ Selected random dates: 4 to 8
+2025-04-14 19:01:33,324 - INFO - Generated Israeli ID: 307726596
+2025-04-14 19:01:33,483 - INFO - ✅ Clicked room selection button.
+2025-04-14 19:01:33,539 - INFO - ✅ Room selection modal is visible.
+2025-04-14 19:01:33,716 - INFO - 🔽 Set search-engine-build-room-room-row-cell-adults0 to 2
+2025-04-14 19:01:33,883 - INFO - 🔽 Set search-engine-build-room-room-row-cell-kids0 to 
+2025-04-14 19:01:34,031 - INFO - 🔽 Set search-engine-build-room-room-row-cell-babies0 to 0
+2025-04-14 19:01:34,118 - INFO - ✅ Room set: 2 adults, 1 children, 0 infants.
+2025-04-14 19:01:34,118 - INFO - Guests selected: 2 adults, 1 children, 0 infants
+2025-04-14 19:01:44,260 - INFO - ✅ Hotel search results returned.
+2025-04-14 19:01:44,260 - INFO - 🔎 Looking for 'הצג מחירים' buttons...
+2025-04-14 19:01:44,305 - INFO - 🔍 Found 4 'הצג מחירים' buttons.
+2025-04-14 19:01:44,409 - INFO - 🛏️ Clicked 'הצג מחירים' via native click.
+2025-04-14 19:01:44,486 - INFO - 🏨 Clicked 'להזמנת חדר' button via JS: להזמנת חדר
+2025-04-14 19:01:44,490 - INFO - ↩️ Switched back to default content
+2025-04-14 19:01:46,078 - INFO - Order form is ready for input.
+2025-04-14 19:01:46,484 - INFO - ✅ Email set: chenttedgui@gmail.com
+2025-04-14 19:01:46,712 - INFO - ✅ Phone set: 0544531600
+2025-04-14 19:01:46,852 - INFO - ✅ First name set: חן
+2025-04-14 19:01:47,019 - INFO - ✅ Last name set: טסט
+2025-04-14 19:01:47,233 - INFO - 🕵️ Locating and clicking 'terms approval' checkbox...
+2025-04-14 19:01:47,313 - INFO - ✔️ Checkbox clicked successfully (via JS)
+2025-04-14 19:01:47,484 - INFO - 📬 Expanded special requests section
+2025-04-14 19:01:48,465 - INFO - ✔️ Switched into payment iframe
+2025-04-14 19:01:48,647 - INFO - ✅ Card number set: 4580080111866879
+2025-04-14 19:01:48,759 - INFO - ✅ Expiry month selected: 08
+2025-04-14 19:01:48,833 - INFO - ✅ Expiry year selected: 2025
+2025-04-14 19:01:48,965 - INFO - ✅ CVV set: 955
+2025-04-14 19:01:49,099 - INFO - ✅ Cardholder name set: פתאל
+2025-04-14 19:01:49,242 - INFO - ✅ Card ID number set: 0356998
+2025-04-14 19:01:49,426 - INFO - 💳 Clicked 'בצע תשלום' button inside iframe
+2025-04-14 19:01:49,429 - INFO - ↩️ Switched back to default content
+2025-04-14 19:01:49,429 - INFO - Booking flow completed and submit clicked (test mode)
+2025-04-14 19:01:49,430 - INFO - 🔍 Verifying confirmation page contents...
+2025-04-14 19:02:06,129 - INFO - ✅ Confirmation screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-14_19-02-05.png
+2025-04-14 19:02:06,129 - INFO - ✅ Order Number: 980023855, Email: chenttedgui@gmail.com

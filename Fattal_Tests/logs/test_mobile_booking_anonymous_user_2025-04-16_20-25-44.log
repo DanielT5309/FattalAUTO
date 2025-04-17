@@ -1,0 +1,67 @@
+2025-04-16 20:25:21,964 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-16 20:25:21,965 - INFO - Generated Israeli ID: 662133057
+2025-04-16 20:25:22,082 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:25:23,876 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-16 20:25:24,340 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-16 20:25:25,128 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:25:25,128 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 20:25:27,236 - INFO - 🗓️ Attempting to select: 9 ביוני 2025 ➡ 12 ביוני 2025 (3 לילות)
+2025-04-16 20:25:30,724 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 20:25:31,827 - INFO - ✅ Selected check-in: 9 ביוני 2025 → check-out: 12 ביוני 2025
+2025-04-16 20:25:31,827 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:25:32,334 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 20:25:32,334 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 20:25:33,678 - INFO - 👤 Set adults: 2
+2025-04-16 20:25:34,347 - INFO - 👤 Set children: 1
+2025-04-16 20:25:34,420 - INFO - 👤 Set infants: 0
+2025-04-16 20:25:34,420 - INFO - 👉 Searching for room continue button using XPath...
+2025-04-16 20:25:44,680 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_button_xpath_fail_2025-04-16_20-25-44.png
+2025-04-16 20:25:44,680 - ERROR - ❌ Could not click room continue button: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF768105355+78597]
+	GetHandleVerifier [0x00007FF7681053B0+78688]
+	(No symbol) [0x00007FF767EB91AA]
+	(No symbol) [0x00007FF767F0F149]
+	(No symbol) [0x00007FF767F0F3FC]
+	(No symbol) [0x00007FF767F62467]
+	(No symbol) [0x00007FF767F3712F]
+	(No symbol) [0x00007FF767F5F2BB]
+	(No symbol) [0x00007FF767F36EC3]
+	(No symbol) [0x00007FF767F003F8]
+	(No symbol) [0x00007FF767F01163]
+	GetHandleVerifier [0x00007FF7683AEF0D+2870973]
+	GetHandleVerifier [0x00007FF7683A96B8+2848360]
+	GetHandleVerifier [0x00007FF7683C6993+2967875]
+	GetHandleVerifier [0x00007FF76812019A+188746]
+	GetHandleVerifier [0x00007FF76812847F+222255]
+	GetHandleVerifier [0x00007FF76810D2D4+111236]
+	GetHandleVerifier [0x00007FF76810D482+111666]
+	GetHandleVerifier [0x00007FF7680F35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-16 20:25:44,681 - ERROR - ❌ set_mobile_room_occupants crashed: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF768105355+78597]
+	GetHandleVerifier [0x00007FF7681053B0+78688]
+	(No symbol) [0x00007FF767EB91AA]
+	(No symbol) [0x00007FF767F0F149]
+	(No symbol) [0x00007FF767F0F3FC]
+	(No symbol) [0x00007FF767F62467]
+	(No symbol) [0x00007FF767F3712F]
+	(No symbol) [0x00007FF767F5F2BB]
+	(No symbol) [0x00007FF767F36EC3]
+	(No symbol) [0x00007FF767F003F8]
+	(No symbol) [0x00007FF767F01163]
+	GetHandleVerifier [0x00007FF7683AEF0D+2870973]
+	GetHandleVerifier [0x00007FF7683A96B8+2848360]
+	GetHandleVerifier [0x00007FF7683C6993+2967875]
+	GetHandleVerifier [0x00007FF76812019A+188746]
+	GetHandleVerifier [0x00007FF76812847F+222255]
+	GetHandleVerifier [0x00007FF76810D2D4+111236]
+	GetHandleVerifier [0x00007FF76810D482+111666]
+	GetHandleVerifier [0x00007FF7680F35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-16 20:25:44,916 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_20-25-44.png

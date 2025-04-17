@@ -1,0 +1,53 @@
+2025-04-16 20:44:17,598 - INFO - 🎲 Starting FULL RANDOM anonymous booking test (MOBILE)
+2025-04-16 20:44:17,812 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:44:19,583 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-16 20:44:20,069 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-16 20:44:20,825 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:44:20,825 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 20:44:23,015 - INFO - 🗓️ Attempting to select: 2 ביוני 2025 ➡ 5 ביוני 2025 (3 לילות)
+2025-04-16 20:44:26,736 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 20:44:27,759 - INFO - ✅ Selected check-in: 2 ביוני 2025 → check-out: 5 ביוני 2025
+2025-04-16 20:44:27,760 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:44:27,760 - INFO - 👨‍👩‍👧 Guests: 2 adults, 1 children, 1 infants
+2025-04-16 20:44:27,761 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 20:44:27,761 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 20:44:29,105 - INFO - 👤 Set adults: 2
+2025-04-16 20:44:29,717 - INFO - 👤 Set children: 1
+2025-04-16 20:44:30,373 - INFO - 👤 Set infants: 1
+2025-04-16 20:44:30,399 - INFO - 🧩 Room modal still present — continuing to click 'המשך'.
+2025-04-16 20:44:31,000 - INFO - 👉 Dynamically searching for room continue button...
+2025-04-16 20:44:32,204 - INFO - ✅ Clicked room continue button: 'המשך - חדר 1, 4 אורחים'
+2025-04-16 20:44:32,204 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-16 20:44:32,261 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-16 20:44:33,192 - INFO - ✅ Clicked search button (native click).
+2025-04-16 20:44:34,860 - INFO - 🚪 Moved to next step — 'בחרו חדר' loaded.
+2025-04-16 20:44:34,860 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-16 20:44:37,144 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-16 20:44:37,144 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-16 20:44:37,642 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-16 20:44:37,643 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-16 20:44:39,808 - INFO - ✅ Email input is visible.
+2025-04-16 20:44:39,809 - INFO - 📝 Trying to fill Email with 'rlmvs@example.com'
+2025-04-16 20:44:40,867 - INFO - ✅ [Mobile] Email filled correctly with send_keys().
+2025-04-16 20:44:40,868 - INFO - 📝 Trying to fill Phone with '093742518'
+2025-04-16 20:44:41,684 - INFO - ✅ [Mobile] Phone filled correctly with send_keys().
+2025-04-16 20:44:41,684 - INFO - 📝 Trying to fill First Name with 'נוה'
+2025-04-16 20:44:42,547 - INFO - ✅ [Mobile] First Name filled correctly with send_keys().
+2025-04-16 20:44:42,547 - INFO - 📝 Trying to fill Last Name with 'שגב'
+2025-04-16 20:44:45,672 - INFO - ✅ [Mobile] Last Name filled correctly with send_keys().
+2025-04-16 20:44:45,673 - INFO - 📝 Trying to fill ID Number with '169862879'
+2025-04-16 20:44:46,603 - INFO - ✅ [Mobile] ID Number filled correctly with send_keys().
+2025-04-16 20:44:46,603 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-16 20:44:46,667 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-16 20:44:46,670 - INFO - 💳 Scrolling iframe into view (RANDOM)...
+2025-04-16 20:44:46,698 - INFO - 💳 Switching into payment iframe...
+2025-04-16 20:44:46,728 - INFO - ✅ Switched into iframe.
+2025-04-16 20:44:46,988 - INFO - ✅ Card Number filled correctly.
+2025-04-16 20:44:47,181 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-16 20:44:47,314 - INFO - ✅ Expiry Month selected: 10
+2025-04-16 20:44:47,420 - INFO - ✅ Expiry Year selected: 2028
+2025-04-16 20:44:47,584 - INFO - ✅ CVV filled correctly.
+2025-04-16 20:44:47,725 - INFO - ✅ Card ID Number filled correctly.
+2025-04-16 20:44:47,725 - INFO - 🎯 Random Payment form filled successfully.
+2025-04-16 20:44:47,728 - INFO - 🔙 Switched back to main content.
+2025-04-16 20:44:47,729 - INFO - ✅ Full random booking simulated (NO SUBMIT)

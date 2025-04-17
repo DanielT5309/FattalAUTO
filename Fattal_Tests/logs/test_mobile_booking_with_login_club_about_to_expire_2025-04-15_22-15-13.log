@@ -1,0 +1,47 @@
+2025-04-15 22:14:44,874 - INFO - 🧪 Starting test: CLUB user hotel search and booking flow (mobile)
+2025-04-15 22:14:44,874 - INFO - 👤 Opening personal zone (mobile login)...
+2025-04-15 22:14:45,048 - INFO - ✅ Login menu opened via JavaScript interaction.
+2025-04-15 22:14:45,464 - INFO - 🔐 Clicking login button (mobile)...
+2025-04-15 22:14:45,758 - INFO - ✅ Login button clicked.
+2025-04-15 22:14:45,759 - INFO - 📦 Checking for post-login popup...
+2025-04-15 22:14:47,870 - INFO - ✅ Post-login popup closed.
+2025-04-15 22:14:47,870 - INFO - ✅ Logged in successfully.
+2025-04-15 22:14:48,001 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 22:14:49,908 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-15 22:14:50,453 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 22:14:51,525 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 22:14:51,526 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 22:14:53,632 - INFO - 🗓️ Attempting to select: 11 ביוני 2025 ➡ 16 ביוני 2025 (5 לילות)
+2025-04-15 22:14:57,080 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 22:14:58,171 - INFO - ✅ Selected check-in: 11 ביוני 2025 → check-out: 16 ביוני 2025
+2025-04-15 22:14:58,171 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 22:14:58,875 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 22:14:58,875 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 22:15:00,231 - INFO - 👤 Set adults: 2
+2025-04-15 22:15:00,982 - INFO - 👤 Set children: 1
+2025-04-15 22:15:01,027 - INFO - 👤 Set infants: 0
+2025-04-15 22:15:01,593 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 22:15:01,593 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 22:15:01,643 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 22:15:01,662 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 22:15:01,662 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-15 22:15:08,239 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-15 22:15:08,239 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 22:15:08,727 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 22:15:08,727 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 22:15:10,963 - INFO - ✅ Email input is visible.
+2025-04-15 22:15:10,963 - INFO - 📦 Clicking 'Join Club' checkbox (Mobile)...
+2025-04-15 22:15:11,392 - INFO - ✅ Clicked 'Join Club' checkbox using XPath: //label[.//span[contains(text(),'לחדש את המועדון')]]
+2025-04-15 22:15:11,392 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-15 22:15:11,443 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-15 22:15:11,444 - INFO - 💳 Scrolling iframe into view...
+2025-04-15 22:15:11,471 - INFO - 💳 Switching into payment iframe...
+2025-04-15 22:15:11,498 - INFO - ✅ Switched into iframe.
+2025-04-15 22:15:12,508 - INFO - ✅ Card Number filled correctly.
+2025-04-15 22:15:12,656 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-15 22:15:12,774 - INFO - ✅ Expiry Month selected: 08
+2025-04-15 22:15:12,853 - INFO - ✅ Expiry Year selected: 2025
+2025-04-15 22:15:12,968 - INFO - ✅ CVV filled correctly.
+2025-04-15 22:15:13,102 - INFO - ✅ Card ID Number filled correctly.
+2025-04-15 22:15:13,103 - INFO - 🎯 Payment form filled successfully.
+2025-04-15 22:15:13,108 - INFO - 🔙 Switched back to main content.

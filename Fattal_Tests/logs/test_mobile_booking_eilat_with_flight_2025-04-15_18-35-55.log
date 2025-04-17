@@ -1,0 +1,25 @@
+2025-04-15 18:35:21,433 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 18:35:21,641 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 18:35:23,298 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 18:35:24,303 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 18:35:24,606 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 18:35:24,607 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 18:35:26,733 - INFO - 🗓️ Attempting to select: 23 ביוני 2025 ➡ 27 ביוני 2025 (4 לילות)
+2025-04-15 18:35:30,047 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 18:35:30,953 - INFO - ✅ Selected check-in: 23 ביוני 2025 → check-out: 27 ביוני 2025
+2025-04-15 18:35:30,954 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 18:35:30,954 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 18:35:32,319 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 18:35:32,506 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 18:35:32,506 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 18:35:33,854 - INFO - 👤 Set adults: 2
+2025-04-15 18:35:33,905 - INFO - 👤 Set children: 0
+2025-04-15 18:35:33,960 - INFO - 👤 Set infants: 0
+2025-04-15 18:35:34,370 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 18:35:34,371 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 18:35:34,398 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 18:35:34,715 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 18:35:34,715 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 18:35:55,343 - ERROR - ❌ שגיאה בלחיצה על 'להזמנת חדר': Message: 
+
+2025-04-15 18:35:55,544 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\book_room_button_error_2025-04-15_18-35-55.png

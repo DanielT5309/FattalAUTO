@@ -1,0 +1,25 @@
+2025-04-15 11:48:42,152 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 11:48:42,301 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 11:48:43,490 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 11:48:43,831 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 11:48:44,518 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 11:48:44,519 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 11:48:49,163 - INFO - ✅ Selected check-in: 27 ביוני 2025 → check-out: 30 ביוני 2025
+2025-04-15 11:48:49,631 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 11:48:49,632 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 11:48:50,176 - INFO - ✅ Clicked flight options dropdown.
+2025-04-15 11:48:50,436 - INFO - ✈️ Selected 'מכל שדות התעופה' as flight option.
+2025-04-15 11:48:50,553 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 11:48:51,833 - INFO - 👨‍👩‍👧 Set adults: 2
+2025-04-15 11:48:52,460 - INFO - 👨‍👩‍👧 Set children: 1
+2025-04-15 11:48:53,139 - INFO - 👨‍👩‍👧 Set infants: 1
+2025-04-15 11:48:53,397 - INFO - ✅ Closed room modal by re-clicking הרכב.
+2025-04-15 11:48:53,397 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 11:49:03,434 - WARNING - ⚠️ לא נמצא כפתור לפי ID — מנסה לפי class...
+2025-04-15 11:49:03,491 - INFO - 🔍 כפתור 'המשך' נמצא לפי class
+2025-04-15 11:49:03,743 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 11:49:03,743 - INFO - 🔎 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-15 11:49:23,800 - WARNING - ⚠️ ID-based search failed. Trying fallback by text...
+2025-04-15 11:49:33,867 - ERROR - ❌ שגיאה בלחיצה על 'הצג מחירים': Message: ❌ No visible 'הצג מחירים' button found by text.
+
+2025-04-15 11:49:34,226 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\show_prices_button_error_2025-04-15_11-49-33.png

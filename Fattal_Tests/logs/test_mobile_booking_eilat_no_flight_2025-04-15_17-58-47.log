@@ -1,0 +1,25 @@
+2025-04-15 17:58:08,503 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 17:58:08,667 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 17:58:10,216 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 17:58:10,715 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 17:58:11,863 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 17:58:11,864 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 17:58:14,000 - INFO - 🗓️ Attempting to select: 7 ביוני 2025 ➡ 10 ביוני 2025 (3 לילות)
+2025-04-15 17:58:17,485 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 17:58:18,468 - INFO - ✅ Selected check-in: 7 ביוני 2025 → check-out: 10 ביוני 2025
+2025-04-15 17:58:18,468 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 17:58:19,017 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 17:58:19,017 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 17:58:20,393 - INFO - 👤 Set adults: 2
+2025-04-15 17:58:20,515 - INFO - 👤 Set children: 0
+2025-04-15 17:58:20,556 - INFO - 👤 Set infants: 0
+2025-04-15 17:58:20,995 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 17:58:20,995 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 17:58:21,135 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 17:58:21,240 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 17:58:21,240 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 17:58:26,495 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 17:58:26,496 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים' לפי ID המתחיל ב-'room-price-button'...
+2025-04-15 17:58:47,486 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\click_show_prices_regional_fail_2025-04-15_17-58-46.png
+2025-04-15 17:58:47,487 - ERROR - ❌ [REGIONAL] Failed to click 'הצג מחירים': Message: 
+

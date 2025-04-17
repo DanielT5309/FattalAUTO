@@ -1,0 +1,40 @@
+2025-04-15 17:20:09,757 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 17:20:10,071 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 17:20:11,333 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 17:20:11,753 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 17:20:12,479 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 17:20:12,479 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 17:20:14,585 - INFO - 🗓️ Attempting to select: 11 ביוני 2025 ➡ 15 ביוני 2025 (4 לילות)
+2025-04-15 17:20:18,060 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 17:20:19,142 - INFO - ✅ Selected check-in: 11 ביוני 2025 → check-out: 15 ביוני 2025
+2025-04-15 17:20:19,143 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 17:20:19,143 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 17:20:20,310 - ERROR - ❌ Failed to select flight option 'מכל שדות התעופה': Message: element click intercepted: Element <button id="search-engine-search-field-button_flights" class="sc-9f775e38-1 dATLjH">...</button> is not clickable at point (205, 617). Other element would receive the click: <div class="sc-f6382f5-0 edhILP">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF792227089]
+	(No symbol) [0x00007FF792224A42]
+	(No symbol) [0x00007FF792221AE1]
+	(No symbol) [0x00007FF792220A42]
+	(No symbol) [0x00007FF792212204]
+	(No symbol) [0x00007FF7922470EA]
+	(No symbol) [0x00007FF792211AB6]
+	(No symbol) [0x00007FF792247300]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

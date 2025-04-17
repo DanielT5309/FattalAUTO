@@ -1,0 +1,57 @@
+2025-04-15 21:15:55,442 - INFO - Generated Israeli ID: 650323165
+2025-04-15 21:15:55,580 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 21:15:56,829 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 21:15:57,225 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 21:15:57,658 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 21:15:57,659 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 21:15:59,798 - INFO - 🗓️ Attempting to select: 16 ביוני 2025 ➡ 21 ביוני 2025 (5 לילות)
+2025-04-15 21:16:02,892 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 21:16:03,540 - INFO - ✅ Selected check-in: 16 ביוני 2025 → check-out: 21 ביוני 2025
+2025-04-15 21:16:03,540 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 21:16:03,662 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 21:16:03,662 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 21:16:05,004 - INFO - 👤 Set adults: 2
+2025-04-15 21:16:05,065 - INFO - 👤 Set children: 0
+2025-04-15 21:16:05,119 - INFO - 👤 Set infants: 0
+2025-04-15 21:16:05,316 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 21:16:05,316 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 21:16:05,351 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 21:16:05,369 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 21:16:05,369 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 21:16:10,278 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 21:16:10,278 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-15 21:16:13,920 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-04-15 21:16:13,920 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-15 21:16:14,473 - INFO - ✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.
+2025-04-15 21:16:14,474 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 21:16:16,970 - INFO - ✅ Email input is visible.
+2025-04-15 21:16:16,971 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-04-15 21:16:18,174 - INFO - ✅ [Mobile] Email filled correctly.
+2025-04-15 21:16:18,175 - INFO - 📝 Trying to fill Phone with '0544531600'
+2025-04-15 21:16:18,991 - INFO - ✅ [Mobile] Phone filled correctly.
+2025-04-15 21:16:18,992 - INFO - 📝 Trying to fill First Name with 'חן'
+2025-04-15 21:16:19,786 - INFO - ✅ [Mobile] First Name filled correctly.
+2025-04-15 21:16:19,786 - INFO - 📝 Trying to fill Last Name with 'טסט'
+2025-04-15 21:16:20,600 - INFO - ✅ [Mobile] Last Name filled correctly.
+2025-04-15 21:16:20,600 - INFO - 📝 Trying to fill ID Number with '650323165'
+2025-04-15 21:16:21,454 - INFO - ✅ [Mobile] ID Number filled correctly.
+2025-04-15 21:16:21,454 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-15 21:16:21,523 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-15 21:16:21,523 - INFO - 💳 Scrolling iframe into view...
+2025-04-15 21:16:21,545 - INFO - 💳 Switching into payment iframe...
+2025-04-15 21:16:21,570 - INFO - ✅ Switched into iframe.
+2025-04-15 21:16:21,764 - INFO - ✅ Card Number filled correctly.
+2025-04-15 21:16:21,901 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-15 21:16:22,012 - INFO - ✅ Expiry Month selected: 08
+2025-04-15 21:16:22,104 - INFO - ✅ Expiry Year selected: 2025
+2025-04-15 21:16:22,221 - INFO - ✅ CVV filled correctly.
+2025-04-15 21:16:22,347 - INFO - ✅ Card ID Number filled correctly.
+2025-04-15 21:16:22,348 - INFO - 🎯 Payment form filled successfully.
+2025-04-15 21:16:22,352 - INFO - 🔙 Switched back to main content.
+2025-04-15 21:16:22,352 - INFO - 🚀 Trying to click the payment submit button inside iframe...
+2025-04-15 21:16:22,753 - INFO - ✅ Payment submit button clicked successfully via JS.
+2025-04-15 21:16:22,757 - INFO - 🔙 Switched back to main content after payment submission.
+2025-04-15 21:16:22,758 - INFO - 🔍 Verifying mobile confirmation page contents...
+2025-04-15 21:16:30,254 - INFO - 📸 Screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-15_21-16-29.png
+2025-04-15 21:16:30,254 - INFO - ✅ Confirmation screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-15_21-16-29.png
+2025-04-15 21:16:30,255 - INFO - ✅ Order Number (mobile): 980066877

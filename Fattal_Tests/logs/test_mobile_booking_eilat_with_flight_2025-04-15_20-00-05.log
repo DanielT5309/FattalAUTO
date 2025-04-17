@@ -1,0 +1,27 @@
+2025-04-15 19:59:29,924 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 19:59:30,054 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 19:59:31,296 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 19:59:31,675 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 19:59:32,058 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 19:59:32,059 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 19:59:34,173 - INFO - 🗓️ Attempting to select: 10 ביוני 2025 ➡ 14 ביוני 2025 (4 לילות)
+2025-04-15 19:59:37,233 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 19:59:37,941 - INFO - ✅ Selected check-in: 10 ביוני 2025 → check-out: 14 ביוני 2025
+2025-04-15 19:59:37,941 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 19:59:37,941 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 19:59:38,949 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 19:59:39,096 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 19:59:39,097 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 19:59:40,466 - INFO - 👤 Set adults: 2
+2025-04-15 19:59:40,508 - INFO - 👤 Set children: 0
+2025-04-15 19:59:40,544 - INFO - 👤 Set infants: 0
+2025-04-15 19:59:40,652 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 19:59:40,652 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 19:59:40,683 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 19:59:40,783 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 19:59:40,783 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 19:59:44,723 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 19:59:44,724 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-15 20:00:05,548 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\click_show_prices_regional_fail_2025-04-15_20-00-05.png
+2025-04-15 20:00:05,548 - ERROR - ❌ [REGIONAL] Failed to click 'הצג מחירים': Message: 
+

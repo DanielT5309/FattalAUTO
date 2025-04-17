@@ -1,0 +1,23 @@
+2025-04-16 20:09:50,678 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-16 20:09:50,679 - INFO - Generated Israeli ID: 461340747
+2025-04-16 20:09:50,842 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:09:52,668 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-16 20:09:53,155 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-16 20:09:53,896 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:09:53,896 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 20:09:56,035 - INFO - 🗓️ Attempting to select: 14 ביוני 2025 ➡ 18 ביוני 2025 (4 לילות)
+2025-04-16 20:09:59,414 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 20:10:00,601 - INFO - ✅ Selected check-in: 14 ביוני 2025 → check-out: 18 ביוני 2025
+2025-04-16 20:10:00,601 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:10:01,309 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 20:10:01,309 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 20:10:02,649 - INFO - 👤 Set adults: 2
+2025-04-16 20:10:03,335 - INFO - 👤 Set children: 1
+2025-04-16 20:10:03,407 - INFO - 👤 Set infants: 0
+2025-04-16 20:10:03,407 - INFO - 👉 Searching for 'המשך' button starting with: 'המשך - חדר'
+2025-04-16 20:10:03,645 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_button_fail_2025-04-16_20-10-03.png
+2025-04-16 20:10:03,645 - ERROR - ❌ Failed to click button 'המשך - חדר': Message: ❌ No button found matching: 'המשך - חדר'
+
+2025-04-16 20:10:03,645 - ERROR - ❌ set_mobile_room_occupants crashed: Message: ❌ No button found matching: 'המשך - חדר'
+
+2025-04-16 20:10:03,856 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_20-10-03.png

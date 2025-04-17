@@ -1,0 +1,29 @@
+2025-04-15 15:39:10,220 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-15 15:39:10,220 - INFO - Generated Israeli ID: 353515836
+2025-04-15 15:39:10,708 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 15:39:12,692 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-15 15:39:13,247 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-15 15:39:14,148 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 15:39:14,148 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 15:39:16,302 - INFO - 🗓️ Attempting to select: 30 ביוני 2025 ➡ 4 ביולי 2025 (4 לילות)
+2025-04-15 15:39:19,758 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 15:39:21,319 - INFO - ✅ Selected check-in: 30 ביוני 2025 → check-out: 4 ביולי 2025
+2025-04-15 15:39:21,320 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 15:39:21,753 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 15:39:21,754 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 15:39:23,117 - INFO - 👤 Set adults: 2
+2025-04-15 15:39:23,984 - INFO - 👤 Set children: 1
+2025-04-15 15:39:24,038 - INFO - 👤 Set infants: 0
+2025-04-15 15:39:24,531 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 15:39:24,532 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 15:39:24,562 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 15:39:24,957 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 15:39:24,957 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-15 15:39:24,958 - INFO - 🔁 ניסיון 1 — חיפוש כפתור לפי ID שמתחיל ב-'room-price-button'...
+2025-04-15 15:39:28,615 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-15 15:39:28,616 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 15:39:29,102 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 15:39:29,102 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 15:41:33,691 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\mobile_personal_form_timeout_2025-04-15_15-41-33.png
+2025-04-15 15:41:33,691 - ERROR - ❌ Personal form did not load in time: Message: 🛑 Could not locate visible email input after scrolling.
+

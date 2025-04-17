@@ -1,0 +1,25 @@
+2025-04-16 20:48:10,105 - INFO - Generated Israeli ID: 296938509
+2025-04-16 20:48:10,106 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 20:48:10,273 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:48:11,819 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 20:48:12,172 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 20:48:12,448 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:48:12,448 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 20:48:22,668 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 20:48:22,668 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 20:48:23,328 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:48:23,329 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 20:48:24,325 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 20:48:24,325 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 20:48:24,325 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 20:48:25,680 - INFO - 👤 Set adults: 2
+2025-04-16 20:48:25,722 - INFO - 👤 Set children: 0
+2025-04-16 20:48:25,760 - INFO - 👤 Set infants: 0
+2025-04-16 20:48:25,768 - INFO - 🧩 Room modal still present — continuing to click 'המשך'.
+2025-04-16 20:48:26,369 - INFO - 👉 Dynamically searching for room continue button...
+2025-04-16 20:48:26,610 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_button_xpath_fail_2025-04-16_20-48-26.png
+2025-04-16 20:48:26,610 - ERROR - ❌ Could not click room continue button: Message: ❌ No room continue button matching 'המשך' and 'חדר' was found.
+
+2025-04-16 20:48:26,611 - ERROR - ❌ set_mobile_room_occupants crashed: Message: ❌ No room continue button matching 'המשך' and 'חדר' was found.
+
+2025-04-16 20:48:26,786 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_20-48-26.png

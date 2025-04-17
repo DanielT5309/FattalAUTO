@@ -1,0 +1,181 @@
+2025-04-15 21:24:25,124 - INFO - Generated Israeli ID: 584082010
+2025-04-15 21:24:25,125 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 21:24:25,669 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 21:24:29,038 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 21:24:29,437 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 21:24:29,724 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 21:24:29,725 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-15 21:24:39,831 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-15 21:24:39,831 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-15 21:24:40,498 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 21:24:40,498 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 21:24:41,485 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 21:24:41,584 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 21:24:41,584 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 21:24:42,934 - INFO - 👤 Set adults: 2
+2025-04-15 21:24:42,971 - INFO - 👤 Set children: 0
+2025-04-15 21:24:43,009 - INFO - 👤 Set infants: 0
+2025-04-15 21:24:43,117 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 21:24:43,118 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 21:24:43,150 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 21:24:43,261 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 21:24:43,262 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 21:24:45,820 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 21:24:45,820 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-15 21:24:50,203 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-04-15 21:24:50,203 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-15 21:24:50,383 - INFO - ✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.
+2025-04-15 21:24:50,384 - INFO - 🕒 [Mobile] Trying flight time tab: בוקר (Attempt 1)
+2025-04-15 21:24:50,384 - INFO - 📌 [Mobile] Clicking time tab 'בוקר'...
+2025-04-15 21:25:00,423 - ERROR - ❌ Failed to click time tab 'בוקר': Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 21:25:00,424 - WARNING - ❌ [Mobile] Flight time tab 'בוקר' failed: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 21:25:00,425 - INFO - 🕒 [Mobile] Trying flight time tab: צהריים (Attempt 2)
+2025-04-15 21:25:00,425 - INFO - 📌 [Mobile] Clicking time tab 'צהריים'...
+2025-04-15 21:25:10,445 - ERROR - ❌ Failed to click time tab 'צהריים': Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 21:25:10,446 - WARNING - ❌ [Mobile] Flight time tab 'צהריים' failed: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 21:25:10,446 - INFO - 🕒 [Mobile] Trying flight time tab: ערב (Attempt 3)
+2025-04-15 21:25:10,447 - INFO - 📌 [Mobile] Clicking time tab 'ערב'...
+2025-04-15 21:25:10,823 - INFO - ✅ Clicked time tab: ערב
+2025-04-15 21:25:10,824 - INFO - 🛫 [Mobile] Clicking 'עריכה' for departure flight
+2025-04-15 21:25:10,899 - INFO - ✅ 'עריכה' clicked for departure flight
+2025-04-15 21:25:10,899 - INFO - 📍 Selecting first mobile departure option
+2025-04-15 21:25:11,007 - INFO - ✅ Clicked departure radio button via JS.
+2025-04-15 21:25:11,007 - INFO - 🛬 [Mobile] Clicking 'עריכה' for return flight
+2025-04-15 21:25:11,084 - INFO - ✅ 'עריכה' clicked for return flight
+2025-04-15 21:25:11,084 - INFO - 📍 Selecting first mobile return option
+2025-04-15 21:25:11,122 - INFO - ✅ Clicked return radio button via JS.
+2025-04-15 21:25:11,136 - INFO - 🎉 [Mobile] Flight booking succeeded with tab: ערב
+2025-04-15 21:25:11,136 - INFO - 🧍 [Mobile] Filling details for 2 adult passengers...
+2025-04-15 21:25:11,640 - WARNING - ⚠️ Element not interactable: 'First Name 1'. Using JS React fallback.
+2025-04-15 21:25:11,657 - INFO - ✅ JS React fallback succeeded for 'First Name 1'
+2025-04-15 21:25:12,164 - WARNING - ⚠️ Element not interactable: 'Last Name 1'. Using JS React fallback.
+2025-04-15 21:25:12,178 - INFO - ✅ JS React fallback succeeded for 'Last Name 1'
+2025-04-15 21:25:12,623 - WARNING - ⚠️ Element not interactable: 'First Name 2'. Using JS React fallback.
+2025-04-15 21:25:12,637 - INFO - ✅ JS React fallback succeeded for 'First Name 2'
+2025-04-15 21:25:13,077 - WARNING - ⚠️ Element not interactable: 'Last Name 2'. Using JS React fallback.
+2025-04-15 21:25:13,090 - INFO - ✅ JS React fallback succeeded for 'Last Name 2'
+2025-04-15 21:25:13,091 - INFO - 🎯 [Mobile] Adult passenger form fields filled.
+2025-04-15 21:25:13,091 - INFO - 👉 Looking for 'המשך' button with class 'sc-4b8d67fa-1 fIgbAH'...
+2025-04-15 21:25:13,663 - INFO - ✅ Clicked 'המשך' button successfully.
+2025-04-15 21:25:13,663 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 21:25:13,704 - INFO - ✅ Email input is visible.
+2025-04-15 21:25:13,705 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-04-15 21:25:14,336 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\mobile_input_fail_Email_2025-04-15_21-25-14.png
+2025-04-15 21:25:14,337 - ERROR - ❌ Failed to set Email: Message: element not interactable
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C8FDC]
+	(No symbol) [0x00007FF792218934]
+	(No symbol) [0x00007FF792216753]
+	(No symbol) [0x00007FF7922470EA]
+	(No symbol) [0x00007FF792211AB6]
+	(No symbol) [0x00007FF792247300]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

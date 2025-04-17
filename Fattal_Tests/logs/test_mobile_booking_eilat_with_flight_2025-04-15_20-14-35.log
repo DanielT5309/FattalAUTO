@@ -1,0 +1,80 @@
+2025-04-15 20:13:10,315 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 20:13:10,451 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 20:13:11,706 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 20:13:12,119 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 20:13:13,099 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 20:13:13,099 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 20:13:15,210 - INFO - 🗓️ Attempting to select: 16 ביוני 2025 ➡ 19 ביוני 2025 (3 לילות)
+2025-04-15 20:13:18,321 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 20:13:18,992 - INFO - ✅ Selected check-in: 16 ביוני 2025 → check-out: 19 ביוני 2025
+2025-04-15 20:13:18,993 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 20:13:18,993 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 20:13:20,006 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 20:13:20,158 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 20:13:20,159 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 20:13:21,564 - INFO - 👤 Set adults: 2
+2025-04-15 20:13:21,646 - INFO - 👤 Set children: 0
+2025-04-15 20:13:21,721 - INFO - 👤 Set infants: 0
+2025-04-15 20:13:21,982 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 20:13:21,982 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 20:13:22,041 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 20:13:22,226 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 20:13:22,226 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 20:13:25,538 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 20:13:25,538 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-15 20:14:02,205 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-04-15 20:14:02,205 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-15 20:14:02,428 - INFO - ✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.
+2025-04-15 20:14:02,429 - INFO - 🕒 [Mobile] Trying flight time tab: בוקר (Attempt 1)
+2025-04-15 20:14:02,429 - INFO - 📌 [Mobile] Clicking time tab 'בוקר'...
+2025-04-15 20:14:12,496 - WARNING - ⚠️ Could not click time tab 'בוקר': Message: no such element: Unable to locate element: {"method":"xpath","selector":"//button[contains(.,'בוקר')]"}
+  (Session info: chrome=135.0.7049.85); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF79221F149]
+	(No symbol) [0x00007FF79221F3FC]
+	(No symbol) [0x00007FF792272467]
+	(No symbol) [0x00007FF79224712F]
+	(No symbol) [0x00007FF79226F2BB]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-15 20:14:12,497 - INFO - 🛫 [Mobile] Clicking 'עריכה' for departure flight
+2025-04-15 20:14:12,595 - INFO - ✅ 'עריכה' clicked for departure flight
+2025-04-15 20:14:12,596 - INFO - 📍 Selecting first mobile departure option
+2025-04-15 20:14:12,644 - INFO - ✅ Clicked departure radio button via JS.
+2025-04-15 20:14:12,644 - INFO - 🛬 [Mobile] Clicking 'עריכה' for return flight
+2025-04-15 20:14:12,693 - INFO - ✅ 'עריכה' clicked for return flight
+2025-04-15 20:14:12,694 - INFO - 📍 Selecting first mobile return option
+2025-04-15 20:14:12,729 - INFO - ✅ Clicked return radio button via JS.
+2025-04-15 20:14:12,742 - INFO - 🎉 [Mobile] Flight booking succeeded with tab: בוקר
+2025-04-15 20:14:12,742 - INFO - 🧍 [Mobile] Filling details for 2 adult passengers...
+2025-04-15 20:14:13,269 - WARNING - ⚠️ Element not interactable. Falling back to JavaScript typing. Element: <selenium.webdriver.remote.webelement.WebElement (session="237b7df2268b17984d7b8ae041dd5c8c", element="f.D3805CF95A2D321351C388F86D1975F1.d.8575364DE8EE51AE245DF66D2968C2E9.e.215")>
+2025-04-15 20:14:13,285 - INFO - 💡 Set value using JS fallback.
+2025-04-15 20:14:13,285 - INFO - ✅ First name set for adult 1: יוסי
+2025-04-15 20:14:13,738 - WARNING - ⚠️ Element not interactable. Falling back to JavaScript typing. Element: <selenium.webdriver.remote.webelement.WebElement (session="237b7df2268b17984d7b8ae041dd5c8c", element="f.D3805CF95A2D321351C388F86D1975F1.d.8575364DE8EE51AE245DF66D2968C2E9.e.216")>
+2025-04-15 20:14:13,749 - INFO - 💡 Set value using JS fallback.
+2025-04-15 20:14:13,749 - INFO - ✅ Last name set for adult 1: בדיקה
+2025-04-15 20:14:14,193 - WARNING - ⚠️ Element not interactable. Falling back to JavaScript typing. Element: <selenium.webdriver.remote.webelement.WebElement (session="237b7df2268b17984d7b8ae041dd5c8c", element="f.D3805CF95A2D321351C388F86D1975F1.d.8575364DE8EE51AE245DF66D2968C2E9.e.217")>
+2025-04-15 20:14:14,207 - INFO - 💡 Set value using JS fallback.
+2025-04-15 20:14:14,207 - INFO - ✅ First name set for adult 2: נועה
+2025-04-15 20:14:14,667 - WARNING - ⚠️ Element not interactable. Falling back to JavaScript typing. Element: <selenium.webdriver.remote.webelement.WebElement (session="237b7df2268b17984d7b8ae041dd5c8c", element="f.D3805CF95A2D321351C388F86D1975F1.d.8575364DE8EE51AE245DF66D2968C2E9.e.218")>
+2025-04-15 20:14:14,680 - INFO - 💡 Set value using JS fallback.
+2025-04-15 20:14:14,680 - INFO - ✅ Last name set for adult 2: בדיקה
+2025-04-15 20:14:14,680 - INFO - 🎯 [Mobile] Adult passenger form fields filled.
+2025-04-15 20:14:14,680 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-15 20:14:35,657 - ERROR - 📸 Screenshot saved.
+2025-04-15 20:14:35,657 - ERROR - ❌ Personal form did not load in time: 🛑 Could not locate visible email input after scrolling.

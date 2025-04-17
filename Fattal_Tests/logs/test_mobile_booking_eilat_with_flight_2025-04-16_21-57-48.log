@@ -1,0 +1,24 @@
+2025-04-16 21:57:20,233 - INFO - Generated Israeli ID: 924778137
+2025-04-16 21:57:20,234 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 21:57:20,379 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 21:57:22,013 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 21:57:22,436 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 21:57:22,774 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 21:57:22,774 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 21:57:33,573 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 21:57:33,573 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 21:57:34,268 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 21:57:34,268 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 21:57:35,285 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 21:57:35,297 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-16 21:57:35,297 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-16 21:57:35,297 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 21:57:36,663 - INFO - 👤 Set adults: 2
+2025-04-16 21:57:36,711 - INFO - 👤 Set children: 0
+2025-04-16 21:57:36,753 - INFO - 👤 Set infants: 0
+2025-04-16 21:57:36,762 - INFO - 🧩 Room modal still present — ready to click 'המשך'.
+2025-04-16 21:57:37,763 - INFO - 👉 Searching for room continue button...
+2025-04-16 21:57:37,788 - INFO - 🧩 Room modal is visible and ready.
+2025-04-16 21:57:48,021 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_click_fail_2025-04-16_21-57-47.png
+2025-04-16 21:57:48,021 - ERROR - ❌ Could not click room continue button: Message: 
+

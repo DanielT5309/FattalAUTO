@@ -1,0 +1,21 @@
+2025-04-16 19:25:33,462 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-16 19:25:33,463 - INFO - Generated Israeli ID: 511370041
+2025-04-16 19:25:33,603 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 19:25:35,883 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-16 19:25:36,386 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-16 19:25:37,215 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 19:25:37,215 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 19:25:39,323 - INFO - 🗓️ Attempting to select: 9 ביוני 2025 ➡ 13 ביוני 2025 (4 לילות)
+2025-04-16 19:25:42,800 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 19:25:43,682 - INFO - ✅ Selected check-in: 9 ביוני 2025 → check-out: 13 ביוני 2025
+2025-04-16 19:25:43,683 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 19:25:44,219 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 19:25:44,220 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 19:25:45,568 - INFO - 👤 Set adults: 2
+2025-04-16 19:25:46,443 - INFO - 👤 Set children: 1
+2025-04-16 19:25:46,519 - INFO - 👤 Set infants: 0
+2025-04-16 19:25:46,858 - INFO - ✅ Clicked mobile room continue button.
+2025-04-16 19:25:46,858 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-16 19:25:56,922 - WARNING - ⚠️ לא נמצא כפתור לפי ID — מנסה לפי class...
+2025-04-16 19:26:02,267 - ERROR - ⏱️ Timeout – לא נמצא כפתור 'המשך' לפי ID וגם לפי class.
+2025-04-16 19:26:02,799 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\mobile_search_button_full_timeout_2025-04-16_19-26-02.png

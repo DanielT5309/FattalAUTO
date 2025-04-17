@@ -1,0 +1,53 @@
+2025-04-16 22:06:00,145 - INFO - Generated Israeli ID: 153047212
+2025-04-16 22:06:00,145 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-16 22:06:00,283 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 22:06:01,415 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 22:06:01,764 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 22:06:02,023 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 22:06:02,024 - INFO - 📅 Selecting specific range: 25 ➡ 30
+2025-04-16 22:06:11,198 - INFO - ✅ Clicked check-in: 25 ביוני
+2025-04-16 22:06:11,198 - INFO - ✅ Clicked check-out: 30 ביוני
+2025-04-16 22:06:11,886 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 22:06:11,886 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-16 22:06:12,835 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-16 22:06:12,849 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-16 22:06:12,849 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-16 22:06:12,849 - INFO - 👨‍👩‍👧 Opening room modal if needed...
+2025-04-16 22:06:12,874 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-16 22:06:12,874 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-16 22:06:12,887 - INFO - 🧩 Room modal is open and ready.
+2025-04-16 22:06:12,887 - INFO - 🔧 Adjusting adults to 2...
+2025-04-16 22:06:12,945 - INFO - 👤 Set adults: 2
+2025-04-16 22:06:12,945 - INFO - 🔧 Adjusting children to 1...
+2025-04-16 22:06:13,367 - INFO - 👤 Set children: 1
+2025-04-16 22:06:13,368 - INFO - 🔧 Adjusting infants to 1...
+2025-04-16 22:06:13,808 - INFO - 👤 Set infants: 1
+2025-04-16 22:06:13,809 - INFO - ✅ All occupant values set — modal remains open for continue.
+2025-04-16 22:06:14,809 - INFO - 👉 Searching for room continue button...
+2025-04-16 22:06:14,821 - INFO - 🧩 Room modal is visible and ready.
+2025-04-16 22:06:15,245 - INFO - 🧩 Room modal is visible and ready.
+2025-04-16 22:06:25,603 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_click_fail_2025-04-16_22-06-25.png
+2025-04-16 22:06:25,604 - ERROR - ❌ Could not click room continue button: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF768105355+78597]
+	GetHandleVerifier [0x00007FF7681053B0+78688]
+	(No symbol) [0x00007FF767EB91AA]
+	(No symbol) [0x00007FF767F0F149]
+	(No symbol) [0x00007FF767F0F3FC]
+	(No symbol) [0x00007FF767F62467]
+	(No symbol) [0x00007FF767F3712F]
+	(No symbol) [0x00007FF767F5F2BB]
+	(No symbol) [0x00007FF767F36EC3]
+	(No symbol) [0x00007FF767F003F8]
+	(No symbol) [0x00007FF767F01163]
+	GetHandleVerifier [0x00007FF7683AEF0D+2870973]
+	GetHandleVerifier [0x00007FF7683A96B8+2848360]
+	GetHandleVerifier [0x00007FF7683C6993+2967875]
+	GetHandleVerifier [0x00007FF76812019A+188746]
+	GetHandleVerifier [0x00007FF76812847F+222255]
+	GetHandleVerifier [0x00007FF76810D2D4+111236]
+	GetHandleVerifier [0x00007FF76810D482+111666]
+	GetHandleVerifier [0x00007FF7680F35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

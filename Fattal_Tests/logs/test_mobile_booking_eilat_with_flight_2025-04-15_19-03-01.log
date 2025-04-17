@@ -1,0 +1,28 @@
+2025-04-15 19:02:15,376 - INFO - 🛫 Starting mobile booking test for Eilat including flights...
+2025-04-15 19:02:15,503 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-15 19:02:16,830 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-15 19:02:17,271 - INFO - ✅ Clicked first suggested region from list.
+2025-04-15 19:02:17,537 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-15 19:02:17,537 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-15 19:02:19,653 - INFO - 🗓️ Attempting to select: 23 ביוני 2025 ➡ 27 ביוני 2025 (4 לילות)
+2025-04-15 19:02:22,741 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-15 19:02:23,428 - INFO - ✅ Selected check-in: 23 ביוני 2025 → check-out: 27 ביוני 2025
+2025-04-15 19:02:23,428 - INFO - ✅ Confirmed calendar selection.
+2025-04-15 19:02:23,429 - INFO - 🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-04-15 19:02:24,404 - INFO - ✈️ Selected 'מכל שדות התעופה' for flights.
+2025-04-15 19:02:24,503 - INFO - ✅ Opened mobile room selection modal.
+2025-04-15 19:02:24,503 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-15 19:02:25,875 - INFO - 👤 Set adults: 2
+2025-04-15 19:02:25,918 - INFO - 👤 Set children: 0
+2025-04-15 19:02:25,961 - INFO - 👤 Set infants: 0
+2025-04-15 19:02:26,068 - INFO - ✅ Clicked mobile room continue button.
+2025-04-15 19:02:26,068 - INFO - 📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-04-15 19:02:26,098 - INFO - 🔍 כפתור 'המשך' נמצא לפי ID
+2025-04-15 19:02:26,210 - INFO - ✅ נלחץ כפתור 'המשך' (main search button במובייל)
+2025-04-15 19:02:26,210 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-15 19:02:28,952 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-15 19:02:28,952 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים' לפי טקסט או ID...
+2025-04-15 19:02:34,931 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה (fallback by text).
+2025-04-15 19:02:34,932 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-15 19:03:01,664 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\click_book_room_regional_fail_2025-04-15_19-03-01.png
+2025-04-15 19:03:01,665 - ERROR - ❌ [REGIONAL] Failed to click regional 'להזמנת חדר': ❌ [REGIONAL] Couldn't click any 'להזמנת חדר' button after loop.

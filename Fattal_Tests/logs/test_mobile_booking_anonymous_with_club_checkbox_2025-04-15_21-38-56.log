@@ -1,0 +1,26 @@
+2025-04-15 21:38:56,737 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-15 21:38:56,738 - INFO - Generated Israeli ID: 317714897
+2025-04-15 21:38:56,741 - ERROR - ❌ Failed to click mobile hotel search input: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF792415335+78597]
+	GetHandleVerifier [0x00007FF792415390+78688]
+	(No symbol) [0x00007FF7921C91AA]
+	(No symbol) [0x00007FF7921A1B63]
+	(No symbol) [0x00007FF79224EB6E]
+	(No symbol) [0x00007FF79226EBB2]
+	(No symbol) [0x00007FF792246EC3]
+	(No symbol) [0x00007FF7922103F8]
+	(No symbol) [0x00007FF792211163]
+	GetHandleVerifier [0x00007FF7926BEEED+2870973]
+	GetHandleVerifier [0x00007FF7926B9698+2848360]
+	GetHandleVerifier [0x00007FF7926D6973+2967875]
+	GetHandleVerifier [0x00007FF79243017A+188746]
+	GetHandleVerifier [0x00007FF79243845F+222255]
+	GetHandleVerifier [0x00007FF79241D2B4+111236]
+	GetHandleVerifier [0x00007FF79241D462+111666]
+	GetHandleVerifier [0x00007FF792403589+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

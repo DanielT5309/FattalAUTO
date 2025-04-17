@@ -1,0 +1,12 @@
+2025-04-16 20:33:42,258 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-16 20:33:42,258 - INFO - Generated Israeli ID: 867628000
+2025-04-16 20:33:42,620 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:33:44,625 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-16 20:33:45,173 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-16 20:33:46,045 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:33:46,045 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 20:33:48,168 - INFO - 🗓️ Attempting to select: 7 ביוני 2025 ➡ 11 ביוני 2025 (4 לילות)
+2025-04-16 20:33:51,812 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 20:33:53,415 - INFO - ✅ Selected check-in: 7 ביוני 2025 → check-out: 11 ביוני 2025
+2025-04-16 20:33:53,415 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:33:54,403 - INFO - ✅ Opened mobile room selection modal.

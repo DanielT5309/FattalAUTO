@@ -1,0 +1,23 @@
+2025-04-16 20:57:25,990 - INFO - Generated Israeli ID: 815048699
+2025-04-16 20:57:26,362 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-16 20:57:27,623 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-16 20:57:27,991 - INFO - ✅ Clicked first suggested region from list.
+2025-04-16 20:57:28,261 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-16 20:57:28,261 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-16 20:57:30,411 - INFO - 🗓️ Attempting to select: 27 ביוני 2025 ➡ 2 ביולי 2025 (5 לילות)
+2025-04-16 20:57:33,538 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-16 20:57:34,248 - INFO - ✅ Selected check-in: 27 ביוני 2025 → check-out: 2 ביולי 2025
+2025-04-16 20:57:34,248 - INFO - ✅ Confirmed calendar selection.
+2025-04-16 20:57:34,248 - INFO - ✅ Opened mobile room selection modal.
+2025-04-16 20:57:34,248 - INFO - 👨‍👩‍👧 Opening occupant modal and adjusting counts...
+2025-04-16 20:57:35,611 - INFO - 👤 Set adults: 2
+2025-04-16 20:57:35,650 - INFO - 👤 Set children: 0
+2025-04-16 20:57:35,690 - INFO - 👤 Set infants: 0
+2025-04-16 20:57:35,697 - INFO - 🧩 Room modal still present — continuing to click 'המשך'.
+2025-04-16 20:57:36,298 - INFO - 👉 Dynamically searching for room continue button...
+2025-04-16 20:57:36,619 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\room_continue_button_xpath_fail_2025-04-16_20-57-36.png
+2025-04-16 20:57:36,619 - ERROR - ❌ Could not click room continue button: Message: ❌ No room continue button matching 'המשך' and 'חדר' was found.
+
+2025-04-16 20:57:36,619 - ERROR - ❌ set_mobile_room_occupants crashed: Message: ❌ No room continue button matching 'המשך' and 'חדר' was found.
+
+2025-04-16 20:57:36,899 - ERROR - 📸 Screenshot saved: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Screenshots\set_room_mobile_fail_2025-04-16_20-57-36.png
