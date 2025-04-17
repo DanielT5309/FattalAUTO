@@ -27,7 +27,7 @@ import json
 class FattalTests(TestCase):
     def setUp(self):
         self.log_stream = io.StringIO()
-        with open("users.json", encoding="utf-8") as f:
+        with open("config.json", encoding="utf-8") as f:
             self.users = json.load(f)
         # Reset logging configuration
         for handler in logging.root.handlers[:]:
@@ -65,8 +65,11 @@ class FattalTests(TestCase):
             "configuration": "mobile"
         })
         self.driver.set_window_rect(x=540, y=0, width=420, height=800)
-       # self.driver.get("https://fe.stage.fattal.kimaia.dev/")
-        self.driver.get("https://www.fattal.co.il/")
+        env_config = self.users.get("environment", {})
+        active_key = env_config.get("active", "prod_url")
+        base_url = env_config.get(active_key, "https://www.fattal.co.il/")
+        self.driver.get(base_url)
+        logging.info(f"🌐 Opened environment URL: {base_url}")
 
         # Page object initialization
         self.mobile_main_page = FattalMainPageMobile(self.driver)

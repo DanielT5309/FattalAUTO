@@ -1,4 +1,9 @@
 {
+"environment": {
+  "prod_url": "https://www.fattal.co.il/",
+  "stage_url": "https://fe.stage.fattal.kimaia.dev/",
+  "active": "prod_url"
+},
   "default_guest": {
     "email": "chenttedgui@gmail.com",
     "phone": "0544531600",
