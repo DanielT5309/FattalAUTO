@@ -1,0 +1,24 @@
+{
+  "default_guest": {
+    "email": "chenttedgui@gmail.com",
+    "phone": "0544531600",
+    "first_name": "חן",
+    "last_name": "טסט"
+  },
+  "club_renew_user": {
+    "id": "999760200",
+    "password": "Aa123456"
+  },
+  "club_about_to_expire_user": {
+    "id": "948061585",
+    "password": "Aa123456"
+  },
+  "club_11night_user": {
+    "id": "999425861",
+    "password": "Aa123456"
+  },
+  "club_regular_user": {
+    "id": "999318330",
+    "password": "Aa123456"
+  }
+}

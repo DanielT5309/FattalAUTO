@@ -23,11 +23,12 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
-
+import json
 class FattalTests(TestCase):
     def setUp(self):
         self.log_stream = io.StringIO()
-
+        with open("users.json", encoding="utf-8") as f:
+            self.users = json.load(f)
         # Reset logging configuration
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -265,14 +266,30 @@ class FattalTests(TestCase):
         c.save()
         print(f" PDF saved: {filename}")
 
-    def fill_guest_details(self, email="chenttedgui@gmail.com", phone="0544531600", first_name="חן", last_name="טסט"):
-        """Fills guest details into the order page and stores them for logging/export."""
+    def fill_guest_details(self, guest=None, email=None, phone=None, first_name=None, last_name=None):
+        """
+        Fills guest details into the order page.
+        You can either pass a full `guest` dictionary (with keys: email, phone, first_name, last_name)
+        OR use individual arguments to override defaults.
+        """
+        if guest:
+            email = guest.get("email", email)
+            phone = guest.get("phone", phone)
+            first_name = guest.get("first_name", first_name)
+            last_name = guest.get("last_name", last_name)
+
+        # Defaults fallback
+        email = email or "chenttedgui@gmail.com"
+        phone = phone or "0544531600"
+        first_name = first_name or "חן"
+        last_name = last_name or "טסט"
+
         self.mobile_order_page.set_email(email)
         self.mobile_order_page.set_phone(phone)
         self.mobile_order_page.set_first_name(first_name)
         self.mobile_order_page.set_last_name(last_name)
 
-        # Store for post_test_logging
+        # For logging/export
         self.entered_email = email
         self.entered_first_name = first_name
         self.entered_last_name = last_name
@@ -327,7 +344,13 @@ class FattalTests(TestCase):
         #Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         #Order Details
-        self.fill_guest_details()
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe
@@ -368,7 +391,13 @@ class FattalTests(TestCase):
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        self.fill_guest_details()
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe
@@ -417,7 +446,13 @@ class FattalTests(TestCase):
         # Step 9: Payment form
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        self.fill_guest_details()
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
@@ -460,7 +495,13 @@ class FattalTests(TestCase):
         # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        self.fill_guest_details()
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
@@ -479,8 +520,9 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys("999760200")
-            self.mobile_toolbar.user_password_input().send_keys("Aa123456")
+            user = self.users["club_renew_user"]
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("✅ Logged in successfully.")
@@ -529,8 +571,9 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys("948061585")
-            self.mobile_toolbar.user_password_input().send_keys("Aa123456")
+            user = self.users["club_about_to_expire_user"]
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("✅ Logged in successfully.")
@@ -579,8 +622,9 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys("999425861")
-            self.mobile_toolbar.user_password_input().send_keys("Aa123456")
+            user = self.users["club_11night_user"]
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("✅ Logged in successfully.")
@@ -627,9 +671,9 @@ class FattalTests(TestCase):
 
         # Step 0: Club Login
         try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys("999318330")
-            self.mobile_toolbar.user_password_input().send_keys("Aa123456")
+            user = self.users["club_regular_user"]
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("✅ Logged in successfully.")
@@ -672,8 +716,9 @@ class FattalTests(TestCase):
     def test_mobile_booking_with_user_and_deals(self):
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys("999318330")
-            self.mobile_toolbar.user_password_input().send_keys("Aa123456")
+            user = self.users["club_regular_user"]
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("✅ Logged in successfully.")

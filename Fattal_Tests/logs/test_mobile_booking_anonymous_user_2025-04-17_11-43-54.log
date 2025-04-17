@@ -1,0 +1,65 @@
+2025-04-17 11:43:15,536 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-17 11:43:15,537 - INFO - Generated Israeli ID: 104593397
+2025-04-17 11:43:15,737 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 11:43:17,941 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-17 11:43:18,563 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-17 11:43:19,746 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 11:43:19,746 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 11:43:21,861 - INFO - 🗓️ Attempting to select: 26 ביוני 2025 ➡ 29 ביוני 2025 (3 לילות)
+2025-04-17 11:43:25,332 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 11:43:26,407 - INFO - ✅ Selected check-in: 26 ביוני 2025 → check-out: 29 ביוני 2025
+2025-04-17 11:43:26,408 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 11:43:26,430 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 11:43:26,430 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 11:43:26,430 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 11:43:26,447 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 11:43:26,447 - INFO - 🔧 Setting adults to 2...
+2025-04-17 11:43:26,523 - INFO - 👤 Adults set to: 2
+2025-04-17 11:43:26,523 - INFO - 🔧 Setting children to 1...
+2025-04-17 11:43:27,512 - INFO - 👤 Children set to: 1
+2025-04-17 11:43:27,512 - INFO - 🔧 Setting infants to 0...
+2025-04-17 11:43:27,566 - INFO - 👤 Infants set to: 0
+2025-04-17 11:43:27,566 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 11:43:27,567 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 11:43:27,577 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 11:43:28,523 - INFO - ✅ Clicked room continue button (native click).
+2025-04-17 11:43:28,523 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-17 11:43:33,738 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-17 11:43:33,781 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-17 11:43:34,609 - INFO - ✅ Clicked search button (JS click).
+2025-04-17 11:43:34,609 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-17 11:43:38,537 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-17 11:43:38,538 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-17 11:43:39,050 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-17 11:43:39,051 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-17 11:43:41,465 - INFO - ✅ Email input is visible.
+2025-04-17 11:43:41,465 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-04-17 11:43:42,527 - INFO - ✅ [Mobile] Email filled correctly with send_keys().
+2025-04-17 11:43:42,528 - INFO - 📝 Trying to fill Phone with '0544531600'
+2025-04-17 11:43:43,495 - INFO - ✅ [Mobile] Phone filled correctly with send_keys().
+2025-04-17 11:43:43,495 - INFO - 📝 Trying to fill First Name with 'חן'
+2025-04-17 11:43:44,399 - INFO - ✅ [Mobile] First Name filled correctly with send_keys().
+2025-04-17 11:43:44,399 - INFO - 📝 Trying to fill Last Name with 'טסט'
+2025-04-17 11:43:45,302 - INFO - ✅ [Mobile] Last Name filled correctly with send_keys().
+2025-04-17 11:43:45,302 - INFO - 📝 Trying to fill ID Number with '104593397'
+2025-04-17 11:43:46,177 - INFO - ✅ [Mobile] ID Number filled correctly with send_keys().
+2025-04-17 11:43:46,177 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-17 11:43:46,243 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-17 11:43:46,243 - INFO - 💳 Scrolling iframe into view...
+2025-04-17 11:43:46,284 - INFO - 💳 Switching into payment iframe...
+2025-04-17 11:43:46,315 - INFO - ✅ Switched into iframe.
+2025-04-17 11:43:46,585 - INFO - ✅ Card Number filled correctly.
+2025-04-17 11:43:46,740 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-17 11:43:46,868 - INFO - ✅ Expiry Month selected: 08
+2025-04-17 11:43:46,969 - INFO - ✅ Expiry Year selected: 2025
+2025-04-17 11:43:47,110 - INFO - ✅ CVV filled correctly.
+2025-04-17 11:43:47,271 - INFO - ✅ Card ID Number filled correctly.
+2025-04-17 11:43:47,272 - INFO - 🎯 Payment form filled successfully.
+2025-04-17 11:43:47,277 - INFO - 🔙 Switched back to main content.
+2025-04-17 11:43:47,277 - INFO - 🚀 Trying to click the payment submit button inside iframe...
+2025-04-17 11:43:47,715 - INFO - ✅ Payment submit button clicked successfully via JS.
+2025-04-17 11:43:47,719 - INFO - 🔙 Switched back to main content after payment submission.
+2025-04-17 11:43:47,719 - INFO - 🔍 Verifying mobile confirmation page contents...
+2025-04-17 11:43:54,867 - INFO - 📸 Screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-17_11-43-54.png
+2025-04-17 11:43:54,868 - INFO - ✅ Confirmation screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-04-17_11-43-54.png
+2025-04-17 11:43:54,868 - INFO - ✅ Order Number (mobile): 980023947
