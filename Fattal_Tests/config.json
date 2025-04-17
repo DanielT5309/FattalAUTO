@@ -1,9 +1,9 @@
 {
-"environment": {
-  "prod_url": "https://www.fattal.co.il/",
-  "stage_url": "https://fe.stage.fattal.kimaia.dev/",
-  "active": "stage_url"
-},
+  "environment": {
+    "prod_url": "https://www.fattal.co.il/",
+    "stage_url": "https://fe.stage.fattal.kimaia.dev/",
+    "active": "stage_url"
+  },
   "default_guest": {
     "email": "chenttedgui@gmail.com",
     "phone": "0544531600",
@@ -25,5 +25,10 @@
   "club_regular_user": {
     "id": "999318330",
     "password": "Aa123456"
+  },
+  "fattal_gifts": {
+    "fattal_gift1": "1282643017",
+    "fattal_gift2": "1510951091",
+    "fattal_gift3": "1274069942"
   }
 }

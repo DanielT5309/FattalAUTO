@@ -1,0 +1,98 @@
+2025-04-17 14:52:33,373 - INFO - 🌐 Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-04-17 14:52:33,374 - INFO - Generated Israeli ID: 541666756
+2025-04-17 14:52:33,581 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 14:52:37,735 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-04-17 14:52:38,299 - INFO - ✅ Clicked first suggested region from list.
+2025-04-17 14:52:38,923 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 14:52:38,924 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 14:52:41,175 - INFO - 🗓️ Attempting to select: 3 ביוני 2025 ➡ 8 ביוני 2025 (5 לילות)
+2025-04-17 14:52:44,288 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 14:52:44,975 - INFO - ✅ Selected check-in: 3 ביוני 2025 → check-out: 8 ביוני 2025
+2025-04-17 14:52:44,975 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 14:52:44,993 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 14:52:44,993 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 14:52:44,993 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 14:52:45,010 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 14:52:45,010 - INFO - 🔧 Setting adults to 2...
+2025-04-17 14:52:45,064 - INFO - 👤 Adults set to: 2
+2025-04-17 14:52:45,064 - INFO - 🔧 Setting children to 0...
+2025-04-17 14:52:45,120 - INFO - 👤 Children set to: 0
+2025-04-17 14:52:45,120 - INFO - 🔧 Setting infants to 0...
+2025-04-17 14:52:45,181 - INFO - 👤 Infants set to: 0
+2025-04-17 14:52:45,182 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 14:52:45,182 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 14:52:45,201 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 14:52:45,820 - INFO - ✅ Clicked room continue button (native click).
+2025-04-17 14:52:45,821 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-17 14:52:51,094 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-17 14:52:51,135 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-17 14:52:51,632 - INFO - ✅ Clicked search button (JS click).
+2025-04-17 14:52:51,633 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-17 14:52:57,944 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-17 14:52:57,944 - INFO - 🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-04-17 14:53:04,480 - INFO - ✅ נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-04-17 14:53:04,480 - INFO - 🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-04-17 14:53:05,062 - INFO - ✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.
+2025-04-17 14:53:05,062 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-17 14:53:09,291 - INFO - ✅ Email input is visible.
+2025-04-17 14:53:09,292 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-04-17 14:53:11,035 - INFO - ✅ [Mobile] Email filled correctly with send_keys().
+2025-04-17 14:53:11,036 - INFO - 📝 Trying to fill Phone with '0544531600'
+2025-04-17 14:53:12,255 - INFO - ✅ [Mobile] Phone filled correctly with send_keys().
+2025-04-17 14:53:12,255 - INFO - 📝 Trying to fill First Name with 'חן'
+2025-04-17 14:53:13,483 - INFO - ✅ [Mobile] First Name filled correctly with send_keys().
+2025-04-17 14:53:13,484 - INFO - 📝 Trying to fill Last Name with 'טסט'
+2025-04-17 14:53:14,624 - INFO - ✅ [Mobile] Last Name filled correctly with send_keys().
+2025-04-17 14:53:14,624 - INFO - 📝 Trying to fill ID Number with '541666756'
+2025-04-17 14:53:15,881 - INFO - ✅ [Mobile] ID Number filled correctly with send_keys().
+2025-04-17 14:53:15,882 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-17 14:53:15,959 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-17 14:53:15,959 - INFO - 🏷️ Trying to apply checkout coupon: 1282643017
+2025-04-17 14:53:16,343 - INFO - ✅ Filled coupon input field.
+2025-04-17 14:53:17,033 - INFO - 🎟️ Clicked the 'ממש' (Apply) button.
+2025-04-17 14:53:18,034 - INFO - 🏷️ Trying to apply checkout coupon: 1510951091
+2025-04-17 14:53:18,225 - INFO - ✅ Filled coupon input field.
+2025-04-17 14:53:18,935 - INFO - 🎟️ Clicked the 'ממש' (Apply) button.
+2025-04-17 14:53:19,936 - INFO - 🏷️ Trying to apply checkout coupon: 1274069942
+2025-04-17 14:53:20,115 - INFO - ✅ Filled coupon input field.
+2025-04-17 14:53:20,793 - INFO - 🎟️ Clicked the 'ממש' (Apply) button.
+2025-04-17 14:53:21,794 - INFO - 💳 Scrolling iframe into view...
+2025-04-17 14:53:21,855 - INFO - 💳 Switching into payment iframe...
+2025-04-17 14:53:21,887 - INFO - ✅ Switched into iframe.
+2025-04-17 14:53:22,059 - INFO - ✅ Card Number filled correctly.
+2025-04-17 14:53:22,255 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-17 14:53:22,418 - INFO - ✅ Expiry Month selected: 08
+2025-04-17 14:53:22,594 - INFO - ✅ Expiry Year selected: 2025
+2025-04-17 14:53:22,840 - INFO - ✅ CVV filled correctly.
+2025-04-17 14:53:23,089 - INFO - ✅ Card ID Number filled correctly.
+2025-04-17 14:53:23,090 - INFO - 🎯 Payment form filled successfully.
+2025-04-17 14:53:23,094 - INFO - 🔙 Switched back to main content.
+2025-04-17 14:53:23,094 - INFO - 🚀 Trying to click the payment submit button inside iframe...
+2025-04-17 14:53:23,538 - INFO - ✅ Payment submit button clicked successfully via JS.
+2025-04-17 14:53:23,542 - INFO - 🔙 Switched back to main content after payment submission.
+2025-04-17 14:53:23,543 - INFO - 🔍 Verifying mobile confirmation page contents...
+2025-04-17 14:53:55,120 - INFO - 📸 Screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_FAIL_2025-04-17_14-53-54.png
+2025-04-17 14:53:55,121 - ERROR - ❌ Failed to extract confirmation (mobile): Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7CBC05355+78597]
+	GetHandleVerifier [0x00007FF7CBC053B0+78688]
+	(No symbol) [0x00007FF7CB9B91AA]
+	(No symbol) [0x00007FF7CBA0F149]
+	(No symbol) [0x00007FF7CBA0F3FC]
+	(No symbol) [0x00007FF7CBA62467]
+	(No symbol) [0x00007FF7CBA3712F]
+	(No symbol) [0x00007FF7CBA5F2BB]
+	(No symbol) [0x00007FF7CBA36EC3]
+	(No symbol) [0x00007FF7CBA003F8]
+	(No symbol) [0x00007FF7CBA01163]
+	GetHandleVerifier [0x00007FF7CBEAEF0D+2870973]
+	GetHandleVerifier [0x00007FF7CBEA96B8+2848360]
+	GetHandleVerifier [0x00007FF7CBEC6993+2967875]
+	GetHandleVerifier [0x00007FF7CBC2019A+188746]
+	GetHandleVerifier [0x00007FF7CBC2847F+222255]
+	GetHandleVerifier [0x00007FF7CBC0D2D4+111236]
+	GetHandleVerifier [0x00007FF7CBC0D482+111666]
+	GetHandleVerifier [0x00007FF7CBBF35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+

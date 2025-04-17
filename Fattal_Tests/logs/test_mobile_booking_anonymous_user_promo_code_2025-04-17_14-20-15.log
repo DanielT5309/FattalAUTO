@@ -1,0 +1,26 @@
+2025-04-17 14:19:53,391 - INFO - 🌐 Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-04-17 14:19:53,391 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-17 14:19:53,392 - INFO - Generated Israeli ID: 387022536
+2025-04-17 14:19:53,780 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 14:19:54,963 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-17 14:19:55,298 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-17 14:19:56,196 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 14:19:56,197 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 14:19:58,324 - INFO - 🗓️ Attempting to select: 15 ביוני 2025 ➡ 18 ביוני 2025 (3 לילות)
+2025-04-17 14:20:01,678 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 14:20:02,738 - INFO - ✅ Selected check-in: 15 ביוני 2025 → check-out: 18 ביוני 2025
+2025-04-17 14:20:02,739 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 14:20:02,757 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 14:20:02,758 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 14:20:02,758 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 14:20:02,778 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 14:20:02,779 - INFO - 🔧 Setting adults to 2...
+2025-04-17 14:20:02,821 - INFO - 👤 Adults set to: 2
+2025-04-17 14:20:02,822 - INFO - 🔧 Setting children to 1...
+2025-04-17 14:20:03,609 - INFO - 👤 Children set to: 1
+2025-04-17 14:20:03,609 - INFO - 🔧 Setting infants to 0...
+2025-04-17 14:20:03,654 - INFO - 👤 Infants set to: 0
+2025-04-17 14:20:03,654 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 14:20:03,655 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 14:20:03,664 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 14:20:04,550 - INFO - ✅ Clicked room continue button (native click).

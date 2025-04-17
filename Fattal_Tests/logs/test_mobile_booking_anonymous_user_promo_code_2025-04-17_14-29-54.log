@@ -1,0 +1,70 @@
+2025-04-17 14:28:42,848 - INFO - 🌐 Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-04-17 14:28:42,848 - INFO - 🧪 Starting test: hotel search and booking flow
+2025-04-17 14:28:42,849 - INFO - Generated Israeli ID: 411325566
+2025-04-17 14:28:43,349 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 14:28:45,091 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-17 14:28:45,461 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-17 14:28:46,549 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 14:28:46,549 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 14:28:48,687 - INFO - 🗓️ Attempting to select: 17 ביוני 2025 ➡ 22 ביוני 2025 (5 לילות)
+2025-04-17 14:28:52,086 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 14:28:52,917 - INFO - ✅ Selected check-in: 17 ביוני 2025 → check-out: 22 ביוני 2025
+2025-04-17 14:28:52,917 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 14:28:52,933 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 14:28:52,933 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 14:28:52,933 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 14:28:52,949 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 14:28:52,950 - INFO - 🔧 Setting adults to 2...
+2025-04-17 14:28:53,009 - INFO - 👤 Adults set to: 2
+2025-04-17 14:28:53,010 - INFO - 🔧 Setting children to 1...
+2025-04-17 14:28:53,666 - INFO - 👤 Children set to: 1
+2025-04-17 14:28:53,667 - INFO - 🔧 Setting infants to 0...
+2025-04-17 14:28:53,716 - INFO - 👤 Infants set to: 0
+2025-04-17 14:28:53,716 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 14:28:53,717 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 14:28:53,726 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 14:28:54,500 - INFO - ✅ Clicked room continue button (native click).
+2025-04-17 14:28:55,724 - INFO - ✅ Clicked 'יש לי קוד ארגון' to reveal promo input.
+2025-04-17 14:29:05,937 - WARNING - ⚠️ Failed to click promo code opener: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="search-engine-promo-code-closed-root"]"}
+  (Session info: chrome=135.0.7049.85); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7CBC05355+78597]
+	GetHandleVerifier [0x00007FF7CBC053B0+78688]
+	(No symbol) [0x00007FF7CB9B91AA]
+	(No symbol) [0x00007FF7CBA0F149]
+	(No symbol) [0x00007FF7CBA0F3FC]
+	(No symbol) [0x00007FF7CBA62467]
+	(No symbol) [0x00007FF7CBA3712F]
+	(No symbol) [0x00007FF7CBA5F2BB]
+	(No symbol) [0x00007FF7CBA36EC3]
+	(No symbol) [0x00007FF7CBA003F8]
+	(No symbol) [0x00007FF7CBA01163]
+	GetHandleVerifier [0x00007FF7CBEAEF0D+2870973]
+	GetHandleVerifier [0x00007FF7CBEA96B8+2848360]
+	GetHandleVerifier [0x00007FF7CBEC6993+2967875]
+	GetHandleVerifier [0x00007FF7CBC2019A+188746]
+	GetHandleVerifier [0x00007FF7CBC2847F+222255]
+	GetHandleVerifier [0x00007FF7CBC0D2D4+111236]
+	GetHandleVerifier [0x00007FF7CBC0D482+111666]
+	GetHandleVerifier [0x00007FF7CBBF35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-17 14:29:05,939 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-17 14:29:11,273 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-17 14:29:11,297 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-17 14:29:12,009 - INFO - ✅ Clicked search button (JS click).
+2025-04-17 14:29:12,009 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-17 14:29:19,810 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-17 14:29:19,811 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-17 14:29:20,513 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-17 14:29:20,514 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-17 14:29:27,726 - INFO - ✅ Email input is visible.
+2025-04-17 14:29:27,726 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-04-17 14:29:29,843 - INFO - ✅ [Mobile] Email filled correctly with send_keys().
+2025-04-17 14:29:29,844 - INFO - 📝 Trying to fill Phone with '0544531600'
+2025-04-17 14:29:31,525 - INFO - ✅ [Mobile] Phone filled correctly with send_keys().
+2025-04-17 14:29:31,526 - INFO - 📝 Trying to fill First Name with 'חן'
+2025-04-17 14:29:41,800 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001FE986F5590>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d199faa8c01c4b330a7a565f475e6bd0/screenshot
+2025-04-17 14:29:45,864 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001FE986F5810>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d199faa8c01c4b330a7a565f475e6bd0/screenshot
+2025-04-17 14:29:49,957 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001FE99AF7CE0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d199faa8c01c4b330a7a565f475e6bd0/screenshot

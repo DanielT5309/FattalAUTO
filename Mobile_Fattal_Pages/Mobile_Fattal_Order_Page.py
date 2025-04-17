@@ -318,5 +318,27 @@ class FattalOrderPageMobile:
             self.driver.switch_to.default_content()
             logging.info("🔙 Switched back to main content after payment submission.")
 
+    def apply_checkout_coupon(self, coupon_code: str):
+        """
+        Fills the checkout coupon input field and applies the coupon.
+        """
+        try:
+            logging.info(f"🏷️ Trying to apply checkout coupon: {coupon_code}")
 
+            # 1. Locate and fill the input field
+            coupon_input = self.driver.find_element(By.ID, "input-field-input_checkout-coupon-input-field")
+            coupon_input.clear()
+            coupon_input.send_keys(coupon_code)
+            logging.info("✅ Filled coupon input field.")
 
+            # Optional small delay to allow the UI to respond
+            time.sleep(0.5)
+
+            # 2. Click the "ממש" button
+            apply_button = self.driver.find_element(By.ID, "checkout-coupon-apply-coupon-button")
+            apply_button.click()
+            logging.info("🎟️ Clicked the 'ממש' (Apply) button.")
+
+        except Exception as e:
+            logging.error(f"❌ Failed to apply coupon: {e}")
+            raise

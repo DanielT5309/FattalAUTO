@@ -516,6 +516,53 @@ class FattalTests(TestCase):
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+
+    def test_mobile_booking_eilat_fattal_gift(self):
+        hotel_name = "אילת, ישראל"
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_region()
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead(stay_length = 5)
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
+        # Step 3: Search Vacation
+        self.mobile_main_page.click_room_continue_button(),
+        self.mobile_main_page.click_mobile_search_button()
+        # Step 5: Handle results
+        self.mobile_search_page.click_book_room_button()
+        self.mobile_search_page.click_show_prices_regional()
+        self.mobile_search_page.click_book_room_regional()
+        # Step 6 : Order Page
+        self.mobile_order_page.wait_until_personal_form_ready()
+        # Order Details
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
+
+        self.mobile_order_page.set_id_number(random_id)
+        self.mobile_order_page.click_user_agreement_checkbox()
+        for code in self.users["fattal_gifts"].values():
+            self.mobile_order_page.apply_checkout_coupon(code)
+            sleep(1)  # Optional: wait between attempts
+        # Step 7: Fill the iframe
+        self.mobile_order_page.fill_payment_iframe_mobile()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9 : Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+
     def test_mobile_booking_with_login_club_renew(self):
         hotel_name = "לאונרדו נגב, באר שבע"
         logging.info("🧪 Starting test: CLUB user hotel search and booking flow (mobile)")
@@ -809,6 +856,55 @@ class FattalTests(TestCase):
             "email": self.entered_email,
             "screenshot_path": ""
         }
+
+    def test_mobile_booking_anonymous_user_promo_code(self):
+        hotel_name = "לאונרדו נגב, באר שבע"
+        logging.info("🧪 Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        self.mobile_main_page.open_promo_code_input()
+        self.mobile_main_page.enter_promo_code("FHVR")
+        assert self.mobile_main_page.is_promo_code_applied("FHVR"), "❌ Promo code was not correctly applied!"
+
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        #Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.mobile_search_page.click_book_room_button()
+        #Step 6 : Order Page
+        self.mobile_order_page.wait_until_personal_form_ready()
+        #Order Details
+        guest = self.users["default_guest"]
+        self.fill_guest_details(
+            email=guest["email"],
+            phone=guest["phone"],
+            first_name=guest["first_name"],
+            last_name=guest["last_name"]
+        )
+        self.mobile_order_page.set_id_number(random_id)
+        self.mobile_order_page.click_user_agreement_checkbox()
+        # Step 7: Fill the iframe
+        self.mobile_order_page.fill_payment_iframe_mobile()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9 : Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def tearDown(self):
         if self.driver:

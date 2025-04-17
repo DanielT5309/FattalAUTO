@@ -81,7 +81,19 @@ class FattalMainPageMobile:
             self.take_screenshot("open_calendar_fail")
             raise
 
-    def select_date_range_two_months_ahead(self):
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.action_chains import ActionChains
+    import time
+    import random
+    import logging
+
+    def select_date_range_two_months_ahead(self, stay_length=None):
+        """
+        Selects check-in and check-out dates from the 3rd calendar month shown (2 months ahead).
+        :param stay_length: Optional integer for number of nights. If None, chooses randomly (3-5).
+        """
         try:
             logging.info("📅 Scrolling and selecting date range (real clicks)...")
 
@@ -98,8 +110,8 @@ class FattalMainPageMobile:
             if len(valid_buttons) < 8:
                 raise Exception("❌ Not enough active date buttons in target month")
 
-            # ✅ Randomize duration: 3 to 5 nights
-            stay_length = random.randint(3, 5)
+            # ✅ Use passed value or randomize
+            stay_length = stay_length or random.randint(3, 5)
             start_idx = random.randint(0, len(valid_buttons) - stay_length - 1)
             checkin = valid_buttons[start_idx]
             checkout = valid_buttons[start_idx + stay_length]
@@ -445,6 +457,46 @@ class FattalMainPageMobile:
             return True
         except TimeoutException:
             logging.warning("⚠️ Room modal is NOT visible!")
+            return False
+
+    def open_promo_code_input(self):
+        """Clicks the 'יש לי קוד ארגון' button to reveal the promo code input field."""
+        try:
+            open_button = self.driver.find_element(By.ID, "search-engine-promo-code-closed-root")
+            open_button.click()
+            logging.info("✅ Clicked 'יש לי קוד ארגון' to reveal promo input.")
+        except Exception as e:
+            logging.warning(f"⚠️ Failed to click promo code opener: {e}")
+
+    def enter_promo_code(self, promo_code: str):
+        """Inputs the promo code and triggers validation by clicking outside the input field."""
+        try:
+            WebDriverWait(self.driver, 5).until(
+                EC.visibility_of_element_located((By.ID, "search-engine-promo-code-input"))
+            )
+            promo_input = self.driver.find_element(By.ID, "search-engine-promo-code-input")
+            promo_input.clear()
+            promo_input.send_keys(promo_code)
+            logging.info(f"✅ Promo code '{promo_code}' entered successfully.")
+
+            # 🔄 Click outside to trigger blur (we'll click the body or header)
+            self.driver.find_element(By.TAG_NAME, "body").click()
+            logging.info("🖱️ Clicked outside to close promo input.")
+
+        except Exception as e:
+            logging.error(f"❌ Failed to enter promo code: {e}")
+
+    def is_promo_code_applied(self, expected_code: str = "FHVR") -> bool:
+        """
+        Verifies that the promo code input field contains the expected value.
+        """
+        try:
+            input_field = self.driver.find_element(By.ID, "search-engine-promo-code-input")
+            actual_value = input_field.get_attribute("value")
+            logging.info(f"🔎 Promo input contains: {actual_value}")
+            return actual_value.strip().upper() == expected_code.upper()
+        except Exception as e:
+            logging.warning(f"❌ Could not verify promo code input: {e}")
             return False
 
 
