@@ -674,6 +674,7 @@ class FattalTests(TestCase):
 
         # Step 0: Club Login
         try:
+            self.mobile_toolbar.open_login_menu()
             user = self.users["club_regular_user"]
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])

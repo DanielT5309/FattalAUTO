@@ -1,0 +1,57 @@
+2025-04-17 13:33:27,080 - INFO - 🌐 Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-04-17 13:33:27,080 - INFO - 🧪 Starting test: CLUB user hotel search and booking flow (mobile)
+2025-04-17 13:33:27,081 - INFO - 👤 Opening personal zone (mobile login)...
+2025-04-17 13:33:27,384 - INFO - ✅ Login menu opened via JavaScript interaction.
+2025-04-17 13:33:27,866 - INFO - 🔐 Clicking login button (mobile)...
+2025-04-17 13:33:28,180 - INFO - ✅ Login button clicked.
+2025-04-17 13:33:28,180 - INFO - 📦 Checking for post-login popup...
+2025-04-17 13:33:30,275 - INFO - ✅ Post-login popup closed.
+2025-04-17 13:33:30,276 - INFO - ✅ Logged in successfully.
+2025-04-17 13:33:30,442 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 13:33:31,758 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-17 13:33:32,109 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-17 13:33:32,358 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 13:33:32,359 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 13:33:35,106 - INFO - 🗓️ Attempting to select: 12 ביוני 2025 ➡ 16 ביוני 2025 (4 לילות)
+2025-04-17 13:33:38,420 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 13:33:39,248 - INFO - ✅ Selected check-in: 12 ביוני 2025 → check-out: 16 ביוני 2025
+2025-04-17 13:33:39,248 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 13:33:39,263 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 13:33:39,264 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 13:33:39,264 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 13:33:39,277 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 13:33:39,278 - INFO - 🔧 Setting adults to 2...
+2025-04-17 13:33:39,318 - INFO - 👤 Adults set to: 2
+2025-04-17 13:33:39,318 - INFO - 🔧 Setting children to 1...
+2025-04-17 13:33:39,880 - INFO - 👤 Children set to: 1
+2025-04-17 13:33:39,881 - INFO - 🔧 Setting infants to 0...
+2025-04-17 13:33:39,953 - INFO - 👤 Infants set to: 0
+2025-04-17 13:33:39,953 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 13:33:39,953 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 13:33:39,961 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 13:33:40,669 - INFO - ✅ Clicked room continue button (native click).
+2025-04-17 13:33:40,669 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-17 13:33:45,842 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-17 13:33:45,879 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-17 13:33:46,585 - INFO - ✅ Clicked search button (JS click).
+2025-04-17 13:33:46,585 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-17 13:33:50,906 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-17 13:33:50,906 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-17 13:33:51,365 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-17 13:33:51,365 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-17 13:33:53,859 - INFO - ✅ Email input is visible.
+2025-04-17 13:33:53,860 - INFO - 📦 Clicking 'Join Club' checkbox (Mobile)...
+2025-04-17 13:34:04,262 - INFO - ✅ Clicked 'Join Club' checkbox using XPath: //label[.//span[contains(text(),'להצטרף למועדון')]]
+2025-04-17 13:34:04,263 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-17 13:34:04,318 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-17 13:34:04,319 - INFO - 💳 Scrolling iframe into view...
+2025-04-17 13:34:04,348 - INFO - 💳 Switching into payment iframe...
+2025-04-17 13:34:04,376 - INFO - ✅ Switched into iframe.
+2025-04-17 13:34:05,245 - INFO - ✅ Card Number filled correctly.
+2025-04-17 13:34:05,370 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-17 13:34:05,495 - INFO - ✅ Expiry Month selected: 08
+2025-04-17 13:34:05,595 - INFO - ✅ Expiry Year selected: 2025
+2025-04-17 13:34:05,726 - INFO - ✅ CVV filled correctly.
+2025-04-17 13:34:05,866 - INFO - ✅ Card ID Number filled correctly.
+2025-04-17 13:34:05,866 - INFO - 🎯 Payment form filled successfully.
+2025-04-17 13:34:05,869 - INFO - 🔙 Switched back to main content.

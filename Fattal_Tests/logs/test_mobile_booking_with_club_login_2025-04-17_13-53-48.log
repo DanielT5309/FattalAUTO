@@ -1,0 +1,101 @@
+2025-04-17 13:52:41,332 - INFO - 🌐 Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-04-17 13:52:41,332 - INFO - 🧪 Starting test: CLUB user hotel search and booking flow (mobile)
+2025-04-17 13:52:51,338 - WARNING - ⚠️ Login failed or already logged in: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7CBC05355+78597]
+	GetHandleVerifier [0x00007FF7CBC053B0+78688]
+	(No symbol) [0x00007FF7CB9B91AA]
+	(No symbol) [0x00007FF7CBA0F149]
+	(No symbol) [0x00007FF7CBA0F3FC]
+	(No symbol) [0x00007FF7CBA62467]
+	(No symbol) [0x00007FF7CBA3712F]
+	(No symbol) [0x00007FF7CBA5F2BB]
+	(No symbol) [0x00007FF7CBA36EC3]
+	(No symbol) [0x00007FF7CBA003F8]
+	(No symbol) [0x00007FF7CBA01163]
+	GetHandleVerifier [0x00007FF7CBEAEF0D+2870973]
+	GetHandleVerifier [0x00007FF7CBEA96B8+2848360]
+	GetHandleVerifier [0x00007FF7CBEC6993+2967875]
+	GetHandleVerifier [0x00007FF7CBC2019A+188746]
+	GetHandleVerifier [0x00007FF7CBC2847F+222255]
+	GetHandleVerifier [0x00007FF7CBC0D2D4+111236]
+	GetHandleVerifier [0x00007FF7CBC0D482+111666]
+	GetHandleVerifier [0x00007FF7CBBF35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
+2025-04-17 13:52:51,446 - INFO - ✅ Clicked mobile hotel search input container.
+2025-04-17 13:52:53,066 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-04-17 13:52:53,463 - INFO - ✅ Clicked first suggested hotel from list.
+2025-04-17 13:52:53,844 - INFO - 📅 Opened mobile calendar (date picker).
+2025-04-17 13:52:53,844 - INFO - 📅 Scrolling and selecting date range (real clicks)...
+2025-04-17 13:52:55,927 - INFO - 🗓️ Attempting to select: 7 ביוני 2025 ➡ 10 ביוני 2025 (3 לילות)
+2025-04-17 13:52:59,209 - INFO - 📅 Calendar still open after selection – continuing.
+2025-04-17 13:53:00,060 - INFO - ✅ Selected check-in: 7 ביוני 2025 → check-out: 10 ביוני 2025
+2025-04-17 13:53:00,061 - INFO - ✅ Confirmed calendar selection.
+2025-04-17 13:53:00,108 - INFO - ℹ️ Room modal already open — skip clicking.
+2025-04-17 13:53:00,109 - INFO - 🧩 Room modal already open — did not click again.
+2025-04-17 13:53:00,109 - INFO - 👨‍👩‍👧 Adjusting room occupants...
+2025-04-17 13:53:00,121 - INFO - 🧩 Room modal confirmed present.
+2025-04-17 13:53:00,121 - INFO - 🔧 Setting adults to 2...
+2025-04-17 13:53:00,164 - INFO - 👤 Adults set to: 2
+2025-04-17 13:53:00,164 - INFO - 🔧 Setting children to 1...
+2025-04-17 13:53:00,786 - INFO - 👤 Children set to: 1
+2025-04-17 13:53:00,788 - INFO - 🔧 Setting infants to 0...
+2025-04-17 13:53:00,861 - INFO - 👤 Infants set to: 0
+2025-04-17 13:53:00,861 - INFO - ✅ Room occupant adjustment completed.
+2025-04-17 13:53:00,861 - INFO - 👉 Searching for 'המשך' room continue button...
+2025-04-17 13:53:00,869 - INFO - 🧩 Room modal is visible and ready.
+2025-04-17 13:53:01,609 - INFO - ✅ Clicked room continue button (native click).
+2025-04-17 13:53:01,609 - INFO - 📱 Attempting to click main 'חפש חופשה' search button...
+2025-04-17 13:53:06,845 - WARNING - ⚠️ Room modal may still be open — click might be blocked.
+2025-04-17 13:53:06,881 - INFO - 🔍 Found button with text: 'חפש חופשה'
+2025-04-17 13:53:07,580 - INFO - ✅ Clicked search button (JS click).
+2025-04-17 13:53:07,580 - INFO - 🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...
+2025-04-17 13:53:12,081 - INFO - ✅ כפתור 'הצג מחירים' נלחץ בהצלחה.
+2025-04-17 13:53:12,081 - INFO - 🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-04-17 13:53:12,545 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.
+2025-04-17 13:53:12,545 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-04-17 13:53:14,833 - INFO - ✅ Email input is visible.
+2025-04-17 13:53:14,833 - INFO - 📜 Clicking 'User Agreement' checkbox (Mobile)...
+2025-04-17 13:53:14,889 - INFO - ✅ Clicked 'User Agreement' checkbox.
+2025-04-17 13:53:14,889 - INFO - 💳 Scrolling iframe into view...
+2025-04-17 13:53:14,915 - INFO - 💳 Switching into payment iframe...
+2025-04-17 13:53:15,003 - INFO - ✅ Switched into iframe.
+2025-04-17 13:53:16,441 - INFO - ✅ Card Number filled correctly.
+2025-04-17 13:53:16,579 - INFO - ✅ Cardholder Name filled correctly.
+2025-04-17 13:53:16,692 - INFO - ✅ Expiry Month selected: 08
+2025-04-17 13:53:16,779 - INFO - ✅ Expiry Year selected: 2025
+2025-04-17 13:53:16,902 - INFO - ✅ CVV filled correctly.
+2025-04-17 13:53:17,033 - INFO - ✅ Card ID Number filled correctly.
+2025-04-17 13:53:17,033 - INFO - 🎯 Payment form filled successfully.
+2025-04-17 13:53:17,037 - INFO - 🔙 Switched back to main content.
+2025-04-17 13:53:17,037 - INFO - 🚀 Trying to click the payment submit button inside iframe...
+2025-04-17 13:53:17,443 - INFO - ✅ Payment submit button clicked successfully via JS.
+2025-04-17 13:53:17,446 - INFO - 🔙 Switched back to main content after payment submission.
+2025-04-17 13:53:17,446 - INFO - 🔍 Verifying mobile confirmation page contents...
+2025-04-17 13:53:48,882 - INFO - 📸 Screenshot saved at: C:\Users\Fattal\Desktop\newTest\Fattal AutomationV1\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_FAIL_2025-04-17_13-53-48.png
+2025-04-17 13:53:48,883 - ERROR - ❌ Failed to extract confirmation (mobile): Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7CBC05355+78597]
+	GetHandleVerifier [0x00007FF7CBC053B0+78688]
+	(No symbol) [0x00007FF7CB9B91AA]
+	(No symbol) [0x00007FF7CBA0F149]
+	(No symbol) [0x00007FF7CBA0F3FC]
+	(No symbol) [0x00007FF7CBA62467]
+	(No symbol) [0x00007FF7CBA3712F]
+	(No symbol) [0x00007FF7CBA5F2BB]
+	(No symbol) [0x00007FF7CBA36EC3]
+	(No symbol) [0x00007FF7CBA003F8]
+	(No symbol) [0x00007FF7CBA01163]
+	GetHandleVerifier [0x00007FF7CBEAEF0D+2870973]
+	GetHandleVerifier [0x00007FF7CBEA96B8+2848360]
+	GetHandleVerifier [0x00007FF7CBEC6993+2967875]
+	GetHandleVerifier [0x00007FF7CBC2019A+188746]
+	GetHandleVerifier [0x00007FF7CBC2847F+222255]
+	GetHandleVerifier [0x00007FF7CBC0D2D4+111236]
+	GetHandleVerifier [0x00007FF7CBC0D482+111666]
+	GetHandleVerifier [0x00007FF7CBBF35A9+5465]
+	BaseThreadInitThunk [0x00007FFE7239E8D7+23]
+	RtlUserThreadStart [0x00007FFE736514FC+44]
+
