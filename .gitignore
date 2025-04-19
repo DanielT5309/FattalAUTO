@@ -1,0 +1,15 @@
+# Ignore runtime/debug output
+logs/
+Screenshots/
+reports/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Pytest cache
+.pytest_cache/
+
+# IDE settings (optional)
+.vscode/
+.idea/
