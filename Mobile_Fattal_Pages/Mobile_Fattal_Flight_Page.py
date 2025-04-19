@@ -18,13 +18,13 @@ class FattalFlightPageMobile:
         self.wait = WebDriverWait(driver, 10)
         self.driver = driver
 
-    # ✈️ Try booking flights by time of day
+    # Try booking flights by time of day
     def try_flight_options_by_time_of_day(self):
         time_tabs = ['בוקר', 'צהריים', 'ערב']
         attempt = 1
 
         for label in time_tabs:
-            logging.info(f"🕒 [Mobile] Trying flight time tab: {label} (Attempt {attempt})")
+            logging.info(f"[Mobile] Trying flight time tab: {label} (Attempt {attempt})")
             try:
                 self.select_time_tab(label)
                 self.click_edit_departure_flight()
@@ -33,29 +33,29 @@ class FattalFlightPageMobile:
                 self.click_edit_return_flight()
                 self.choose_first_return_option()
                 if self.ensure_passenger_form_loaded():
-                    logging.info(f"🎉 [Mobile] Flight booking succeeded with tab: {label}")
+                    logging.info(f"[Mobile] Flight booking succeeded with tab: {label}")
                     return
             except Exception as e:
-                logging.warning(f"❌ [Mobile] Flight time tab '{label}' failed: {e}")
+                logging.warning(f"[Mobile] Flight time tab '{label}' failed: {e}")
                 attempt += 1
                 continue
 
-        logging.warning("⚠️ [Mobile] All time tabs failed — moving on.")
+        logging.warning("[Mobile] All time tabs failed — moving on.")
 
     # Check if flight section was skipped
     def handle_passenger_form_if_flight_selection_skipped(self):
         try:
             self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'פרטי הטסים')]")))
-            logging.info("🧍 [Mobile] Passenger form detected, flight selection was not skipped.")
+            logging.info("[Mobile] Passenger form detected, flight selection was not skipped.")
             return False
         except TimeoutException:
-            logging.info("⏭️ [Mobile] Flight selection was skipped — no passenger form shown.")
+            logging.info("[Mobile] Flight selection was skipped — no passenger form shown.")
             return True
 
     # Fill + validate passenger form
     def fill_passenger_details_and_validate(self):
         try:
-            logging.info("🧍 [Mobile] Filling passenger details...")
+            logging.info("[Mobile] Filling passenger details...")
             self.wait.until(lambda d: len(
                 d.find_elements(By.XPATH, "//input[@id='checkout.personal_details_form.label_first_name']")) >= 4)
 
@@ -67,7 +67,7 @@ class FattalFlightPageMobile:
                 fn = self.driver.find_element(By.XPATH,
                                               f"(//input[@id='checkout.personal_details_form.label_first_name'])[{i + 1}]")
                 self.scroll_and_type(fn, names[i])
-                logging.info(f"✅ First name set for passenger {i + 1}")
+                logging.info(f"First name set for passenger {i + 1}")
 
                 # Last Name
                 ln = self.driver.find_element(By.XPATH,
@@ -79,11 +79,11 @@ class FattalFlightPageMobile:
                     dob_fields = self.driver.find_elements(By.ID, "checkout.personal_details_form.label_birthDate")
                     if len(dob_fields) > (i - 2):
                         self.scroll_and_type(dob_fields[i - 2], birthdates[i - 2])
-                        logging.info(f"✅ Birthdate set for passenger {i + 1}")
+                        logging.info(f"Birthdate set for passenger {i + 1}")
 
-            logging.info("🎯 [Mobile] Passenger form filled completely.")
+            logging.info("[Mobile] Passenger form filled completely.")
         except Exception as e:
-            logging.error(f"❌ Failed to fill mobile passenger form: {e}")
+            logging.error(f"Failed to fill mobile passenger form: {e}")
             raise
 
     def scroll_and_type(self, element, value):
@@ -92,111 +92,111 @@ class FattalFlightPageMobile:
             self.wait.until(lambda d: element.is_displayed() and element.is_enabled())
             time.sleep(0.3)
 
-            # ✅ Step 1: Focus & click
+            # Step 1: Focus & click
             self.driver.execute_script("arguments[0].focus();", element)
             element.click()
 
-            # ✅ Step 2: Backspace clear (React-safe)
+            # Step 2: Backspace clear (React-safe)
             element.clear()
             for _ in range(20):
                 element.send_keys("\ue003")  # BACKSPACE
                 time.sleep(0.03)
 
-            # ✅ Step 3: Type char-by-char
+            # Step 3: Type char-by-char
             for char in value:
                 element.send_keys(char)
                 time.sleep(0.04)
 
-            # ✅ Step 4: Trigger blur to confirm value
+            # Step 4: Trigger blur to confirm value
             self.driver.execute_script("arguments[0].blur();", element)
 
-            # ✅ Step 5: Log actual value
+            # Step 5: Log actual value
             actual_val = self.driver.execute_script("return arguments[0].value;", element)
-            logging.info(f"✅ Set value: '{actual_val}' for element ID='{element.get_attribute('id')}'")
+            logging.info(f"Set value: '{actual_val}' for element ID='{element.get_attribute('id')}'")
 
         except ElementNotInteractableException:
-            logging.warning("⚠️ Element not interactable. Using ActionChains fallback.")
+            logging.warning("Element not interactable. Using ActionChains fallback.")
             try:
                 actions = ActionChains(self.driver)
                 actions.move_to_element(element).click().pause(0.3)
                 for char in value:
                     actions.send_keys(char).pause(0.05)
                 actions.perform()
-                logging.info("💡 Typed value with ActionChains.")
+                logging.info("Typed value with ActionChains.")
             except Exception as e:
-                logging.error(f"❌ ActionChains fallback failed: {e}")
+                logging.error(f"ActionChains fallback failed: {e}")
                 raise
 
         except Exception as e:
-            logging.error(f"❌ Failed to type into element: {e}")
+            logging.error(f"Failed to type into element: {e}")
             raise
 
     def click_edit_departure_flight(self):
         try:
-            logging.info("🛫 [Mobile] Clicking 'עריכה' for departure flight")
+            logging.info("[Mobile] Clicking 'עריכה' for departure flight")
             departure_edit_btn = self.wait.until(EC.element_to_be_clickable((
                 By.XPATH,
                 "//span[contains(text(),'טיסת הלוך')]/ancestor::div[contains(@class,'sc-5602081d-1')]//span[text()='עריכה']"
             )))
             self.driver.execute_script("arguments[0].click();", departure_edit_btn)
-            logging.info("✅ 'עריכה' clicked for departure flight")
+            logging.info("'עריכה' clicked for departure flight")
         except Exception as e:
-            logging.error(f"❌ Failed to click departure edit button: {e}")
+            logging.error(f"Failed to click departure edit button: {e}")
             raise
 
     def choose_first_departure_option(self):
         try:
-            logging.info("📍 Selecting first mobile departure option")
+            logging.info("Selecting first mobile departure option")
             self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'שינוי טיסת הלוך')]")))
             radios = self.driver.find_elements(By.XPATH,
                                                "//span[contains(text(),'שינוי טיסת הלוך')]/ancestor::div[contains(@class,'sc-a5db3e2f-0')]//input[@type='radio']")
             if radios:
                 self.driver.execute_script("arguments[0].click();", radios[0])
-                logging.info("✅ Clicked departure radio button via JS.")
+                logging.info("Clicked departure radio button via JS.")
             else:
-                raise Exception("🚫 No departure radio buttons found.")
+                raise Exception("No departure radio buttons found.")
         except Exception as e:
-            logging.error(f"❌ Failed to select mobile departure flight: {e}")
+            logging.error(f"Failed to select mobile departure flight: {e}")
             raise
 
     def click_edit_return_flight(self):
         try:
-            logging.info("🛬 [Mobile] Clicking 'עריכה' for return flight")
+            logging.info("[Mobile] Clicking 'עריכה' for return flight")
             return_edit_btn = self.wait.until(EC.element_to_be_clickable((
                 By.XPATH,
                 "//span[contains(text(),'טיסת חזור')]/ancestor::div[contains(@class,'sc-5602081d-1')]//span[text()='עריכה']"
             )))
             self.driver.execute_script("arguments[0].click();", return_edit_btn)
-            logging.info("✅ 'עריכה' clicked for return flight")
+            logging.info("'עריכה' clicked for return flight")
         except Exception as e:
-            logging.error(f"❌ Failed to click return edit button: {e}")
+            logging.error(f"Failed to click return edit button: {e}")
             raise
 
     def choose_first_return_option(self):
         try:
-            logging.info("📍 Selecting first mobile return option")
+            logging.info("Selecting first mobile return option")
             self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'שינוי טיסת חזור')]")))
             radios = self.driver.find_elements(By.XPATH,
                                                "//span[contains(text(),'שינוי טיסת חזור')]/ancestor::div[contains(@class,'sc-a5db3e2f-0')]//input[@type='radio']")
             if len(radios) >= 1:
                 self.driver.execute_script("arguments[0].click();", radios[0])
-                logging.info("✅ Clicked return radio button via JS.")
+                logging.info("Clicked return radio button via JS.")
             else:
-                raise Exception("🚫 No return radio buttons found.")
+                raise Exception("No return radio buttons found.")
         except Exception as e:
-            logging.error(f"❌ Failed to select mobile return flight: {e}")
+            logging.error(f"Failed to select mobile return flight: {e}")
             raise
 
     def confirm_flight_selection(self):
         try:
-            logging.info("🆗 Confirming flight selection (Mobile)")
+            logging.info("Confirming flight selection (Mobile)")
             confirm_btn = self.wait.until(
                 EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'המשך')]"))
             )
             confirm_btn.click()
-            logging.info("✈️ Confirm button clicked")
+            logging.info("Confirm button clicked")
         except Exception as e:
-            logging.error(f"❌ Failed to click confirm: {e}")
+            logging.error(f"Failed to click confirm: {e}")
             raise
 
     def ensure_passenger_form_loaded(self):
@@ -208,20 +208,20 @@ class FattalFlightPageMobile:
 
     def fill_adult_passenger_details(self):
         try:
-            logging.info("🧍 [Mobile] Filling details for 2 adult passengers...")
+            logging.info("[Mobile] Filling details for 2 adult passengers...")
 
             # Wait until both adult passenger containers are visible
             adult_containers = self.wait.until(lambda d: d.find_elements(
                 By.CSS_SELECTOR, "div[id^='checkout-passenger-details-row_adult_']"))
 
             if len(adult_containers) < 2:
-                raise Exception("❌ Less than 2 adult passenger containers found.")
+                raise Exception("Less than 2 adult passenger containers found.")
 
             first_names = ["Daniel", "Chen"]
             last_name = "Test"
 
             for i, container in enumerate(adult_containers[:2]):
-                logging.info(f"✏️ Filling form for adult #{i + 1}...")
+                logging.info(f"Filling form for adult #{i + 1}...")
 
                 # First Name
                 first_name_input = container.find_element(
@@ -233,10 +233,10 @@ class FattalFlightPageMobile:
                     By.CSS_SELECTOR, "input[id^='checkout-form-field-input_adult_']")[1]
                 self.type_into_react_field(last_name_input, last_name, label=f"Last Name {i + 1}")
 
-            logging.info("🎯 [Mobile] Adult passenger form fields filled.")
+            logging.info("[Mobile] Adult passenger form fields filled.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to fill adult passenger form: {e}")
+            logging.error(f"Failed to fill adult passenger form: {e}")
             self.driver.save_screenshot("error_fill_adults.png")
             raise
 
@@ -255,10 +255,10 @@ class FattalFlightPageMobile:
 
             # Attempt typing normally
             element.send_keys(text)
-            logging.info(f"✅ Typed normally into '{label}'")
+            logging.info(f"Typed normally into '{label}'")
 
         except ElementNotInteractableException:
-            logging.warning(f"⚠️ Element not interactable: '{label}'. Using JS React fallback.")
+            logging.warning(f"Element not interactable: '{label}'. Using JS React fallback.")
 
             try:
                 set_value_script = """
@@ -276,19 +276,19 @@ class FattalFlightPageMobile:
                 el.dispatchEvent(new Event('change', { bubbles: true }));
                 """
                 self.driver.execute_script(set_value_script, element, text)
-                logging.info(f"✅ JS React fallback succeeded for '{label}'")
+                logging.info(f"JS React fallback succeeded for '{label}'")
 
             except Exception as js_error:
-                logging.error(f"❌ JS fallback failed for '{label}': {js_error}")
+                logging.error(f"JS fallback failed for '{label}': {js_error}")
                 raise
 
         except Exception as e:
-            logging.error(f"❌ Unexpected error in '{label}': {e}")
+            logging.error(f"Unexpected error in '{label}': {e}")
             raise
 
     def select_time_tab(self, label):
         try:
-            logging.info(f"📌 [Mobile] Clicking time tab '{label}'...")
+            logging.info(f"[Mobile] Clicking time tab '{label}'...")
 
             # Try more flexible XPath — button or div/span
             tab_xpath = f"//*[self::button or self::div or self::span][contains(text(),'{label}')]"
@@ -302,20 +302,20 @@ class FattalFlightPageMobile:
                     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", el)
                     time.sleep(0.3)
                     self.driver.execute_script("arguments[0].click();", el)
-                    logging.info(f"✅ Clicked time tab: {label}")
+                    logging.info(f"Clicked time tab: {label}")
                     return
                 except Exception as click_error:
-                    logging.warning(f"❌ Could not click element with label '{label}' — trying next...")
+                    logging.warning(f"Could not click element with label '{label}' — trying next...")
 
-            raise Exception(f"❌ No clickable tab found for '{label}'")
+            raise Exception(f"No clickable tab found for '{label}'")
 
         except Exception as e:
-            logging.error(f"❌ Failed to click time tab '{label}': {e}")
+            logging.error(f"Failed to click time tab '{label}': {e}")
             raise
 
     def click_continue_button(self):
         try:
-            logging.info("👉 Looking for 'המשך' continue button by ID 'checkout-flights-button-submit'...")
+            logging.info("Looking for 'המשך' continue button by ID 'checkout-flights-button-submit'...")
 
             btn = self.wait.until(
                 EC.element_to_be_clickable((By.ID, "checkout-flights-button-submit"))
@@ -329,13 +329,13 @@ class FattalFlightPageMobile:
                 # Native click attempt
                 btn.click()
             except ElementClickInterceptedException:
-                logging.warning("⚠️ Click was intercepted — falling back to JS click.")
+                logging.warning("Click was intercepted — falling back to JS click.")
                 self.driver.execute_script("arguments[0].click();", btn)
 
-            logging.info("✅ Clicked 'המשך' continue button successfully.")
+            logging.info("Clicked 'המשך' continue button successfully.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to click continue button: {e}")
+            logging.error(f"Failed to click continue button: {e}")
             self.driver.save_screenshot("screenshot_continue_button_fail.png")
             raise
 

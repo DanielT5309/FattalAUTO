@@ -19,10 +19,10 @@ class FattalToolBar:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", logo)
             self.driver.execute_script("arguments[0].click();", logo)
-            logging.info("🏠 Clicked homepage logo successfully.")
+            logging.info("Clicked homepage logo successfully.")
         except Exception as e:
-            logging.warning(f"❌ Failed to click homepage logo: {e}")
-            logging.info("🔁 Reloading homepage manually...")
+            logging.warning(f"Failed to click homepage logo: {e}")
+            logging.info("Reloading homepage manually...")
             self.driver.get("https://www.fattal.co.il")
 
     def customer_support(self):
@@ -63,16 +63,143 @@ class FattalToolBar:
         self.driver.find_element(By.CSS_SELECTOR, 'button.sc-3edcab97-8.grLZGu').click()
 
     def personal_zone(self):
-        self.driver.find_element(By.CSS_SELECTOR, 'button.sc-5ece21b1-1.hsasZd').click()
+        try:
+            # Try multiple approaches to find the personal zone button
+            try:
+                # First try by text content (most reliable)
+                btn = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'אזור אישי')]"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                self.driver.execute_script("arguments[0].click();", btn)
+                logging.info("Clicked personal zone button via text content")
+                return
+            except:
+                # Try by position/location if text search fails
+                personal_buttons = self.driver.find_elements(By.CSS_SELECTOR, "header button")
+                for btn in personal_buttons:
+                    if "אזור אישי" in btn.text:
+                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                        self.driver.execute_script("arguments[0].click();", btn)
+                        logging.info("Clicked personal zone button from header buttons")
+                        return
+                
+                # If all else fails, try JavaScript to find the button
+                clicked = self.driver.execute_script("""
+                    const buttons = Array.from(document.querySelectorAll('button'));
+                    const personalBtn = buttons.find(btn => btn.textContent.includes('אזור אישי'));
+                    if (personalBtn) {
+                        personalBtn.scrollIntoView({block: 'center'});
+                        personalBtn.click();
+                        return true;
+                    }
+                    return false;
+                """)
+                
+                if clicked:
+                    logging.info("Clicked personal zone button via JavaScript")
+                    return
+                
+                raise Exception("Could not find personal zone button")
+        except Exception as e:
+            logging.error(f"Failed to click personal zone button: {e}")
+            raise
 
     def user_id_input(self):
-        return self.driver.find_element(By.CSS_SELECTOR, 'input#idNumber.MuiInputBase-input.MuiFilledInput-input.mui-style-rtl-2bxn45')
+        try:
+            # Try multiple approaches to find the ID input field
+            try:
+                # First try by ID (most reliable if available)
+                input_field = self.wait.until(
+                    EC.visibility_of_element_located((By.ID, "idNumber"))
+                )
+                return input_field
+            except:
+                # Try by placeholder text
+                input_field = self.wait.until(
+                    EC.visibility_of_element_located((By.XPATH, "//input[@placeholder='תעודת זהות']"))
+                )
+                return input_field
+                
+        except Exception as e:
+            logging.error(f"Failed to find ID input field: {e}")
+            # Last resort - try to find any visible input that might be the ID field
+            inputs = self.driver.find_elements(By.TAG_NAME, "input")
+            for input_field in inputs:
+                if input_field.is_displayed() and "id" in input_field.get_attribute("id").lower():
+                    return input_field
+            
+            # If we got here, we couldn't find the field
+            raise
 
     def user_password_input(self):
-        return self.driver.find_element(By.CSS_SELECTOR, 'input#idLogin.MuiInputBase-input.MuiFilledInput-input.mui-style-rtl-2bxn45')
+        try:
+            # Try multiple approaches to find the password input field
+            try:
+                # First try by ID (most reliable if available)
+                input_field = self.wait.until(
+                    EC.visibility_of_element_located((By.ID, "idLogin"))
+                )
+                return input_field
+            except:
+                # Try by type or placeholder
+                input_field = self.wait.until(
+                    EC.visibility_of_element_located((By.XPATH, "//input[@type='password' or @placeholder='סיסמה']"))
+                )
+                return input_field
+                
+        except Exception as e:
+            logging.error(f"Failed to find password input field: {e}")
+            # Last resort - try to find any password input
+            inputs = self.driver.find_elements(By.TAG_NAME, "input")
+            for input_field in inputs:
+                if input_field.is_displayed() and input_field.get_attribute("type") == "password":
+                    return input_field
+            
+            # If we got here, we couldn't find the field
+            raise
 
     def login_button(self):
-        self.driver.find_element(By.CSS_SELECTOR, 'button.sc-e0eef0cb-2.jcQsHL').click()
+        try:
+            # Try multiple approaches to find the login button
+            try:
+                # First try by text content (most reliable)
+                btn = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[text()='התחברות']"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                self.driver.execute_script("arguments[0].click();", btn)
+                logging.info("Clicked login button via text content")
+                return
+            except:
+                # If text search fails, try to find any button in the login form
+                form_buttons = self.driver.find_elements(By.CSS_SELECTOR, "form button")
+                if form_buttons:
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", form_buttons[0])
+                    self.driver.execute_script("arguments[0].click();", form_buttons[0])
+                    logging.info("Clicked login button (first form button)")
+                    return
+                
+                # If all else fails, try JavaScript to find the button
+                clicked = self.driver.execute_script("""
+                    const buttons = Array.from(document.querySelectorAll('button'));
+                    const loginBtn = buttons.find(btn => btn.textContent.includes('התחברות'));
+                    if (loginBtn) {
+                        loginBtn.scrollIntoView({block: 'center'});
+                        loginBtn.click();
+                        return true;
+                    }
+                    return false;
+                """)
+                
+                if clicked:
+                    logging.info("Clicked login button via JavaScript")
+                    return
+                
+                raise Exception("Could not find login button")
+        except Exception as e:
+            logging.error(f"Failed to click login button: {e}")
+            raise
 
     def single_use_code(self):
         self.driver.find_element(By.CSS_SELECTOR, 'button.sc-997dfd98-1.gNOVTs').click()

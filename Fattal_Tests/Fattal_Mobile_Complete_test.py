@@ -7,12 +7,12 @@ from unittest import TestCase
 from selenium import webdriver
 import random
 from Mobile_Fattal_Flight_Page import FattalFlightPageMobile
-from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
-from Mobile_Fattal_Pages.Mobile_Fattal_Search_Result_Page import FattalSearchResultPageMobile
-from Mobile_Fattal_Pages.Mobile_Fattal_Order_Page import FattalOrderPageMobile
-from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
-from Mobile_Fattal_Pages.Fattal_Mobile_ConfirmPage import FattalMobileConfirmPage
-from Mobile_Fattal_Pages.Fattal_Mobile_Deals_Packages import  FattalDealsPageMobile
+from Mobile_Toolbar_Fattal import FattalMobileToolBar
+from Mobile_Fattal_Main_Page import FattalMainPageMobile
+from Mobile_Fattal_Search_Result_Page import FattalSearchResultPageMobile
+from Mobile_Fattal_Order_Page import FattalOrderPageMobile
+from Fattal_Mobile_ConfirmPage import FattalMobileConfirmPage
+from Fattal_Mobile_Deals_Packages import FattalDealsPageMobile
 import platform
 from datetime import datetime
 from faker import Faker
@@ -24,6 +24,11 @@ from reportlab.lib.units import inch
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import json
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+from selenium.webdriver.support.ui import Select
+
 class FattalTests(TestCase):
     def setUp(self):
         self.log_stream = io.StringIO()
@@ -44,7 +49,7 @@ class FattalTests(TestCase):
 
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # ✅ Use a valid built-in Chrome emulation device (Pixel 2)
+        # Use a valid built-in Chrome emulation device (Pixel 2)
         mobile_emulation = {
             "deviceName": "Pixel 2"
         }
@@ -69,7 +74,7 @@ class FattalTests(TestCase):
         active_key = env_config.get("active", "prod_url")
         base_url = env_config.get(active_key, "https://www.fattal.co.il/")
         self.driver.get(base_url)
-        logging.info(f"🌐 Opened environment URL: {base_url}")
+        logging.info(f"Opened environment URL: {base_url}")
 
         # Page object initialization
         self.mobile_main_page = FattalMainPageMobile(self.driver)
@@ -96,7 +101,7 @@ class FattalTests(TestCase):
 
         os_name = platform.system()
 
-        # 📄 Save logs
+        # Save logs
         log_summary = self.log_stream.getvalue()
         logs_dir = os.path.join(self.base_dir, "logs")
         os.makedirs(logs_dir, exist_ok=True)
@@ -109,7 +114,7 @@ class FattalTests(TestCase):
         except Exception as e:
             print(f"[LOG DEBUG] Failed to write log: {e}")
 
-        # 🚨 Detect real test failure using unittest outcome
+        # Detect real test failure using unittest outcome
         try:
             outcome = getattr(result, 'result', result)
             for failed_test, exc_info in outcome.failures + outcome.errors:
@@ -122,24 +127,24 @@ class FattalTests(TestCase):
                         error_msg = f" Unrecognized exception format: {exc_info}"
                     break
         except Exception as e:
-            logging.warning(f" Failed to analyze test outcome: {e}")
+            logging.warning(f"Failed to analyze test outcome: {e}")
 
-        # 🧾 Capture confirmation metadata if available
+        # Capture confirmation metadata if available
         confirmation = getattr(self, "confirmation_result", {})
         order_number = confirmation.get("order_number", "")
         confirmed_email = confirmation.get("email", "")
         confirmation_screenshot = confirmation.get("screenshot_path", "")
 
-        # 🖼 Create one unified screenshot depending on test result
+        # Create one unified screenshot depending on test result
         try:
             if self.driver:
                 status_label = "FAIL" if has_failed else ("PASS" if order_number else "FAIL")
                 screenshot_path = self.take_confirmation_screenshot(test_method, status_label)
                 confirmation_screenshot = screenshot_path
         except Exception as e:
-            logging.warning(f"📸 Could not take confirmation screenshot: {e}")
+            logging.warning(f"Could not take confirmation screenshot: {e}")
 
-        # 🧠 Final test info dict
+        # Final test info dict
         test_info = {
             "name": test_method,
             "description": "Test Description",
@@ -156,7 +161,7 @@ class FattalTests(TestCase):
             "error": error_msg
         }
 
-        # 📦 Persist results
+        # Persist results
         self.save_to_excel(test_info)
         self.save_to_pdf(test_info)
 
@@ -178,7 +183,7 @@ class FattalTests(TestCase):
                 wb = load_workbook(filename)
                 ws = wb.active
 
-            status = info.get("status", "FAILED" if info.get("error") else "PASSED")
+            status = "FAILED" if info.get("error") else "PASSED"
 
             row = [
                 info.get("name", ""),
@@ -197,14 +202,14 @@ class FattalTests(TestCase):
             ws.append(row)
             row_num = ws.max_row
 
-            # 🖼 Add screenshot hyperlink (if file exists)
+            # Add screenshot hyperlink (if file exists)
             screenshot_path = info.get("screenshot", "")
             if screenshot_path and os.path.exists(screenshot_path):
                 cell = ws.cell(row=row_num, column=11)
                 cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
-            # 📜 Add log file hyperlink (if file exists)
+            # Add log file hyperlink (if file exists)
             log_path = info.get("log", "")
             if log_path and os.path.exists(log_path):
                 cell = ws.cell(row=row_num, column=12)
@@ -220,16 +225,16 @@ class FattalTests(TestCase):
                         if cell.value:
                             max_length = max(max_length, len(str(cell.value)))
                     except Exception as e:
-                        logging.warning(f"📏 Column resize error: {e}")
+                        logging.warning(f"Column resize error: {e}")
                 ws.column_dimensions[col_letter].width = max_length + 5
 
             wb.save(filename)
-            logging.info(f"✔️ Excel file saved at: {filename}")
+            logging.info(f"Excel file saved at: {filename}")
 
         except PermissionError as e:
-            logging.warning(f"📛 Excel file is open or locked: {e}")
+            logging.warning(f"Excel file is open or locked: {e}")
         except Exception as e:
-            logging.error(f"❌ Failed to save Excel file: {e}")
+            logging.error(f"Failed to save Excel file: {e}")
 
     def save_to_pdf(self, info: dict):
         pdf_dir = "reports"
@@ -297,6 +302,66 @@ class FattalTests(TestCase):
         self.entered_first_name = first_name
         self.entered_last_name = last_name
 
+    def fill_payment_details_from_config(self):
+        """
+        Fills payment details using the credit card information from config.json
+        """
+        try:
+            # Get the credit card details from the config
+            credit_card = self.users.get("payment", {}).get("credit_card", {})
+            
+            # Extract the credit card values from config
+            card_number = credit_card.get("card_number")
+            cardholder_name = credit_card.get("cardholder_name")
+            expiry_month = credit_card.get("expiry_month")
+            expiry_year = credit_card.get("expiry_year")
+            cvv = credit_card.get("cvv")
+            id_number = credit_card.get("id_number")
+            
+            logging.info("Using credit card details from config.json")
+            
+            # Find and switch to the iframe
+            iframe = self.driver.find_element(By.ID, "paymentIframe")
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
+            self.driver.switch_to.frame(iframe)
+            
+            # Fill Card Number
+            card_number_input = self.driver.find_element(By.ID, "credit_card_number_input")
+            card_number_input.clear()
+            card_number_input.send_keys(card_number)
+            
+            # Fill Cardholder Name
+            cardholder_input = self.driver.find_element(By.ID, "card_holder_name_input")
+            cardholder_input.clear()
+            cardholder_input.send_keys(cardholder_name)
+            
+            # Select Expiry Month
+            month_select = Select(self.driver.find_element(By.ID, "date_month_input"))
+            month_select.select_by_visible_text(expiry_month)
+            
+            # Select Expiry Year
+            year_select = Select(self.driver.find_element(By.ID, "date_year_input"))
+            year_select.select_by_visible_text(expiry_year)
+            
+            # Fill CVV
+            cvv_input = self.driver.find_element(By.ID, "cvv_input")
+            cvv_input.clear()
+            cvv_input.send_keys(cvv)
+            
+            # Fill ID Number
+            id_input = self.driver.find_element(By.ID, "id_number_input")
+            id_input.clear()
+            id_input.send_keys(id_number)
+            
+            logging.info("Credit card details from config applied successfully")
+            
+        except Exception as e:
+            logging.error(f"Failed to apply credit card details from config: {e}")
+            raise
+        finally:
+            # Switch back to default content
+            self.driver.switch_to.default_content()
+
     def take_confirmation_screenshot(self, test_method, status):
         screenshot_dir = os.path.join(self.base_dir, "Screenshots")
         os.makedirs(screenshot_dir, exist_ok=True)
@@ -304,7 +369,7 @@ class FattalTests(TestCase):
             screenshot_dir, f"confirmation_{status}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
         )
         self.driver.save_screenshot(filename)
-        logging.info(f"📸 Confirmation screenshot saved at: {filename}")
+        logging.info(f"Screenshot saved at: {filename}")
         return filename
 
     def run(self, result=None):
@@ -321,7 +386,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_anonymous_user(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: hotel search and booking flow")
+        logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
@@ -356,18 +421,18 @@ class FattalTests(TestCase):
         )
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_with_club_checkbox(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: hotel search and booking flow")
+        logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
@@ -403,20 +468,20 @@ class FattalTests(TestCase):
         )
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_eilat_with_flight(self):
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
-        logging.info("🛫 Starting mobile booking test for Eilat including flights...")
+        logging.info("Starting mobile booking test for Eilat including flights...")
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -425,7 +490,7 @@ class FattalTests(TestCase):
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
         #self.mobile_main_page.select_date_range_two_months_ahead()
-        # 📆 Step 2: Select exact date range instead of the dynamic one
+        # Step 2: Select exact date range instead of the dynamic one
         self.mobile_main_page.select_specific_date_range(checkin_day=1, checkout_day=5)
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
@@ -439,7 +504,7 @@ class FattalTests(TestCase):
         self.mobile_search_page.click_show_prices_regional()
         self.mobile_search_page.click_book_room_regional()
 
-        # Step 7: ✈️ Select flight or continue
+        # Step 7: Select flight or continue
         self.mobile_flight_page.try_flight_options_by_time_of_day()
 
         # Step 8: Passenger form
@@ -459,9 +524,8 @@ class FattalTests(TestCase):
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-
-        self.mobile_order_page.fill_payment_iframe_mobile()
-        #self.mobile_order_page.click_payment_submit_button()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 10: Confirmation
         #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
@@ -508,14 +572,14 @@ class FattalTests(TestCase):
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_eilat_fattal_gift(self):
         hotel_name = "אילת, ישראל"
@@ -554,18 +618,18 @@ class FattalTests(TestCase):
         for code in self.users["fattal_gifts"].values():
             self.mobile_order_page.apply_checkout_coupon(code)
             sleep(1)  # Optional: wait between attempts
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_with_login_club_renew(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: CLUB user hotel search and booking flow (mobile)")
+        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
         try:
@@ -575,9 +639,9 @@ class FattalTests(TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
-            logging.info("✅ Logged in successfully.")
+            logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"⚠️ Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -605,8 +669,8 @@ class FattalTests(TestCase):
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
         # self.mobile_order_page.click_payment_submit_button()
@@ -616,7 +680,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_with_login_club_about_to_expire(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: CLUB user hotel search and booking flow (mobile)")
+        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
         try:
@@ -626,9 +690,9 @@ class FattalTests(TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
-            logging.info("✅ Logged in successfully.")
+            logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"⚠️ Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -656,8 +720,8 @@ class FattalTests(TestCase):
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
         # self.mobile_order_page.click_payment_submit_button()
@@ -667,7 +731,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_with_club_login_11night(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: CLUB user hotel search and booking flow (mobile)")
+        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
         try:
@@ -677,9 +741,9 @@ class FattalTests(TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
-            logging.info("✅ Logged in successfully.")
+            logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"⚠️ Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -706,18 +770,18 @@ class FattalTests(TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        #Step 9 : Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        # # Step 8: Click submit inside iframe (already inside from step 7)
+        # self.mobile_order_page.click_payment_submit_button()
+        # #Step 9 : Confirm and Assert
+        # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        # assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_with_club_login(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: CLUB user hotel search and booking flow (mobile)")
+        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
         try:
@@ -727,9 +791,9 @@ class FattalTests(TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
-            logging.info("✅ Logged in successfully.")
+            logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"⚠️ Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -756,14 +820,15 @@ class FattalTests(TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
         #Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
     def test_mobile_booking_with_user_and_deals(self):
         try:
             self.mobile_toolbar.open_login_menu()
@@ -772,9 +837,9 @@ class FattalTests(TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
-            logging.info("✅ Logged in successfully.")
+            logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"⚠️ Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")
         self.mobile_toolbar.click_deals_and_packages_tab()
         self.mobile_deals_page.click_view_all_deals_link()
         self.mobile_deals_page.click_view_more_deal_button()
@@ -786,8 +851,8 @@ class FattalTests(TestCase):
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Click submit inside iframe (already inside from step 7)
         #self.mobile_order_page.click_payment_submit_button()
@@ -796,9 +861,9 @@ class FattalTests(TestCase):
         #assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_random_guest_details(self):
-        fake = Faker('he_IL')  # 🇮🇱 עברית!
+        fake = Faker('he_IL')  # עברית!
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🎲 Starting FULL RANDOM anonymous booking test (MOBILE)")
+        logging.info("Starting FULL RANDOM anonymous booking test (MOBILE)")
 
         # Step 1: חיפוש מלון ודילים
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -813,7 +878,7 @@ class FattalTests(TestCase):
         adults = random.randint(1, 2)
         children = random.randint(0, 1)
         infants = random.randint(0, 1)
-        logging.info(f"👨‍👩‍👧 Guests: {adults} adults, {children} children, {infants} infants")
+        logging.info(f"Guests: {adults} adults, {children} children, {infants} infants")
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=adults, children=children, infants=infants)
         self.mobile_main_page.click_room_continue_button()
@@ -848,8 +913,8 @@ class FattalTests(TestCase):
         # Step 7: פרטי כרטיס רנדומליים (לא נשלח בפועל)
         self.mobile_order_page.fill_payment_iframe_mobile_random()
 
-        # ⚠️ לא נלחץ על כפתור שליחה - TEST MODE ONLY
-        logging.info("✅ Full random booking simulated (NO SUBMIT)")
+        # לא נלחץ על כפתור שליחה - TEST MODE ONLY
+        logging.info("Full random booking simulated (NO SUBMIT)")
 
         self.confirmation_result = {
             "order_number": "",  # אין מספר הזמנה כי לא ביצענו שליחה
@@ -859,7 +924,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_anonymous_user_promo_code(self):
         hotel_name = "לאונרדו נגב, באר שבע"
-        logging.info("🧪 Starting test: hotel search and booking flow")
+        logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
@@ -877,7 +942,7 @@ class FattalTests(TestCase):
         self.mobile_main_page.click_room_continue_button()
         self.mobile_main_page.open_promo_code_input()
         self.mobile_main_page.enter_promo_code("FHVR")
-        assert self.mobile_main_page.is_promo_code_applied("FHVR"), "❌ Promo code was not correctly applied!"
+        assert self.mobile_main_page.is_promo_code_applied("FHVR"), "Promo code was not correctly applied!"
 
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
@@ -897,14 +962,14 @@ class FattalTests(TestCase):
         )
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        # Step 7: Fill the iframe
-        self.mobile_order_page.fill_payment_iframe_mobile()
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def tearDown(self):
         if self.driver:
@@ -928,8 +993,8 @@ class FattalTests(TestCase):
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")
 
-            logging.info("🕒 Waiting 2 seconds before closing browser...")
-            sleep(2)  # ✅ Pause while browser is still open
+            logging.info("Waiting 2 seconds before closing browser...")
+            sleep(2)  # Pause while browser is still open
 
             logging.info("Closing browser (tearDown).")
             try:

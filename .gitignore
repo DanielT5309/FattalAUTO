@@ -13,3 +13,9 @@ __pycache__/
 # IDE settings (optional)
 .vscode/
 .idea/
+
+# Sensitive config
+config.json
+
+# Ignore screenshots
+*.png

@@ -30,5 +30,15 @@
     "fattal_gift1": "1282643017",
     "fattal_gift2": "1510951091",
     "fattal_gift3": "1274069942"
+  },
+  "payment": {
+    "credit_card": {
+      "card_number": "4580080111866879",
+      "cardholder_name": "פתאל",
+      "expiry_month": "08",
+      "expiry_year": "2025",
+      "cvv": "955",
+      "id_number": "0356998"
+    }
   }
 }

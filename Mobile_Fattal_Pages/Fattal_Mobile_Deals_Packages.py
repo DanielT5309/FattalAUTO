@@ -23,10 +23,10 @@ class FattalDealsPageMobile:
 
     def click_view_all_deals_link(self):
         """
-        🔗 Clicks the 'לכל הדילים והחבילות' anchor link that navigates to the full deals page.
+        Clicks the 'לכל הדילים והחבילות' anchor link that navigates to the full deals page.
         """
         try:
-            logging.info("🔗 Trying to click 'לכל הדילים והחבילות' link...")
+            logging.info("Trying to click 'לכל הדילים והחבילות' link...")
 
             deals_link = WebDriverWait(self.driver, 15).until(
                 EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'לכל הדילים והחבילות')]"))
@@ -36,20 +36,20 @@ class FattalDealsPageMobile:
             time.sleep(0.3)
             self.driver.execute_script("arguments[0].click();", deals_link)
 
-            logging.info("✅ Clicked 'לכל הדילים והחבילות' link successfully.")
+            logging.info("Clicked 'לכל הדילים והחבילות' link successfully.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to click 'לכל הדילים והחבילות': {e}")
+            logging.error(f"Failed to click 'לכל הדילים והחבילות': {e}")
             self.driver.save_screenshot("view_all_deals_click_fail.png")
             raise
 
     def click_view_more_deal_button(self):
         """
-        📦 Clicks on the 'להזמנה ופרטים נוספים' button inside a specific deal card.
+        Clicks on the 'להזמנה ופרטים נוספים' button inside a specific deal card.
         Waits until the element is both visible and clickable to avoid race conditions.
         """
         try:
-            logging.info("🔎 Waiting for 'להזמנה ופרטים נוספים' deal button to appear...")
+            logging.info("Waiting for 'להזמנה ופרטים נוספים' deal button to appear...")
 
             # Step 1: Wait for it to be visible
             visible_button = WebDriverWait(self.driver, 15).until(
@@ -58,7 +58,7 @@ class FattalDealsPageMobile:
                     "//a[contains(text(),'להזמנה ופרטים נוספים')]"
                 ))
             )
-            logging.info("👁️ Deal button is visible — waiting a moment for UI to stabilize...")
+            logging.info("Deal button is visible — waiting a moment for UI to stabilize...")
 
             # Step 2: Wait for it to be clickable (to avoid premature interaction)
             clickable_button = WebDriverWait(self.driver, 10).until(
@@ -73,20 +73,20 @@ class FattalDealsPageMobile:
             time.sleep(0.4)
             self.driver.execute_script("arguments[0].click();", clickable_button)
 
-            logging.info("✅ Clicked on 'להזמנה ופרטים נוספים' successfully.")
+            logging.info("Clicked on 'להזמנה ופרטים נוספים' successfully.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to click 'להזמנה ופרטים נוספים': {e}")
+            logging.error(f"Failed to click 'להזמנה ופרטים נוספים': {e}")
             self.driver.save_screenshot("click_view_more_deal_error.png")
             raise
 
     def click_book_now_button(self):
         """
-        🛎️ Clicks on the 'הזמן עכשיו' (Book Now) button after ensuring it's visible and clickable.
+        Clicks on the 'הזמן עכשיו' (Book Now) button after ensuring it's visible and clickable.
         Useful for the final booking confirmation.
         """
         try:
-            logging.info("🛎️ Waiting for 'הזמן עכשיו' (Book Now) button to become visible...")
+            logging.info("Waiting for 'הזמן עכשיו' (Book Now) button to become visible...")
 
             button = WebDriverWait(self.driver, 20).until(
                 EC.visibility_of_element_located((By.XPATH, "//button[normalize-space()='הזמן עכשיו']"))
@@ -95,22 +95,22 @@ class FattalDealsPageMobile:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='הזמן עכשיו']")))
-            time.sleep(0.5)  # ⏳ UI animations or transitions
+            time.sleep(0.5)  # UI animations or transitions
 
             self.driver.execute_script("arguments[0].click();", button)
-            logging.info("✅ Clicked 'הזמן עכשיו' button successfully.")
+            logging.info("Clicked 'הזמן עכשיו' button successfully.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to click 'הזמן עכשיו' button: {e}")
+            logging.error(f"Failed to click 'הזמן עכשיו' button: {e}")
             raise
 
     def click_continue_search_button_mobile(self):
         """
-        📱 Clicks the 'המשך' (Continue) button on mobile search screen.
+        Clicks the 'המשך' (Continue) button on mobile search screen.
         Handles dynamic text like 'המשך - 2 לילות' by using partial match.
         """
         try:
-            logging.info("📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
+            logging.info("מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
 
             button = WebDriverWait(self.driver, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//div[starts-with(text(), 'המשך')]"))
@@ -122,10 +122,10 @@ class FattalDealsPageMobile:
             time.sleep(0.3)  # Give animations time to settle
 
             self.driver.execute_script("arguments[0].click();", button)
-            logging.info("✅ נלחץ כפתור 'המשך' (main search button במובייל)")
+            logging.info("נלחץ כפתור 'המשך' (main search button במובייל)")
 
         except Exception as e:
-            logging.warning("⚠️ לא נמצא כפתור לפי ID — מנסה לפי class...")
+            logging.warning("לא נמצא כפתור לפי ID — מנסה לפי class...")
             try:
                 alt_button = WebDriverWait(self.driver, 10).until(
                     EC.element_to_be_clickable((By.CLASS_NAME, "sc-f6382f5-0"))
@@ -133,18 +133,18 @@ class FattalDealsPageMobile:
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", alt_button)
                 time.sleep(0.3)
                 self.driver.execute_script("arguments[0].click();", alt_button)
-                logging.info("✅ נלחץ כפתור 'המשך' לפי class")
+                logging.info("נלחץ כפתור 'המשך' לפי class")
             except Exception as e2:
-                logging.error(f"❌ לא הצליח ללחוץ על כפתור 'המשך': {e2}")
+                logging.error(f"לא הצליח ללחוץ על כפתור 'המשך': {e2}")
                 raise
 
     def click_continue_room_button(self):
         """
-        ⏭️ Clicks the continue button on the room selection step.
+        Clicks the continue button on the room selection step.
         Ignores dynamic room/guest count in the text.
         """
         try:
-            logging.info("🔍 Looking for 'המשך' button in room selection...")
+            logging.info("Looking for 'המשך' button in room selection...")
 
             # Wait for element containing 'המשך' regardless of dynamic numbers
             continue_btn = WebDriverWait(self.driver, 15).until(
@@ -158,9 +158,9 @@ class FattalDealsPageMobile:
             time.sleep(0.4)
             self.driver.execute_script("arguments[0].click();", continue_btn)
 
-            logging.info("✅ Clicked 'המשך' button in room selection.")
+            logging.info("Clicked 'המשך' button in room selection.")
         except Exception as e:
-            logging.error(f"❌ Failed to click 'המשך' in room selection: {e}")
+            logging.error(f"Failed to click 'המשך' in room selection: {e}")
             raise
 
     def click_mobile_search_button(self):
@@ -168,40 +168,40 @@ class FattalDealsPageMobile:
         מנסה ללחוץ על כפתור 'המשך' במובייל לפי ID, ואם לא הצליח – לפי class fallback
         """
         try:
-            logging.info("📱 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
+            logging.info("מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
 
             try:
                 # ניסיון ראשון לפי ID
                 search_btn = WebDriverWait(self.driver, 7).until(
                     EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-buttonMain"))
                 )
-                logging.info("🔍 כפתור 'המשך' נמצא לפי ID")
+                logging.info("כפתור 'המשך' נמצא לפי ID")
             except TimeoutException:
-                logging.warning("⚠️ לא נמצא כפתור לפי ID — מנסה לפי class...")
+                logging.warning("לא נמצא כפתור לפי ID — מנסה לפי class...")
                 search_btn = WebDriverWait(self.driver, 5).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "div.sc-f6382f5-0.edhILP"))
                 )
-                logging.info("🔍 כפתור 'המשך' נמצא לפי class")
+                logging.info("כפתור 'המשך' נמצא לפי class")
 
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_btn)
             self.driver.execute_script("arguments[0].click();", search_btn)
 
-            logging.info("✅ נלחץ כפתור 'המשך' (main search button במובייל)")
+            logging.info("נלחץ כפתור 'המשך' (main search button במובייל)")
 
         except TimeoutException:
-            logging.error("⏱️ Timeout – לא נמצא כפתור 'המשך' לפי ID וגם לפי class.")
+            logging.error("Timeout – לא נמצא כפתור 'המשך' לפי ID וגם לפי class.")
             raise
         except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על כפתור 'המשך': {e}")
+            logging.error(f"שגיאה בלחיצה על כפתור 'המשך': {e}")
             raise
 
     def click_mobile_show_prices_button(self):
         """
-        💸 לוחץ על כפתור 'הצג מחירים' בלי להתייחס למחיר שמוצג.
+        לוחץ על כפתור 'הצג מחירים' בלי להתייחס למחיר שמוצג.
         מתמודד עם ID דינמי ומחכה לזמינות האלמנט.
         """
         try:
-            logging.info("🔍 מחפש ולוחץ על כפתור 'הצג מחירים' במובייל...")
+            logging.info("מחפש ולוחץ על כפתור 'הצג מחירים' במובייל...")
 
             # חפש לפי ID שמתחיל ב-room-price-button
             show_price_btn = WebDriverWait(self.driver, 20).until(
@@ -212,8 +212,8 @@ class FattalDealsPageMobile:
             time.sleep(0.3)
             self.driver.execute_script("arguments[0].click();", show_price_btn)
 
-            logging.info("✅ נלחץ כפתור 'הצג מחירים' בהצלחה.")
+            logging.info("נלחץ כפתור 'הצג מחירים' בהצלחה.")
 
         except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על כפתור 'הצג מחירים': {e}")
+            logging.error(f"שגיאה בלחיצה על כפתור 'הצג מחירים': {e}")
             raise

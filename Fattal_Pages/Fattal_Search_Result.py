@@ -19,20 +19,20 @@ class FattalSearchResultPage:
 
     def wait_for_rooms_to_load(self):
         try:
-            logging.info("🛏️ Waiting for room cards to fully load...")
+            logging.info("Waiting for room cards to fully load...")
 
             # Option 1: Wait for the skeleton placeholders to disappear (if class changes)
             WebDriverWait(self.driver, 30).until(
                 EC.presence_of_all_elements_located(self.ROOM_CARDS_LOADED)
             )
 
-            logging.info("✅ Room cards are loaded.")
+            logging.info("Room cards are loaded.")
         except Exception as e:
-            logging.error(f"❌ Room cards did not load in time: {e}")
+            logging.error(f"Room cards did not load in time: {e}")
             raise
 
     def click_first_show_prices(self):
-        logging.info("🔎 Looking for 'הצג מחירים' buttons...")
+        logging.info("Looking for 'הצג מחירים' buttons...")
 
         for attempt in range(3):
             try:
@@ -44,23 +44,23 @@ class FattalSearchResultPage:
                     EC.element_to_be_clickable(self.SHOW_PRICES_BUTTONS)
                 )
 
-                logging.info(f"🔍 Found {len(show_buttons)} 'הצג מחירים' buttons.")
+                logging.info(f"Found {len(show_buttons)} 'הצג מחירים' buttons.")
                 show_buttons[0].click()
-                logging.info("🛏️ Clicked 'הצג מחירים' via native click.")
+                logging.info("Clicked 'הצג מחירים' via native click.")
                 return
             except Exception as e:
-                logging.warning(f"⌛ Attempt {attempt + 1}: 'הצג מחירים' buttons not yet present or not clickable.")
+                logging.warning(f"Attempt {attempt + 1}: 'הצג מחירים' buttons not yet present or not clickable.")
                 time.sleep(5)
 
         try:
             show_buttons = self.driver.find_elements(*self.SHOW_PRICES_BUTTONS)
             if show_buttons:
                 self.driver.execute_script("arguments[0].click();", show_buttons[0])
-                logging.info("⚙️ Clicked 'הצג מחירים' via JavaScript fallback.")
+                logging.info("Clicked 'הצג מחירים' via JavaScript fallback.")
             else:
-                raise Exception("❌ 'הצג מחירים' button never became visible.")
+                raise Exception("'הצג מחירים' button never became visible.")
         except Exception as e:
-            logging.error(f"❌ Failed to click 'הצג מחירים': {e}")
+            logging.error(f"Failed to click 'הצג מחירים': {e}")
             raise
 
     def click_first_book_room(self):
@@ -82,11 +82,11 @@ class FattalSearchResultPage:
                 return null;
             """)
             if clicked_text:
-                logging.info(f"🏨 Clicked 'להזמנת חדר' button via JS: {clicked_text}")
+                logging.info(f"Clicked 'להזמנת חדר' button via JS: {clicked_text}")
             else:
                 raise Exception("No visible 'להזמנת חדר' button found.")
         except Exception as e:
-            logging.error(f"❌ JavaScript click failed for 'להזמנת חדר': {e}")
+            logging.error(f"JavaScript click failed for 'להזמנת חדר': {e}")
             raise
 
     def no_results_found(self) -> bool:
@@ -95,7 +95,7 @@ class FattalSearchResultPage:
                 EC.presence_of_element_located((By.XPATH, "//h1[contains(text(),'לא נמצאו מלונות')]"))
             )
             if banner.is_displayed():
-                logging.warning("🚫 No hotels matched the search.")
+                logging.warning("No hotels matched the search.")
                 return True
             return False
         except:
@@ -108,13 +108,13 @@ class FattalSearchResultPage:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
             button.click()
-            logging.info("✅ Clicked 'להזמנת חדר' button.")
+            logging.info("Clicked 'להזמנת חדר' button.")
         except Exception as e:
-            logging.error(f"❌ Could not click 'להזמנת חדר': {e}")
+            logging.error(f"Could not click 'להזמנת חדר': {e}")
             raise
 
     def wait_for_prices_to_load(self):
-        logging.info("⏳ Waiting for hotel details page to fully load...")
+        logging.info("Waiting for hotel details page to fully load...")
 
         retries = 2
         for attempt in range(retries):
@@ -127,14 +127,14 @@ class FattalSearchResultPage:
                 WebDriverWait(self.driver, 10).until(
                     EC.visibility_of_element_located((By.XPATH, "//button[contains(@id, 'room-price-button')]"))
                 )
-                logging.info("✅ 'הצג מחירים' button is visible.")
+                logging.info("'הצג מחירים' button is visible.")
                 return
             except Exception as e:
-                logging.warning(f"⚠️ Attempt {attempt + 1}/{retries} failed: {e}")
+                logging.warning(f"Attempt {attempt + 1}/{retries} failed: {e}")
                 if attempt < retries - 1:
-                    logging.info("🔁 Retrying after short wait...")
+                    logging.info("Retrying after short wait...")
                 else:
-                    logging.error(f"❌ Timeout or stale element on last attempt: {e}")
+                    logging.error(f"Timeout or stale element on last attempt: {e}")
                     raise
 
 

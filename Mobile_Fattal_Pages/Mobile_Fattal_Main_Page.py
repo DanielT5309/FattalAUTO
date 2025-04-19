@@ -28,9 +28,9 @@ class FattalMainPageMobile:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_box)
             self.driver.execute_script("arguments[0].click();", search_box)
-            logging.info("✅ Clicked mobile hotel search input container.")
+            logging.info("Clicked mobile hotel search input container.")
         except Exception as e:
-            logging.error(f"❌ Failed to click mobile hotel search input: {e}")
+            logging.error(f"Failed to click mobile hotel search input: {e}")
             self.take_screenshot("click_mobile_hotel_search_input_fail")
             raise
 
@@ -42,9 +42,9 @@ class FattalMainPageMobile:
             input_field.clear()
             input_field.send_keys(city_name)
             input_field.click()
-            logging.info(f"✅ Typed city name in mobile: {city_name}")
+            logging.info(f"Typed city name in mobile: {city_name}")
         except Exception as e:
-            logging.error(f"❌ Failed to set city on mobile: {e}")
+            logging.error(f"Failed to set city on mobile: {e}")
 
 
     def take_screenshot(self, name="error_screenshot"):
@@ -53,7 +53,7 @@ class FattalMainPageMobile:
         os.makedirs(screenshot_dir, exist_ok=True)
         path = os.path.join(screenshot_dir, f"{name}_{timestamp}.png")
         self.driver.save_screenshot(path)
-        logging.error(f"📸 Screenshot saved: {path}")
+        logging.error(f"Screenshot saved: {path}")
 
     def click_first_suggested_hotel(self):
         try:
@@ -62,9 +62,9 @@ class FattalMainPageMobile:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", suggestion_btn)
             suggestion_btn.click()
-            logging.info("✅ Clicked first suggested hotel from list.")
+            logging.info("Clicked first suggested hotel from list.")
         except Exception as e:
-            logging.error(f"❌ Failed to click first suggested hotel: {e}")
+            logging.error(f"Failed to click first suggested hotel: {e}")
             self.take_screenshot("click_suggested_hotel_fail")
             raise
 
@@ -75,9 +75,9 @@ class FattalMainPageMobile:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", date_picker)
             date_picker.click()
-            logging.info("📅 Opened mobile calendar (date picker).")
+            logging.info("Opened mobile calendar (date picker).")
         except Exception as e:
-            logging.error(f"❌ Failed to open date picker: {e}")
+            logging.error(f"Failed to open date picker: {e}")
             self.take_screenshot("open_calendar_fail")
             raise
 
@@ -95,11 +95,11 @@ class FattalMainPageMobile:
         :param stay_length: Optional integer for number of nights. If None, chooses randomly (3-5).
         """
         try:
-            logging.info("📅 Scrolling and selecting date range (real clicks)...")
+            logging.info("Scrolling and selecting date range (real clicks)...")
 
             months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
             if len(months) < 3:
-                raise Exception("❌ Less than 3 months available in calendar")
+                raise Exception("Less than 3 months available in calendar")
 
             target_month = months[2]
             self.driver.execute_script(
@@ -108,7 +108,7 @@ class FattalMainPageMobile:
 
             valid_buttons = target_month.find_elements(By.XPATH, ".//button[not(@disabled)]")
             if len(valid_buttons) < 8:
-                raise Exception("❌ Not enough active date buttons in target month")
+                raise Exception("Not enough active date buttons in target month")
 
             # ✅ Use passed value or randomize
             stay_length = stay_length or random.randint(3, 5)
@@ -118,7 +118,7 @@ class FattalMainPageMobile:
 
             checkin_label = checkin.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
             checkout_label = checkout.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-            logging.info(f"🗓️ Attempting to select: {checkin_label} ➡ {checkout_label} ({stay_length} לילות)")
+            logging.info(f"Attempting to select: {checkin_label} to {checkout_label} ({stay_length} לילות)")
 
             actions = ActionChains(self.driver)
             actions.move_to_element(checkin).pause(0.5).click().pause(1.0)
@@ -126,9 +126,9 @@ class FattalMainPageMobile:
 
             try:
                 self.driver.find_element(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-                logging.info("📅 Calendar still open after selection – continuing.")
+                logging.info("Calendar still open after selection – continuing.")
             except:
-                raise Exception("❌ Calendar closed before both dates were selected!")
+                raise Exception("Calendar closed before both dates were selected!")
 
             continue_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
@@ -138,11 +138,11 @@ class FattalMainPageMobile:
             time.sleep(0.4)
             continue_btn.click()
 
-            logging.info(f"✅ Selected check-in: {checkin_label} → check-out: {checkout_label}")
-            logging.info("✅ Confirmed calendar selection.")
+            logging.info(f"Selected check-in: {checkin_label} → check-out: {checkout_label}")
+            logging.info("Confirmed calendar selection.")
 
         except Exception as e:
-            logging.error(f"❌ Date selection failed: {e}")
+            logging.error(f"Date selection failed: {e}")
             self.take_screenshot("calendar_selection_fail")
             raise
 
@@ -162,7 +162,7 @@ class FattalMainPageMobile:
                     EC.presence_of_element_located((By.ID, "search-engine-build-room-mobile-wrapper-adults0"))
                 )
                 modal_open = True
-                logging.info("ℹ️ Room modal already open — skip clicking.")
+                logging.info("Room modal already open — skip clicking.")
             except TimeoutException:
                 modal_open = False
 
@@ -172,12 +172,12 @@ class FattalMainPageMobile:
                 )
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", room_button)
                 self.driver.execute_script("arguments[0].click();", room_button)
-                logging.info("✅ Clicked to open mobile room selection modal.")
+                logging.info("Clicked to open mobile room selection modal.")
             else:
-                logging.info("🧩 Room modal already open — did not click again.")
+                logging.info("Room modal already open — did not click again.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to trigger room modal: {e}")
+            logging.error(f"Failed to trigger room modal: {e}")
             self.take_screenshot("open_room_modal_fail")
             raise
 
@@ -185,7 +185,7 @@ class FattalMainPageMobile:
     def set_mobile_room_occupants(self, adults=2, children=0, infants=0):
         """Adjust room occupants assuming the modal is already open. Does NOT open modal or click 'המשך'."""
         try:
-            logging.info("👨‍👩‍👧 Adjusting room occupants...")
+            logging.info("Adjusting room occupants...")
 
             # Map of room sections
             room_config = {
@@ -198,10 +198,10 @@ class FattalMainPageMobile:
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.ID, "search-engine-build-room-mobile-room-container0"))
             )
-            logging.info("🧩 Room modal confirmed present.")
+            logging.info("Room modal confirmed present.")
 
             for section, desired in room_config.items():
-                logging.info(f"🔧 Setting {section} to {desired}...")
+                logging.info(f"Setting {section} to {desired}...")
 
                 count_id = f"search-engine-build-room-mobile-count-{section}0"
                 plus_id = f"search-engine-build-room-mobile-wrapper-{section}0"
@@ -224,18 +224,18 @@ class FattalMainPageMobile:
 
                 while current > desired:
                     if minus_btn.get_attribute("disabled"):
-                        logging.warning(f"⚠️ Cannot reduce {section} below {current}. Button disabled.")
+                        logging.warning(f"Cannot reduce {section} below {current}. Button disabled.")
                         break
                     self.driver.execute_script("arguments[0].click();", minus_btn)
                     current -= 1
                     time.sleep(0.25)
 
-                logging.info(f"👤 {section.capitalize()} set to: {current}")
+                logging.info(f"{section.capitalize()} set to: {current}")
 
-            logging.info("✅ Room occupant adjustment completed.")
+            logging.info("Room occupant adjustment completed.")
 
         except Exception as e:
-            logging.error(f"❌ Failed during occupant setting: {e}")
+            logging.error(f"Failed during occupant setting: {e}")
             self.take_screenshot("room_occupants_adjustment_fail")
             raise
 
@@ -244,7 +244,7 @@ class FattalMainPageMobile:
         self.click_room_continue_button()
 
     def click_mobile_search_button(self):
-        logging.info("📱 Attempting to click main 'חפש חופשה' search button...")
+        logging.info("Attempting to click main 'חפש חופשה' search button...")
 
         try:
             # Step 1: Ensure modal is closed
@@ -252,9 +252,9 @@ class FattalMainPageMobile:
                 WebDriverWait(self.driver, 5).until_not(
                     EC.presence_of_element_located((By.ID, "search-engine-build-room-mobile-wrapper-adults0"))
                 )
-                logging.info("🧩 Room modal is now fully closed.")
+                logging.info("Room modal is now fully closed.")
             except TimeoutException:
-                logging.warning("⚠️ Room modal may still be open — click might be blocked.")
+                logging.warning("Room modal may still be open — click might be blocked.")
 
             # Step 2: Re-fetch the search button
             WebDriverWait(self.driver, 10).until(
@@ -264,9 +264,9 @@ class FattalMainPageMobile:
 
             # Step 3: Confirm text is correct
             btn_text = self.driver.execute_script("return arguments[0].textContent.trim();", search_btn)
-            logging.info(f"🔍 Found button with text: '{btn_text}'")
+            logging.info(f"Found button with text: '{btn_text}'")
             if "חפש" not in btn_text:
-                raise Exception("❌ Search button text does not contain 'חפש'.")
+                raise Exception("Search button text does not contain 'חפש'.")
 
             # Step 4: Scroll & confirm it's clickable
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_btn)
@@ -277,17 +277,17 @@ class FattalMainPageMobile:
                 const btn = arguments[0];
                 const rect = btn.getBoundingClientRect();
                 const topElement = document.elementFromPoint(rect.left + 10, rect.top + 10);
-                if (topElement !== btn) throw new Error('❌ Search button is visually blocked.');
+                if (topElement !== btn) throw new Error('Search button is visually blocked.');
             """, search_btn)
 
             # Step 6: Click via JS
             self.driver.execute_script("arguments[0].click();", search_btn)
-            logging.info("✅ Clicked search button (JS click).")
+            logging.info("Clicked search button (JS click).")
 
 
         except Exception as e:
             self.take_screenshot("search_button_click_fail")
-            logging.error(f"❌ Failed to click 'חפש חופשה': {e}")
+            logging.error(f"Failed to click 'חפש חופשה': {e}")
             raise
 
     def close_room_modal_mobile(self):
@@ -300,16 +300,16 @@ class FattalMainPageMobile:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", room_button)
             self.driver.execute_script("arguments[0].click();", room_button)
-            logging.info("✅ Closed room modal by re-clicking הרכב.")
+            logging.info("Closed room modal by re-clicking הרכב.")
         except Exception as e:
-            logging.error(f"❌ Failed to close room modal: {e}")
+            logging.error(f"Failed to close room modal: {e}")
             self.take_screenshot("close_room_modal_fail")
             raise
 
     def reopen_and_close_calendar_after_room_set(self):
         """Clicks the calendar (תאריכים) button once after room selection to reset any lingering focus."""
         try:
-            logging.info("📅 Clicking תאריכים to force close modals before final search...")
+            logging.info("Clicking תאריכים to force close modals before final search...")
 
             calendar_btn = WebDriverWait(self.driver, 5).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-date-picker-month-button"))
@@ -319,22 +319,22 @@ class FattalMainPageMobile:
             time.sleep(0.6)  # Let the UI catch up
 
             # Just click it once — no date selection needed
-            logging.info("📅 Re-clicked calendar (תאריכים) to close if open.")
+            logging.info("Re-clicked calendar (תאריכים) to close if open.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to re-click calendar after room selection: {e}")
+            logging.error(f"Failed to re-click calendar after room selection: {e}")
             self.take_screenshot("reclick_calendar_fail")
             raise
 
     def select_flight_option_all_airports(self):
         try:
-            logging.info("🛫 Opening flight dropdown and selecting 'מכל שדות התעופה'...")
+            logging.info("Opening flight dropdown and selecting 'מכל שדות התעופה'...")
 
             dropdown_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-search-field-button_flights"))
             )
 
-            # 💡 Safe scroll + JS click to avoid interception
+            # Safe scroll + JS click to avoid interception
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", dropdown_btn)
             time.sleep(0.5)
             self.driver.execute_script("arguments[0].click();", dropdown_btn)
@@ -345,11 +345,11 @@ class FattalMainPageMobile:
             time.sleep(0.2)
             self.driver.execute_script("arguments[0].click();", all_flights_btn)
 
-            logging.info("✈️ Selected 'מכל שדות התעופה' for flights.")
+            logging.info("Selected 'מכל שדות התעופה' for flights.")
 
         except Exception as e:
             self.take_screenshot("flight_select_fail")
-            logging.error(f"❌ Failed to select flight option 'מכל שדות התעופה': {e}")
+            logging.error(f"Failed to select flight option 'מכל שדות התעופה': {e}")
             raise
 
     def click_first_suggested_region(self):
@@ -359,21 +359,21 @@ class FattalMainPageMobile:
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", suggestion_btn)
             suggestion_btn.click()
-            logging.info("✅ Clicked first suggested region from list.")
+            logging.info("Clicked first suggested region from list.")
         except Exception as e:
-            logging.error(f"❌ Failed to click first suggested region: {e}")
+            logging.error(f"Failed to click first suggested region: {e}")
             self.take_screenshot("click_suggested_region_fail")
             raise
 
     def select_specific_date_range(self, checkin_day, checkout_day):
         try:
-            logging.info(f"📅 Selecting specific range: {checkin_day} ➡ {checkout_day}")
+            logging.info(f"Selecting specific range: {checkin_day} to {checkout_day}")
 
             months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
             if len(months) < 2:
-                raise Exception("❌ Not enough months rendered in calendar.")
+                raise Exception("Not enough months rendered in calendar.")
 
-            # We’ll loop through both available months to find our buttons
+            # We'll loop through both available months to find our buttons
             checkin_btn = None
             checkout_btn = None
 
@@ -391,7 +391,7 @@ class FattalMainPageMobile:
                         continue
 
             if not checkin_btn or not checkout_btn:
-                raise Exception(f"❌ Could not find one or both dates: {checkin_day}, {checkout_day}")
+                raise Exception(f"Could not find one or both dates: {checkin_day}, {checkout_day}")
 
             # Scroll and click
             actions = ActionChains(self.driver)
@@ -401,8 +401,8 @@ class FattalMainPageMobile:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkout_btn)
             actions.move_to_element(checkout_btn).pause(0.5).click().perform()
 
-            logging.info(f"✅ Clicked check-in: {checkin_day} ביוני")
-            logging.info(f"✅ Clicked check-out: {checkout_day} ביוני")
+            logging.info(f"Clicked check-in: {checkin_day} ביוני")
+            logging.info(f"Clicked check-out: {checkout_day} ביוני")
 
             continue_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
@@ -412,20 +412,20 @@ class FattalMainPageMobile:
             time.sleep(0.4)
             continue_btn.click()
 
-            logging.info("✅ Confirmed calendar selection.")
+            logging.info("Confirmed calendar selection.")
 
         except Exception as e:
             self.take_screenshot("select_specific_date_range_fail")
-            logging.error(f"❌ Failed selecting specific date range: {e}")
+            logging.error(f"Failed selecting specific date range: {e}")
             raise
 
     def click_room_continue_button(self):
-        logging.info("👉 Searching for 'המשך' room continue button...")
+        logging.info("Searching for 'המשך' room continue button...")
 
         try:
             # Wait until modal is still visible
             if not self.wait_for_room_modal_open(timeout=3):
-                raise TimeoutException("❌ Room modal is not visible.")
+                raise TimeoutException("Room modal is not visible.")
 
             xpath = "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"
 
@@ -438,25 +438,25 @@ class FattalMainPageMobile:
 
             try:
                 continue_btn.click()
-                logging.info("✅ Clicked room continue button (native click).")
+                logging.info("Clicked room continue button (native click).")
             except Exception:
                 self.driver.execute_script("arguments[0].click();", continue_btn)
-                logging.info("✅ Clicked room continue button (JS fallback).")
+                logging.info("Clicked room continue button (JS fallback).")
 
         except Exception as e:
             self.take_screenshot("room_continue_click_fail")
-            logging.error(f"❌ Could not click 'המשך' continue button: {e}")
-            raise TimeoutException("❌ 'המשך' button not found or not clickable.")
+            logging.error(f"Could not click 'המשך' continue button: {e}")
+            raise TimeoutException("'המשך' button not found or not clickable.")
 
     def wait_for_room_modal_open(self, timeout=5):
         try:
             WebDriverWait(self.driver, timeout).until(
                 EC.presence_of_element_located((By.ID, "search-engine-build-room-mobile-wrapper-adults0"))
             )
-            logging.info("🧩 Room modal is visible and ready.")
+            logging.info("Room modal is visible and ready.")
             return True
         except TimeoutException:
-            logging.warning("⚠️ Room modal is NOT visible!")
+            logging.warning("Room modal is NOT visible!")
             return False
 
     def open_promo_code_input(self):
@@ -464,9 +464,9 @@ class FattalMainPageMobile:
         try:
             open_button = self.driver.find_element(By.ID, "search-engine-promo-code-closed-root")
             open_button.click()
-            logging.info("✅ Clicked 'יש לי קוד ארגון' to reveal promo input.")
+            logging.info("Clicked 'יש לי קוד ארגון' to reveal promo input.")
         except Exception as e:
-            logging.warning(f"⚠️ Failed to click promo code opener: {e}")
+            logging.warning(f"Failed to click promo code opener: {e}")
 
     def enter_promo_code(self, promo_code: str):
         """Inputs the promo code and triggers validation by clicking outside the input field."""
@@ -477,14 +477,14 @@ class FattalMainPageMobile:
             promo_input = self.driver.find_element(By.ID, "search-engine-promo-code-input")
             promo_input.clear()
             promo_input.send_keys(promo_code)
-            logging.info(f"✅ Promo code '{promo_code}' entered successfully.")
+            logging.info(f"Promo code '{promo_code}' entered successfully.")
 
-            # 🔄 Click outside to trigger blur (we'll click the body or header)
+            # Click outside to trigger blur (we'll click the body or header)
             self.driver.find_element(By.TAG_NAME, "body").click()
-            logging.info("🖱️ Clicked outside to close promo input.")
+            logging.info("Clicked outside to close promo input.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to enter promo code: {e}")
+            logging.error(f"Failed to enter promo code: {e}")
 
     def is_promo_code_applied(self, expected_code: str = "FHVR") -> bool:
         """
@@ -493,10 +493,10 @@ class FattalMainPageMobile:
         try:
             input_field = self.driver.find_element(By.ID, "search-engine-promo-code-input")
             actual_value = input_field.get_attribute("value")
-            logging.info(f"🔎 Promo input contains: {actual_value}")
+            logging.info(f"Promo input contains: {actual_value}")
             return actual_value.strip().upper() == expected_code.upper()
         except Exception as e:
-            logging.warning(f"❌ Could not verify promo code input: {e}")
+            logging.warning(f"Could not verify promo code input: {e}")
             return False
 
 

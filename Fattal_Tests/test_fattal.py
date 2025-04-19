@@ -24,6 +24,7 @@ import io
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import sys
+import json
 
 class FattalTests(TestCase):
     def setUp(self):
@@ -35,6 +36,15 @@ class FattalTests(TestCase):
 
         # Calculate base dir to Fattal_Tests (where test_fattal.py lives)
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Load configuration
+        try:
+            with open(os.path.join(self.base_dir, "config.json"), encoding="utf-8") as f:
+                self.config = json.load(f)
+                logging.info("Configuration loaded successfully")
+        except Exception as e:
+            logging.error(f"Failed to load configuration: {e}")
+            self.config = {}
 
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -329,12 +339,12 @@ class FattalTests(TestCase):
         #  Payment stage
         self.order_page.switch_to_payment_iframe()
 
-        self.order_page.set_card_number("4580080111866879")
-        self.order_page.select_expiry_month("08")
-        self.order_page.select_expiry_year("2025")
-        self.order_page.set_cvv("955")
-        self.order_page.set_cardholder_name("Israel Cohen")
-        self.order_page.set_id_number_card("0356998")
+        self.order_page.set_card_number(self.config["payment"]["credit_card"]["card_number"])
+        self.order_page.select_expiry_month(self.config["payment"]["credit_card"]["expiry_month"])
+        self.order_page.select_expiry_year(self.config["payment"]["credit_card"]["expiry_year"])
+        self.order_page.set_cvv(self.config["payment"]["credit_card"]["cvv"])
+        self.order_page.set_cardholder_name(self.config["payment"]["credit_card"]["cardholder_name"])
+        self.order_page.set_id_number_card(self.config["payment"]["credit_card"]["id_number"])
 
         self.order_page.switch_to_default_content()
         logging.info("Booking flow completed after flight selection")
@@ -384,12 +394,12 @@ class FattalTests(TestCase):
             self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.order_page.switch_to_payment_iframe()
-        self.order_page.set_card_number("4580080111866879")
-        self.order_page.select_expiry_month("08")
-        self.order_page.select_expiry_year("2025")
-        self.order_page.set_cvv("955")
-        self.order_page.set_cardholder_name("Israel Cohen")
-        self.order_page.set_id_number_card("0356998")
+        self.order_page.set_card_number(self.config["payment"]["credit_card"]["card_number"])
+        self.order_page.select_expiry_month(self.config["payment"]["credit_card"]["expiry_month"])
+        self.order_page.select_expiry_year(self.config["payment"]["credit_card"]["expiry_year"])
+        self.order_page.set_cvv(self.config["payment"]["credit_card"]["cvv"])
+        self.order_page.set_cardholder_name(self.config["payment"]["credit_card"]["cardholder_name"])
+        self.order_page.set_id_number_card(self.config["payment"]["credit_card"]["id_number"])
         self.order_page.switch_to_default_content()
 
         logging.info(" Booking flow completed (test mode)")
@@ -441,12 +451,12 @@ class FattalTests(TestCase):
             self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.order_page.switch_to_payment_iframe()
-        self.order_page.set_card_number("4580080111866879")
-        self.order_page.select_expiry_month("08")
-        self.order_page.select_expiry_year("2025")
-        self.order_page.set_cvv("955")
-        self.order_page.set_cardholder_name("Israel Cohen")
-        self.order_page.set_id_number_card("0356998")
+        self.order_page.set_card_number(self.config["payment"]["credit_card"]["card_number"])
+        self.order_page.select_expiry_month(self.config["payment"]["credit_card"]["expiry_month"])
+        self.order_page.select_expiry_year(self.config["payment"]["credit_card"]["expiry_year"])
+        self.order_page.set_cvv(self.config["payment"]["credit_card"]["cvv"])
+        self.order_page.set_cardholder_name(self.config["payment"]["credit_card"]["cardholder_name"])
+        self.order_page.set_id_number_card(self.config["payment"]["credit_card"]["id_number"])
         self.order_page.switch_to_default_content()
 
         logging.info("Booking flow completed (test mode)")
@@ -524,7 +534,7 @@ class FattalTests(TestCase):
             try:
                 self.take_screenshot("test_eilat_flight")
             except Exception:
-                logging.warning("📸 Couldn't capture screenshot due to earlier failure.")
+                logging.warning("Couldn't capture screenshot due to earlier failure.")
             raise
 
     def test_eilat(self):

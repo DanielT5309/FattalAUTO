@@ -24,22 +24,22 @@ class FattalSearchResultPageMobile:
         os.makedirs(screenshot_dir, exist_ok=True)
         path = os.path.join(screenshot_dir, f"{name}_{timestamp}.png")
         self.driver.save_screenshot(path)
-        logging.error(f"📸 Screenshot saved: {path}")
+        logging.error(f"Screenshot saved: {path}")
 
     def wait_for_rooms_to_load(self):
         try:
-            logging.info("📲 ממתין לטעינת כרטיסי חדרים (מובייל)...")
+            logging.info("ממתין לטעינת כרטיסי חדרים (מובייל)...")
             WebDriverWait(self.driver, 30).until(
                 EC.presence_of_element_located(self.BOOK_ROOM_BUTTONS)
             )
-            logging.info("✅ כרטיסי חדרים נטענו.")
+            logging.info("כרטיסי חדרים נטענו.")
         except Exception as e:
-            logging.error(f"❌ כשל בטעינת כרטיסי חדרים במובייל: {e}")
+            logging.error(f"כשל בטעינת כרטיסי חדרים במובייל: {e}")
             self.take_screenshot("wait_for_rooms_failed")
             raise
 
     def click_show_prices_button(self):
-        logging.info("🔍 מחפש ולוחץ על כפתור 'הצג מחירים'...")
+        logging.info("מחפש ולוחץ על כפתור 'הצג מחירים'...")
 
         try:
             # Wait for any button that contains this text
@@ -49,15 +49,15 @@ class FattalSearchResultPageMobile:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", show_price_button)
             time.sleep(0.5)
             show_price_button.click()
-            logging.info("✅ כפתור 'הצג מחירים' נלחץ בהצלחה.")
+            logging.info("כפתור 'הצג מחירים' נלחץ בהצלחה.")
 
         except Exception as e:
             self.take_screenshot("show_prices_click_fail")
-            logging.error(f"❌ Failed to click 'הצג מחירים': {e}")
+            logging.error(f"Failed to click 'הצג מחירים': {e}")
             raise
 
     def click_first_show_prices_button(self):
-        logging.info("🔍 מחפש כפתורי 'הצג מחירים' במובייל...")
+        logging.info("מחפש כפתורי 'הצג מחירים' במובייל...")
 
         for attempt in range(3):
             try:
@@ -69,28 +69,28 @@ class FattalSearchResultPageMobile:
                     EC.element_to_be_clickable(self.SHOW_PRICES_BUTTONS)
                 )
 
-                logging.info(f"🧮 נמצאו {len(show_buttons)} כפתורי 'הצג מחירים'.")
+                logging.info(f"נמצאו {len(show_buttons)} כפתורי 'הצג מחירים'.")
                 show_buttons[0].click()
-                logging.info("✅ נלחץ כפתור 'הצג מחירים' הראשון.")
+                logging.info("נלחץ כפתור 'הצג מחירים' הראשון.")
                 return
             except Exception as e:
-                logging.warning(f"⌛ ניסיון {attempt + 1}: הכפתור עדיין לא מוכן. ממתין...")
+                logging.warning(f"ניסיון {attempt + 1}: הכפתור עדיין לא מוכן. ממתין...")
                 time.sleep(3)
 
         try:
             show_buttons = self.driver.find_elements(*self.SHOW_PRICES_BUTTONS)
             if show_buttons:
                 self.driver.execute_script("arguments[0].click();", show_buttons[0])
-                logging.info("⚙️ כפתור 'הצג מחירים' נלחץ באמצעות JS.")
+                logging.info("כפתור 'הצג מחירים' נלחץ באמצעות JS.")
             else:
-                raise Exception("❌ כפתור 'הצג מחירים' לא נמצא.")
+                raise Exception("כפתור 'הצג מחירים' לא נמצא.")
         except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על 'הצג מחירים': {e}")
+            logging.error(f"שגיאה בלחיצה על 'הצג מחירים': {e}")
             self.take_screenshot("show_prices_button_fallback_error")
             raise
 
     def click_book_room_button(self):
-        logging.info("🏨 מחפש ולוחץ על כפתור 'להזמנת חדר'...")
+        logging.info("מחפש ולוחץ על כפתור 'להזמנת חדר'...")
 
         try:
             book_buttons = WebDriverWait(self.driver, 15).until(
@@ -103,17 +103,17 @@ class FattalSearchResultPageMobile:
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_button)
                 time.sleep(0.4)
                 self.driver.execute_script("arguments[0].click();", visible_button)
-                logging.info("✅ נלחץ כפתור 'להזמנת חדר' בהצלחה.")
+                logging.info("נלחץ כפתור 'להזמנת חדר' בהצלחה.")
             else:
-                raise Exception("❌ No visible 'להזמנת חדר' button found.")
+                raise Exception("No visible 'להזמנת חדר' button found.")
 
         except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר': {e}")
+            logging.error(f"שגיאה בלחיצה על 'להזמנת חדר': {e}")
             self.take_screenshot("book_room_button_error")
             raise
 
     def wait_for_prices_to_load(self):
-        logging.info("⏳ ממתין להופעת כפתורי מחירים...")
+        logging.info("ממתין להופעת כפתורי מחירים...")
 
         try:
             WebDriverWait(self.driver, 20).until(
@@ -122,9 +122,9 @@ class FattalSearchResultPageMobile:
             WebDriverWait(self.driver, 10).until(
                 EC.visibility_of_element_located(self.ROOM_PRICE_LOADED)
             )
-            logging.info("✅ מחירי חדרים נטענו בהצלחה.")
+            logging.info("מחירי חדרים נטענו בהצלחה.")
         except Exception as e:
-            logging.error(f"❌ לא נמצאו מחירים תוך זמן סביר: {e}")
+            logging.error(f"לא נמצאו מחירים תוך זמן סביר: {e}")
             self.take_screenshot("wait_for_prices_timeout")
             raise
 
@@ -134,7 +134,7 @@ class FattalSearchResultPageMobile:
                 EC.presence_of_element_located((By.XPATH, "//h1[contains(text(),'לא נמצאו מלונות')]"))
             )
             if banner.is_displayed():
-                logging.warning("🚫 אין תוצאות חיפוש — לא נמצאו מלונות.")
+                logging.warning("אין תוצאות חיפוש — לא נמצאו מלונות.")
                 return True
             return False
         except:
@@ -142,11 +142,11 @@ class FattalSearchResultPageMobile:
 
     def click_show_prices_regional(self):
         """
-        📦 Regional flow: Tries to locate and click 'הצג מחירים' using JS once it's found.
+        Regional flow: Tries to locate and click 'הצג מחירים' using JS once it's found.
         Scrolls only when element exists. No unnecessary scrolling.
         """
         try:
-            logging.info("🔍 [REGIONAL] מחפש כפתור 'הצג מחירים'...")
+            logging.info("[REGIONAL] מחפש כפתור 'הצג מחירים'...")
 
             # Try to locate the element first
             WebDriverWait(self.driver, 90).until(
@@ -155,7 +155,7 @@ class FattalSearchResultPageMobile:
             buttons = self.driver.find_elements(By.XPATH, "//button[contains(text(),'הצג מחירים')]")
 
             if not buttons:
-                raise TimeoutException("❌ 'הצג מחירים' not found on the page.")
+                raise TimeoutException("'הצג מחירים' not found on the page.")
 
             target_btn = buttons[0]
 
@@ -165,40 +165,40 @@ class FattalSearchResultPageMobile:
 
             # Try clicking it via JS
             self.driver.execute_script("arguments[0].click();", target_btn)
-            logging.info("✅ נלחץ כפתור 'הצג מחירים' בהצלחה.")
+            logging.info("נלחץ כפתור 'הצג מחירים' בהצלחה.")
 
         except Exception as e:
             self.take_screenshot("click_show_prices_regional_fail")
-            logging.error(f"❌ [REGIONAL] Failed to click 'הצג מחירים': {e}")
+            logging.error(f"[REGIONAL] Failed to click 'הצג מחירים': {e}")
             raise
 
     def click_book_room_regional(self):
         """
-        🧳 Regional flow (with flights): Clicks the correct 'להזמנת חדר' button from price box layout.
+        Regional flow (with flights): Clicks the correct 'להזמנת חדר' button from price box layout.
         """
         try:
-            logging.info("🧭 [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...")
+            logging.info("[REGIONAL] Trying to click 'להזמנת חדר' from regional price container...")
 
             # Scroll & find all potential "book room" buttons inside regional container
             buttons = self.driver.find_elements(By.XPATH, "//button[contains(@id, 'room-price-button-choose-room')]")
 
             if not buttons:
-                raise Exception("❌ [REGIONAL] No 'להזמנת חדר' buttons found in price container.")
+                raise Exception("[REGIONAL] No 'להזמנת חדר' buttons found in price container.")
 
             for btn in buttons:
                 try:
                     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
                     WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable(btn))
                     btn.click()
-                    logging.info("✅ [REGIONAL] Clicked 'להזמנת חדר' successfully.")
+                    logging.info("[REGIONAL] Clicked 'להזמנת חדר' successfully.")
                     return
                 except Exception:
                     continue
 
-            raise Exception("❌ [REGIONAL] Couldn't click any 'להזמנת חדר' button after loop.")
+            raise Exception("[REGIONAL] Couldn't click any 'להזמנת חדר' button after loop.")
 
         except Exception as e:
             self.take_screenshot("click_book_room_regional_fail")
-            logging.error(f"❌ [REGIONAL] Failed to click regional 'להזמנת חדר': {e}")
+            logging.error(f"[REGIONAL] Failed to click regional 'להזמנת חדר': {e}")
             raise
 

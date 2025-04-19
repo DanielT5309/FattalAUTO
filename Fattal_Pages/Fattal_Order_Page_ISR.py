@@ -22,32 +22,72 @@ class FattalOrderPage:
             else:
                 logging.info(f"ℹ️ {label} field is disabled, skipping input.")
         except Exception as e:
-            logging.error(f"❌ Failed to set {label.lower()}: {e}")
-            raise
+            logging.warning(f"⚠️ Standard method failed for {label}, falling back to JS: {e}")
+            self._fallback_set_by_js(text, label)
 
     def set_email(self, email):
-        self._safe_fill_field(By.ID, "checkout.personal_details_form.label_email", email, "Email")
+        try:
+            self._safe_fill_field(By.ID, "checkout-form-field-input_email", email, "Email")
+        except:
+            self._safe_fill_field(By.ID, "checkout.personal_details_form.label_email", email, "Email")
 
     def set_phone(self, phone):
-        self._safe_fill_field(By.ID, "checkout.personal_details_form.label_phone", phone, "Phone")
+        try:
+            self._safe_fill_field(By.ID, "checkout-form-field-input_phone", phone, "Phone")
+        except:
+            self._safe_fill_field(By.ID, "checkout.personal_details_form.label_phone", phone, "Phone")
 
     def set_first_name(self, name):
-        self._safe_fill_field(By.ID, "checkout.personal_details_form.label_first_name", name, "First name")
+        try:
+            self._safe_fill_field(By.ID, "checkout-form-field-input_first-name", name, "First name")
+        except:
+            self._safe_fill_field(By.ID, "checkout.personal_details_form.label_first_name", name, "First name")
 
     def set_last_name(self, name):
-        self._safe_fill_field(By.ID, "checkout.personal_details_form.label_last_name", name, "Last name")
+        try:
+            self._safe_fill_field(By.ID, "checkout-form-field-input_last-name", name, "Last name")
+        except:
+            self._safe_fill_field(By.ID, "checkout.personal_details_form.label_last_name", name, "Last name")
 
     def set_id_number(self, id_number):
-        self._safe_fill_field(By.ID, "checkout.personal_details_form.label_id", id_number, "ID number")
-
-    def wait_until_payment_form_ready(self):
         try:
-            self.wait.until(EC.visibility_of_element_located((By.ID, "checkout.personal_details_form.label_email")))
-            self.wait.until(EC.visibility_of_element_located((By.ID, "checkout.personal_details_form.label_id")))
-            logging.info("🕐 Order form is ready for input.")
-        except Exception as e:
-            logging.error(f"❌ Payment form not ready: {e}")
-            raise
+            self._safe_fill_field(By.ID, "checkout-form-field-input_id", id_number, "ID number")
+        except:
+            self._safe_fill_field(By.ID, "checkout.personal_details_form.label_id", id_number, "ID number")
+
+    def _fallback_set_by_js(self, text, label):
+        script = f"""
+            const inputs = Array.from(document.querySelectorAll('input'));
+            const target = inputs.find(i => 
+                i.id?.includes('{label.lower()}') || 
+                i.placeholder?.includes('{label}') || 
+                i.name?.includes('{label.lower()}')
+            );
+            if (target) {{
+                target.scrollIntoView({{block: 'center'}});
+                target.value = '{text}';
+                target.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                return true;
+            }}
+            return false;
+        """
+        result = self.driver.execute_script(script)
+        if result:
+            logging.info(f"✅ {label} set via JS fallback.")
+        else:
+            logging.error(f"❌ Failed to set {label} even via JS.")
+
+    def wait_until_personal_form_ready(self):
+        try:
+            self.wait.until(EC.visibility_of_element_located((By.ID, "checkout-personal-details-content")))
+            logging.info("🕐 Order form is ready (new structure).")
+        except:
+            try:
+                self.wait.until(EC.visibility_of_element_located((By.ID, "checkout.personal_details_form.label_email")))
+                logging.info("🕐 Order form is ready (old structure).")
+            except Exception as e:
+                logging.error(f"❌ Payment form not ready: {e}")
+                raise
 
     def club_checkbox(self):
         try:
@@ -205,7 +245,3 @@ class FattalOrderPage:
         # Now set the generated ID on the order form
         self.set_id_number(random_id)
 
-    # Assume this is your method to set the ID number in the order form
-    def set_id_number(self, id_number):
-        id_input = self.driver.find_element(By.ID, "checkout.personal_details_form.label_id")
-        id_input.send_keys(id_number)

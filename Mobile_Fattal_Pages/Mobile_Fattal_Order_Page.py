@@ -75,10 +75,10 @@ class FattalOrderPageMobile:
                     el.send_keys("\ue003")
                     time.sleep(0.02)
                 el.send_keys(text)
-                logging.info(f"✅ [Mobile] {label} filled correctly with send_keys().")
+                logging.info(f" [Mobile] {label} filled correctly with send_keys().")
 
             except ElementNotInteractableException:
-                logging.warning(f"⚠️ Element not interactable: '{label}'. Using JS React fallback.")
+                logging.warning(f"⚠ Element not interactable: '{label}'. Using JS React fallback.")
 
                 react_fallback = """
                     var el = arguments[0];
@@ -100,31 +100,31 @@ class FattalOrderPageMobile:
             logging.error(f"❌ Failed to set {label}: {e}")
             raise
 
-    # ✅ FIELD METHODS WITH CORRECT INPUT IDs
-    # ✅ Set Email
+    #  FIELD METHODS WITH CORRECT INPUT IDs
+    #  Set Email
     def set_email(self, email):
         self._safe_fill_mobile_field(By.ID, "checkout-form-field-input_email", email, "Email")
 
-    # ✅ Set Phone
+    #  Set Phone
     def set_phone(self, phone):
         self._safe_fill_mobile_field(By.ID, "checkout-form-field-input_phone", phone, "Phone")
 
-    # ✅ Set First Name
+    #  Set First Name
     def set_first_name(self, first_name):
         self._safe_fill_mobile_field(By.ID, "checkout-form-field-input_first-name", first_name, "First Name")
 
-    # ✅ Set Last Name
+    #  Set Last Name
     def set_last_name(self, last_name):
         self._safe_fill_mobile_field(By.ID, "checkout-form-field-input_last-name", last_name, "Last Name")
 
-    # ✅ Set Israeli ID Number
+    #  Set Israeli ID Number
     def set_id_number(self, id_number):
         self._safe_fill_mobile_field(By.ID, "checkout-form-field-input_id", id_number, "ID Number")
 
-    # ✅ CLUB CHECKBOX
+    #  CLUB CHECKBOX
     def click_join_club_checkbox(self):
         try:
-            logging.info("📦 Clicking 'Join Club' checkbox (Mobile)...")
+            logging.info(" Clicking 'Join Club' checkbox (Mobile)...")
 
             # Try common patterns (can extend if needed)
             xpaths = [
@@ -299,15 +299,26 @@ class FattalOrderPageMobile:
             # ✅ Re-locate iframe before switching
             iframe = self.wait.until(EC.presence_of_element_located((By.ID, "paymentIframe")))
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
+            time.sleep(0.5)  # Small pause to ensure scrolling completes
             self.driver.switch_to.frame(iframe)
 
             # ✅ Locate and click submit
-            submit_btn = self.wait.until(EC.presence_of_element_located((By.ID, "submitBtn")))
+            submit_btn = self.wait.until(EC.element_to_be_clickable((By.ID, "submitBtn")))
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
-            time.sleep(0.3)
-            self.driver.execute_script("arguments[0].click();", submit_btn)
-
-            logging.info("✅ Payment submit button clicked successfully via JS.")
+            time.sleep(0.5)  # Small pause to ensure scrolling completes
+            
+            # Try multiple click methods for robustness
+            try:
+                # First try JavaScript click (most reliable for overlays)
+                self.driver.execute_script("arguments[0].click();", submit_btn)
+                logging.info("✅ Payment submit button clicked successfully via JS.")
+            except Exception as click_error:
+                logging.warning(f"⚠️ JS click failed, trying ActionChains: {click_error}")
+                # Try ActionChains as fallback
+                from selenium.webdriver.common.action_chains import ActionChains
+                actions = ActionChains(self.driver)
+                actions.move_to_element(submit_btn).click().perform()
+                logging.info("✅ Payment submit button clicked via ActionChains.")
 
         except Exception as e:
             self.take_screenshot("fail_submitBtn_click")
