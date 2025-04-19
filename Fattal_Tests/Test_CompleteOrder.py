@@ -414,9 +414,9 @@ class FattalTestsComplete(TestCase):
 
         try:
             self.order_page.click_submit_button()
-            logging.info("✅ Submit button clicked successfully.")
+            logging.info(" Submit button clicked successfully.")
         except Exception as e:
-            logging.error(f"❌ Failed to click submit button: {e}")
+            logging.error(f" Failed to click submit button: {e}")
             self.take_screenshot("submit_click_failure")
             raise
 
@@ -425,9 +425,9 @@ class FattalTestsComplete(TestCase):
                 EC.visibility_of_element_located(
                     (By.XPATH, "//h1[contains(text(), 'אישור') or contains(text(), 'תודה')]"))
             )
-            logging.info("🎉 Confirmation page loaded.")
+            logging.info(" Confirmation page loaded.")
         except:
-            logging.warning("⚠️ Confirmation page not found yet. Continuing anyway.")
+            logging.warning(" Confirmation page not found yet. Continuing anyway.")
 
     def complete_booking_flow(self, hotel_name, adults, children, infants):
         random_id = self.order_page.generate_israeli_id()
@@ -472,9 +472,9 @@ class FattalTestsComplete(TestCase):
 
         try:
             self.order_page.click_submit_button()
-            logging.info("✅ Submit button clicked successfully.")
+            logging.info(" Submit button clicked successfully.")
         except Exception as e:
-            logging.error(f"❌ Failed to click submit button: {e}")
+            logging.error(f" Failed to click submit button: {e}")
             self.take_screenshot("submit_click_failure")
             raise
 
@@ -525,9 +525,9 @@ class FattalTestsComplete(TestCase):
 
         try:
             self.order_page.click_submit_button()
-            logging.info("✅ Submit button clicked successfully.")
+            logging.info(" Submit button clicked successfully.")
         except Exception as e:
-            logging.error(f"❌ Failed to click submit button: {e}")
+            logging.error(f" Failed to click submit button: {e}")
             self.take_screenshot("submit_click_failure")
             raise
 
@@ -560,7 +560,7 @@ class FattalTestsComplete(TestCase):
 
         self.complete_booking_flow_club_checkbox(hotel_name, adults, children, infants)
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
 
     def test_eilat_flight(self):
         hotel_name = "אילת,ישראל"
