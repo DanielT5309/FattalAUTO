@@ -20,3 +20,4 @@ config.json
 
 # Ignore screenshots
 *.png
+Fattal_Tests/Screenshots/
