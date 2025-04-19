@@ -25,30 +25,38 @@ import io
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import sys
-import json
-import time
-from selenium.webdriver.common.action_chains import ActionChains
-
+from dotenv import load_dotenv
 class FattalTestsComplete(TestCase):
     def setUp(self):
+        load_dotenv()
+
         options = webdriver.ChromeOptions()
         options.add_argument("--force-device-scale-factor=0.75")
 
         self.test_start_time = datetime.now()
         self.log_stream = io.StringIO()
 
-        # Calculate base dir to Fattal_Tests (where test_fattal.py lives)
+        # Base dir for logs/screenshots/etc.
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Load configuration
-        try:
-            with open(os.path.join(self.base_dir, "config.json"), encoding="utf-8") as f:
-                self.config = json.load(f)
-                logging.info("Configuration loaded successfully")
-        except Exception as e:
-            logging.error(f"Failed to load configuration: {e}")
-            self.config = {}
+        # Load default guest from .env
+        self.default_guest = {
+            "email": os.getenv("DEFAULT_EMAIL"),
+            "phone": os.getenv("DEFAULT_PHONE"),
+            "first_name": os.getenv("DEFAULT_FIRST_NAME"),
+            "last_name": os.getenv("DEFAULT_LAST_NAME")
+        }
 
+        self.payment_card = {
+            "card_number": os.getenv("PAYMENT_CARD_NUMBER"),
+            "cardholder_name": os.getenv("PAYMENT_CARDHOLDER_NAME"),
+            "expiry_month": os.getenv("PAYMENT_EXPIRY_MONTH"),
+            "expiry_year": os.getenv("PAYMENT_EXPIRY_YEAR"),
+            "cvv": os.getenv("PAYMENT_CVV"),
+            "id_number": os.getenv("PAYMENT_ID_NUMBER")
+        }
+
+        # Reset logging
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
 
@@ -69,12 +77,15 @@ class FattalTestsComplete(TestCase):
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
 
+        # Page object setup
         self.main_page = FattalMainPage(self.driver)
         self.toolbar = FattalToolBar(self.driver)
         self.search_result = FattalSearchResultPage(self.driver)
         self.order_page = FattalOrderPage(self.driver)
         self.flight_page = FattalFlightOrderPage(self.driver)
         self.confirm_page = FattalConfirmPage(self.driver)
+
+        # Start performance marker
         self.driver.execute_script("window.performance.mark('selenium-start')")
 
     def retry_flight_search_if_no_results(self, hotel_name):
@@ -312,6 +323,19 @@ class FattalTestsComplete(TestCase):
         self._resultForDoCleanups = result
         return super().run(result)
 
+    def fill_payment_details(self):
+        """
+            Fills in credit card payment form fields from self.payment_card inside iframe context.
+        """
+        self.order_page.switch_to_payment_iframe()
+        self.order_page.set_card_number(self.payment_card["card_number"])
+        self.order_page.select_expiry_month(self.payment_card["expiry_month"])
+        self.order_page.select_expiry_year(self.payment_card["expiry_year"])
+        self.order_page.set_cvv(self.payment_card["cvv"])
+        self.order_page.set_cardholder_name(self.payment_card["cardholder_name"])
+        self.order_page.set_id_number_card(self.payment_card["id_number"])
+        self.order_page.switch_to_default_content()
+
     def take_screenshot(self, test_method_name):
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
@@ -356,23 +380,17 @@ class FattalTestsComplete(TestCase):
             logging.info("Hotel search results returned.")
 
     def complete_booking_post_flight(self):
-        # Make sure we’re not stuck inside an iframe
         self.order_page.switch_to_default_content()
-
-        # ✅ Use the robust form readiness check
         self.order_page.wait_until_personal_form_ready()
 
-        # 🧠 Generate valid Israeli ID for booking
         random_id = self.order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
-        # ✅ Guest details (could be randomized or from config)
         self.entered_email = "chenttedgui@gmail.com"
         self.entered_phone = "0544531600"
         self.entered_first_name = "חן"
         self.entered_last_name = "טסט"
 
-        # Fill in the form
         self.order_page.set_email(self.entered_email)
         self.order_page.set_phone(self.entered_phone)
         self.order_page.set_first_name(self.entered_first_name)
@@ -380,8 +398,6 @@ class FattalTestsComplete(TestCase):
         self.order_page.set_id_number(random_id)
 
         self.order_page.click_terms_approval_checkbox_js()
-
-        # Add optional special requests and room preferences
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("טקסט לדוגמא .....")
@@ -394,40 +410,16 @@ class FattalTestsComplete(TestCase):
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
-        # Payment iframe actions
-        self.order_page.switch_to_payment_iframe()
-        payment = self.config["payment"]["credit_card"]
-        self.order_page.set_card_number(payment["card_number"])
-        self.order_page.select_expiry_month(payment["expiry_month"])
-        self.order_page.select_expiry_year(payment["expiry_year"])
-        self.order_page.set_cvv(payment["cvv"])
-        self.order_page.set_cardholder_name(payment["cardholder_name"])
-        self.order_page.set_id_number_card(payment["id_number"])
+        self.fill_payment_details()
 
-        # ✅ Click submit button with scroll + fallback
         try:
-            submit_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "submitBtn"))
-            )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
-            time.sleep(0.5)
-
-            try:
-                self.driver.execute_script("arguments[0].click();", submit_btn)
-                logging.info("Clicked 'בצע תשלום' button via JavaScript")
-            except Exception as js_click_error:
-                logging.warning(f"JS click failed, trying ActionChains: {js_click_error}")
-                ActionChains(self.driver).move_to_element(submit_btn).click().perform()
-                logging.info("Clicked 'בצע תשלום' button via ActionChains")
-
+            self.order_page.click_submit_button()
+            logging.info("✅ Submit button clicked successfully.")
         except Exception as e:
             logging.error(f"❌ Failed to click submit button: {e}")
+            self.take_screenshot("submit_click_failure")
             raise
 
-        self.order_page.switch_to_default_content()
-        logging.info("📦 Booking flow completed and submit clicked (post-flight)")
-
-        # Optional: Wait for confirmation page
         try:
             WebDriverWait(self.driver, 25).until(
                 EC.visibility_of_element_located(
@@ -438,8 +430,7 @@ class FattalTestsComplete(TestCase):
             logging.warning("⚠️ Confirmation page not found yet. Continuing anyway.")
 
     def complete_booking_flow(self, hotel_name, adults, children, infants):
-        # Generate a random Israeli ID here and set it
-        random_id = self.order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        random_id = self.order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
         self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
@@ -451,28 +442,21 @@ class FattalTestsComplete(TestCase):
         self.search_result.click_first_show_prices()
         self.search_result.click_first_book_room()
 
-        self.order_page.switch_to_default_content()
-
         self.order_page.wait_until_personal_form_ready()
 
-        # 📝 Hardcode guest details for now
-        guest = self.config["default_guest"]
+        guest = self.default_guest
         self.order_page.set_email(guest["email"])
         self.order_page.set_phone(guest["phone"])
         self.order_page.set_first_name(guest["first_name"])
         self.order_page.set_last_name(guest["last_name"])
         self.order_page.set_id_number(random_id)
 
-        # For logging/export
         self.entered_email = guest["email"]
         self.entered_first_name = guest["first_name"]
         self.entered_last_name = guest["last_name"]
 
-        #  Toggle approval
         self.order_page.click_terms_approval_checkbox_js()
         self.order_page.expand_special_requests_section()
-
-        #  Write special requests
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
 
@@ -484,38 +468,15 @@ class FattalTestsComplete(TestCase):
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
-        self.order_page.switch_to_payment_iframe()
-        self.order_page.set_card_number(self.config["payment"]["credit_card"]["card_number"])
-        self.order_page.select_expiry_month(self.config["payment"]["credit_card"]["expiry_month"])
-        self.order_page.select_expiry_year(self.config["payment"]["credit_card"]["expiry_year"])
-        self.order_page.set_cvv(self.config["payment"]["credit_card"]["cvv"])
-        self.order_page.set_cardholder_name(self.config["payment"]["credit_card"]["cardholder_name"])
-        self.order_page.set_id_number_card(self.config["payment"]["credit_card"]["id_number"])
+        self.fill_payment_details()
 
-        # 🔥 Click the actual button here - using a more robust approach
         try:
-            submit_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "submitBtn"))
-            )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
-            time.sleep(0.5)  # Small pause to ensure scrolling completes
-            
-            # Try JavaScript click first (most reliable for overlays)
-            try:
-                self.driver.execute_script("arguments[0].click();", submit_btn)
-                logging.info("Clicked 'בצע תשלום' button via JavaScript")
-            except Exception as click_error:
-                logging.warning(f"JS click failed, trying ActionChains: {click_error}")
-                # Try ActionChains as fallback
-                actions = ActionChains(self.driver)
-                actions.move_to_element(submit_btn).click().perform()
-                logging.info("Clicked 'בצע תשלום' button via ActionChains")
+            self.order_page.click_submit_button()
+            logging.info("✅ Submit button clicked successfully.")
         except Exception as e:
-            logging.error(f"Failed to click submit button: {e}")
+            logging.error(f"❌ Failed to click submit button: {e}")
+            self.take_screenshot("submit_click_failure")
             raise
-
-        self.order_page.switch_to_default_content()
-        logging.info("Booking flow completed and submit clicked (test mode)")
 
     def complete_booking_flow_club_checkbox(self, hotel_name, adults, children, infants):
         self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
@@ -528,21 +489,20 @@ class FattalTestsComplete(TestCase):
         self.search_result.click_first_book_room()
 
         self.order_page.switch_to_default_content()
-
         self.order_page.wait_until_personal_form_ready()
         self.order_page.club_checkbox()
 
         random_id = self.order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
-        guest = self.config["default_guest"]
+        guest = self.default_guest
+
         self.order_page.set_email(guest["email"])
         self.order_page.set_phone(guest["phone"])
         self.order_page.set_first_name(guest["first_name"])
         self.order_page.set_last_name(guest["last_name"])
         self.order_page.set_id_number(random_id)
 
-        # For logging/export
         self.entered_email = guest["email"]
         self.entered_first_name = guest["first_name"]
         self.entered_last_name = guest["last_name"]
@@ -561,38 +521,15 @@ class FattalTestsComplete(TestCase):
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
-        self.order_page.switch_to_payment_iframe()
-        self.order_page.set_card_number(self.config["payment"]["credit_card"]["card_number"])
-        self.order_page.select_expiry_month(self.config["payment"]["credit_card"]["expiry_month"])
-        self.order_page.select_expiry_year(self.config["payment"]["credit_card"]["expiry_year"])
-        self.order_page.set_cvv(self.config["payment"]["credit_card"]["cvv"])
-        self.order_page.set_cardholder_name(self.config["payment"]["credit_card"]["cardholder_name"])
-        self.order_page.set_id_number_card(self.config["payment"]["credit_card"]["id_number"])
+        self.fill_payment_details()
 
-        #  Click submit button using the same robust approach
         try:
-            submit_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "submitBtn"))
-            )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
-            time.sleep(0.5)  # Small pause to ensure scrolling completes
-            
-            # Try JavaScript click first (most reliable for overlays)
-            try:
-                self.driver.execute_script("arguments[0].click();", submit_btn)
-                logging.info("Clicked 'בצע תשלום' button via JavaScript")
-            except Exception as click_error:
-                logging.warning(f"JS click failed, trying ActionChains: {click_error}")
-                # Try ActionChains as fallback
-                actions = ActionChains(self.driver)
-                actions.move_to_element(submit_btn).click().perform()
-                logging.info("Clicked 'בצע תשלום' button via ActionChains")
+            self.order_page.click_submit_button()
+            logging.info("✅ Submit button clicked successfully.")
         except Exception as e:
-            logging.error(f"Failed to click submit button: {e}")
+            logging.error(f"❌ Failed to click submit button: {e}")
+            self.take_screenshot("submit_click_failure")
             raise
-
-        self.order_page.switch_to_default_content()
-        logging.info(" Booking flow completed and submit clicked (club flow)")
 
     def test_anonymous_no_login(self):
         hotel_name = "לאונרדו נגב, באר שבע"
@@ -663,7 +600,7 @@ class FattalTestsComplete(TestCase):
                 self.flight_page.click_continue_button()
 
             #  Booking flow continues only if everything succeeded
-            #self.complete_booking_post_flight()
+            self.complete_booking_post_flight()
             #self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
 
         except Exception as e:
@@ -741,7 +678,6 @@ class FattalTestsComplete(TestCase):
         self.main_page.select_next_month_date_range()
 
         adults, children, infants = 2, 1, 0
-
         self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
         logging.info(f"🎯 Guests: {adults} adults, {children} children, {infants} infants")
 
@@ -768,7 +704,7 @@ class FattalTestsComplete(TestCase):
         self.entered_first_name = random_first_name
         self.entered_last_name = random_last_name
 
-        # Fill form fields
+        # Fill guest info
         self.order_page.set_email(random_email)
         self.order_page.set_phone(random_phone)
         self.order_page.set_first_name(random_first_name)
@@ -789,8 +725,8 @@ class FattalTestsComplete(TestCase):
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
-        # Payment section (dry-run)
-        card_number = self.config["payment"]["credit_card"]["card_number"]
+        # Random payment data — dry-run style
+        card_number = fake.credit_card_number(card_type='visa')
         expiry_month = str(random.randint(1, 12)).zfill(2)
         expiry_year = str(random.randint(2025, 2028))
         cvv = str(random.randint(100, 999))
@@ -804,12 +740,11 @@ class FattalTestsComplete(TestCase):
         self.order_page.set_cvv(cvv)
         self.order_page.set_cardholder_name(cardholder_name)
         self.order_page.set_id_number_card(card_id_number)
-
-        # 💡 DO NOT click submit — test ends here
         self.order_page.switch_to_default_content()
+
         logging.info("🛑 Test completed before payment (dry-run mode)")
 
-        # Still provide dummy confirmation data for test framework
+        # Dummy result for logging system
         self.confirmation_result = {
             "order_number": "[DRY-RUN]",
             "email": self.entered_email,

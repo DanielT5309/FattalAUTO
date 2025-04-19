@@ -1,5 +1,5 @@
 import random
-from selenium.webdriver.support.ui import Select
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -190,9 +190,52 @@ class FattalOrderPage:
     def set_id_number_card(self, id_number):
         self._safe_fill_field(By.ID, "id_number_input", id_number, "Card ID number")
 
-    def get_submit_button(self):
-        button = self.wait.until(EC.element_to_be_clickable((By.ID, "submitBtn")))
-        return button.click()
+    def click_submit_button(self):
+        try:
+            logging.info(" Trying to click the payment submit button inside iframe...")
+
+            # Re-locate and switch into the iframe
+            iframe = self.wait.until(EC.presence_of_element_located((By.ID, "paymentIframe")))
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
+            self.driver.switch_to.frame(iframe)
+            logging.info(" Switched into iframe.")
+
+            # Wait for the button with retry logic
+            retries = 3
+            for attempt in range(retries):
+                try:
+                    submit_btn = WebDriverWait(self.driver, 10).until(
+                        EC.presence_of_element_located((By.ID, "submitBtn"))
+                    )
+                    logging.info(f" Found submit button on attempt {attempt + 1}")
+                    break
+                except TimeoutException as e:
+                    logging.warning(f" Attempt {attempt + 1} failed — retrying...")
+            else:
+                raise TimeoutException(" Submit button not found after retries.")
+
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+
+            # Try JS click first
+            try:
+                self.driver.execute_script("arguments[0].click();", submit_btn)
+                logging.info(" Payment submit button clicked via JS.")
+            except Exception as js_error:
+                logging.warning(f" JS click failed: {js_error}")
+                try:
+                    from selenium.webdriver.common.action_chains import ActionChains
+                    ActionChains(self.driver).move_to_element(submit_btn).click().perform()
+                    logging.info(" Payment submit button clicked via ActionChains.")
+                except Exception as ac_error:
+                    raise Exception(f" Both JS and ActionChains failed: {ac_error}")
+
+        except Exception as final_error:
+            logging.error(f" Failed to click submit button: {final_error}")
+            raise Exception(f" Submit click failed completely: {final_error}")
+
+        finally:
+            self.driver.switch_to.default_content()
+            logging.info(" Switched back to main content after payment submission.")
 
     def expand_special_requests_section(self):
         try:

@@ -23,17 +23,13 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
-import json
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-import time
 from selenium.webdriver.support.ui import Select
-
+from dotenv import load_dotenv
 class FattalTests(TestCase):
     def setUp(self):
+        load_dotenv()
         self.log_stream = io.StringIO()
-        with open("config.json", encoding="utf-8") as f:
-            self.users = json.load(f)
         # Reset logging configuration
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -70,11 +66,26 @@ class FattalTests(TestCase):
             "configuration": "mobile"
         })
         self.driver.set_window_rect(x=540, y=0, width=420, height=800)
-        env_config = self.users.get("environment", {})
-        active_key = env_config.get("active", "prod_url")
-        base_url = env_config.get(active_key, "https://www.fattal.co.il/")
+        active_key = os.getenv("ENV_ACTIVE", "ENV_PROD_URL")
+        base_url = os.getenv(active_key, "https://www.fattal.co.il/")
         self.driver.get(base_url)
         logging.info(f"Opened environment URL: {base_url}")
+        # Load defaults from .env
+        self.default_guest = {
+            "email": os.getenv("DEFAULT_EMAIL"),
+            "phone": os.getenv("DEFAULT_PHONE"),
+            "first_name": os.getenv("DEFAULT_FIRST_NAME"),
+            "last_name": os.getenv("DEFAULT_LAST_NAME")
+        }
+
+        self.payment_card = {
+            "card_number": os.getenv("PAYMENT_CARD_NUMBER"),
+            "cardholder_name": os.getenv("PAYMENT_CARDHOLDER_NAME"),
+            "expiry_month": os.getenv("PAYMENT_EXPIRY_MONTH"),
+            "expiry_year": os.getenv("PAYMENT_EXPIRY_YEAR"),
+            "cvv": os.getenv("PAYMENT_CVV"),
+            "id_number": os.getenv("PAYMENT_ID_NUMBER")
+        }
 
         # Page object initialization
         self.mobile_main_page = FattalMainPageMobile(self.driver)
@@ -307,16 +318,12 @@ class FattalTests(TestCase):
         Fills payment details using the credit card information from config.json
         """
         try:
-            # Get the credit card details from the config
-            credit_card = self.users.get("payment", {}).get("credit_card", {})
-            
-            # Extract the credit card values from config
-            card_number = credit_card.get("card_number")
-            cardholder_name = credit_card.get("cardholder_name")
-            expiry_month = credit_card.get("expiry_month")
-            expiry_year = credit_card.get("expiry_year")
-            cvv = credit_card.get("cvv")
-            id_number = credit_card.get("id_number")
+            card_number = self.payment_card["card_number"]
+            cardholder_name = self.payment_card["cardholder_name"]
+            expiry_month = self.payment_card["expiry_month"]
+            expiry_year = self.payment_card["expiry_year"]
+            cvv = self.payment_card["cvv"]
+            id_number = self.payment_card["id_number"]
             
             logging.info("Using credit card details from config.json")
             
@@ -412,13 +419,8 @@ class FattalTests(TestCase):
         #Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         #Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
+
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
@@ -459,13 +461,8 @@ class FattalTests(TestCase):
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
+
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
@@ -514,13 +511,7 @@ class FattalTests(TestCase):
         # Step 9: Payment form
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
@@ -562,13 +553,7 @@ class FattalTests(TestCase):
         # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
@@ -605,17 +590,12 @@ class FattalTests(TestCase):
         # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         # Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        for code in self.users["fattal_gifts"].values():
+        gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
+        for code in gifts:
             self.mobile_order_page.apply_checkout_coupon(code)
             sleep(1)  # Optional: wait between attempts
         # Step 7: Fill the iframe using config.json
@@ -634,14 +614,20 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            user = self.users["club_renew_user"]
+            user = {
+                "id": os.getenv("CLUB_RENEW_ID"),
+                "password": os.getenv("CLUB_RENEW_PASSWORD")
+            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
+            logging.warning(f"Login failed or already logged in: {e}")# For report logging only — because form fields are autofilled
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
+
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -685,7 +671,10 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            user = self.users["club_about_to_expire_user"]
+            user = {
+                "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
+                "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD")
+            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -693,6 +682,9 @@ class FattalTests(TestCase):
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
+        # For report logging only — because form fields are autofilled
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
 
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -736,7 +728,10 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            user = self.users["club_11night_user"]
+            user = {
+                "id": os.getenv("CLUB_11NIGHT_ID"),
+                "password": os.getenv("CLUB_11NIGHT_PASSWORD")
+            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -744,7 +739,9 @@ class FattalTests(TestCase):
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
-
+        # For report logging only — because form fields are autofilled
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
@@ -786,7 +783,10 @@ class FattalTests(TestCase):
         # Step 0: Club Login
         try:
             self.mobile_toolbar.open_login_menu()
-            user = self.users["club_regular_user"]
+            user = {
+                "id": os.getenv("CLUB_REGULAR_ID"),
+                "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -794,7 +794,9 @@ class FattalTests(TestCase):
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
-
+        # For report logging only — because form fields are autofilled
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
@@ -832,7 +834,10 @@ class FattalTests(TestCase):
     def test_mobile_booking_with_user_and_deals(self):
         try:
             self.mobile_toolbar.open_login_menu()
-            user = self.users["club_regular_user"]
+            user = {
+                "id": os.getenv("CLUB_REGULAR_ID"),
+                "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -840,6 +845,10 @@ class FattalTests(TestCase):
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
+        # ✅ For report logging only — because form fields are autofilled
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
+
         self.mobile_toolbar.click_deals_and_packages_tab()
         self.mobile_deals_page.click_view_all_deals_link()
         self.mobile_deals_page.click_view_more_deal_button()
@@ -953,13 +962,9 @@ class FattalTests(TestCase):
         #Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         #Order Details
-        guest = self.users["default_guest"]
-        self.fill_guest_details(
-            email=guest["email"],
-            phone=guest["phone"],
-            first_name=guest["first_name"],
-            last_name=guest["last_name"]
-        )
+        self.fill_guest_details(guest=self.default_guest)
+
+
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
