@@ -427,8 +427,8 @@ class FattalMainPageMobile:
             if not self.wait_for_room_modal_open(timeout=3):
                 raise TimeoutException("Room modal is not visible.")
 
-            xpath = "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"
-
+            xpath = "//*[contains(text(), 'המשך') and (self::button or self::div or self::span)]"
+            #xpath = "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"
             continue_btn = WebDriverWait(self.driver, 8).until(
                 EC.element_to_be_clickable((By.XPATH, xpath))
             )

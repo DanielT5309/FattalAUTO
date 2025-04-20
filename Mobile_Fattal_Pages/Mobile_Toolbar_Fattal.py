@@ -1,3 +1,5 @@
+import time
+
 from selenium.common import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
@@ -87,3 +89,76 @@ class FattalMobileToolBar:
             self.driver.save_screenshot("click_deals_tab_error.png")
             raise
 
+    def click_more_tab_mobile(self):
+        """
+        Clicks the 'עוד' (More) footer tab on mobile.
+        """
+        try:
+            logging.info("Trying to click on 'עוד' (More) tab in footer (mobile)...")
+
+            # Wait for the element to be present & clickable
+            more_tab = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "footer-mobile-tab_more"))
+            )
+
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", more_tab)
+            self.driver.execute_script("arguments[0].click();", more_tab)
+
+            logging.info(" Clicked 'עוד' (More) footer tab successfully.")
+
+        except Exception as e:
+            logging.error(f"Failed to click 'עוד' (More) tab: {e}")
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_path = f"click_more_tab_error_{timestamp}.png"
+            self.driver.save_screenshot(screenshot_path)
+            logging.error(f"Screenshot saved: {screenshot_path}")
+            raise
+
+    def click_contact_us_button_mobile(self):
+        """
+        Clicks the 'יצירת קשר' (Contact Us) tab under the 'More' footer menu in mobile view.
+        """
+        try:
+            logging.info("Trying to click on the correct 'יצירת קשר' button in mobile footer...")
+
+            xpath = ("//div[@id='footer-mobile-more-menu-main-content']"
+                     "//div[contains(text(), 'יצירת קשר') and contains(@class, 'sc-e27ad7fa-10')]")
+
+            contact_btn = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, xpath))
+            )
+
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", contact_btn)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", contact_btn)
+
+            logging.info("Clicked the correct 'יצירת קשר' (Contact Us) button successfully.")
+
+        except Exception as e:
+            logging.error(f"Failed to click correct 'יצירת קשר' button: {e}")
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_path = f"click_contact_us_correct_error_{timestamp}.png"
+            self.driver.save_screenshot(screenshot_path)
+            logging.error(f"Screenshot saved: {screenshot_path}")
+            raise
+
+    def click_fattal_friends_club_tab(self):
+        """
+        Clicks the 'מועדון פתאל וחברים' (Fattal & Friends Club) tab in the mobile footer menu.
+        """
+        try:
+            logging.info("Clicking 'מועדון פתאל וחברים' tab in mobile footer...")
+
+            tab_xpath = "//div[contains(@id, 'footer-mobile-more-menu-tab-inner') and contains(., 'מועדון פתאל וחברים')]"
+            tab = self.wait.until(EC.element_to_be_clickable((By.XPATH, tab_xpath)))
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tab)
+            time.sleep(0.3)
+            tab.click()
+
+            logging.info("'מועדון פתאל וחברים' tab clicked successfully.")
+        except Exception as e:
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            path = os.path.join("Fattal_Tests", "Screenshots", f"click_fattal_friends_fail_{timestamp}.png")
+            self.driver.save_screenshot(path)
+            logging.error(f"Failed to click 'מועדון פתאל וחברים' tab. Screenshot saved: {path}")
+            raise

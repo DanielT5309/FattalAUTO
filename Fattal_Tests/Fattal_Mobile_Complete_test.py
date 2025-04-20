@@ -1,18 +1,21 @@
 import io
 import logging
 import sys
+import time
 import traceback
 from time import sleep
 from unittest import TestCase
 from selenium import webdriver
 import random
-from Mobile_Fattal_Flight_Page import FattalFlightPageMobile
-from Mobile_Toolbar_Fattal import FattalMobileToolBar
-from Mobile_Fattal_Main_Page import FattalMainPageMobile
-from Mobile_Fattal_Search_Result_Page import FattalSearchResultPageMobile
-from Mobile_Fattal_Order_Page import FattalOrderPageMobile
-from Fattal_Mobile_ConfirmPage import FattalMobileConfirmPage
-from Fattal_Mobile_Deals_Packages import FattalDealsPageMobile
+from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
+from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
+from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
+from Mobile_Fattal_Pages.Mobile_Fattal_Search_Result_Page import FattalSearchResultPageMobile
+from Mobile_Fattal_Pages.Mobile_Fattal_Order_Page import FattalOrderPageMobile
+from Mobile_Fattal_Pages.Mobile_Fattal_ConfirmPage import FattalMobileConfirmPage
+from Mobile_Fattal_Pages.Mobile_Fattal_Deals_Packages import FattalDealsPageMobile
+from Mobile_Fattal_Pages.Mobile_Fattal_Customer_Contact_Page import FattalMobileCustomerSupport
+from Mobile_Fattal_Pages.Mobile_Fattal_Join_Club_Page import FattalMobileClubJoinPage
 import platform
 from datetime import datetime
 from faker import Faker
@@ -95,7 +98,8 @@ class FattalTests(TestCase):
         self.mobile_confirm = FattalMobileConfirmPage(self.driver)
         self.mobile_deals_page = FattalDealsPageMobile(self.driver)
         self.mobile_flight_page = FattalFlightPageMobile(self.driver)
-
+        self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
+        self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
     def post_test_logging(self, result):
         test_method = self._testMethodName
         has_failed = False
@@ -391,6 +395,113 @@ class FattalTests(TestCase):
         self.driver.save_screenshot(filename)
         logging.error(f" Screenshot taken: {filename}")
 
+    def test_join_fattal_club(self):
+        logging.info("Starting test: Join Fattal Club")
+
+        try:
+            # Step 1: Prepare data
+            guest = self.default_guest
+            first_name = guest["first_name"]
+            last_name = guest["last_name"]
+            email = guest["email"]
+            phone = guest["phone"]
+            birthdate = "01-01-1990"
+            password = "Aa123456"
+            id_number = self.mobile_order_page.generate_israeli_id()
+            logging.info(f"Generated ID for club registration: {id_number}")
+
+            # Step 2: Navigate to club join screen
+            self.mobile_toolbar.click_more_tab_mobile()
+            self.mobile_toolbar.click_fattal_friends_club_tab()
+            self.mobile_club_join_page.click_join_fattal_friends_button()
+
+            # Step 3: Fill form
+            self.mobile_club_join_page.fill_join_fattal_club_form(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone=phone,
+                id_number=id_number,
+                birthdate=birthdate,
+                password=password
+            )
+
+            # Step 4: Assert values
+            self.mobile_club_join_page.assert_input_value("שם פרטי", first_name)
+            self.mobile_club_join_page.assert_input_value("שם משפחה", last_name)
+            self.mobile_club_join_page.assert_input_value("כתובת דוא״ל", email)
+            self.mobile_club_join_page.assert_input_value("מספר טלפון נייד", phone)
+            self.mobile_club_join_page.assert_input_value("תאריך לידה", birthdate)
+            self.mobile_club_join_page.assert_input_value("מספר תעודת זהות", id_number)
+            self.mobile_club_join_page.assert_input_value("בחרו סיסמא", password)
+
+            logging.info("Fattal Club form filled and validated successfully.")
+            self.mobile_club_join_page.click_accept_terms_checkbox()
+            # Assuming you've already navigated to the payment step
+            self.fill_payment_details_from_config()
+            # Step 8: Switch BACK into iframe to click submit
+            self.mobile_order_page.click_payment_submit_button()
+            # Step 9 : Confirm and Assert
+            #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+            #assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
+        except Exception as e:
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_path = os.path.join("Fattal_Tests", "Screenshots", f"join_club_test_fail_{timestamp}.png")
+            self.driver.save_screenshot(screenshot_path)
+            logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
+            raise
+
+    def test_customer_support_ticket(self):
+        logging.info("Starting test: Customer Support Ticket")
+
+        try:
+            guest = self.default_guest
+            first_name = guest["first_name"]
+            last_name = guest["last_name"]
+            phone = guest["phone"]
+            email = guest["email"]
+            id_number = self.mobile_order_page.generate_israeli_id()
+            message = "בדיקה אוטומטית של צור קשר דרך המובייל"
+            hotel_name = "הרודס בוטיק אילת"
+
+            # Step 1: Open the contact form
+            self.mobile_toolbar.click_more_tab_mobile()
+            self.mobile_toolbar.click_contact_us_button_mobile()
+            self.mobile_customer_support.click_send_us_inquiry_button()
+
+            # Step 2: Select 'נושא' dropdown
+            self.mobile_customer_support.select_dropdown_by_label("נושא")
+
+            # Step 3: Fill form inputs
+            self.mobile_customer_support.fill_basic_contact_fields(
+                first_name, last_name, id_number, phone, email, message, accept_marketing=False
+            )
+
+            # Step 4: Select hotel name
+            self.mobile_customer_support.select_dropdown_by_label("שם המלון", option_text=hotel_name)
+
+            # Step 5: Verify form data
+            self.mobile_customer_support.assert_form_data_matches_input(
+                first_name=first_name,
+                last_name=last_name,
+                id_number=id_number,
+                phone=phone,
+                email=email,
+                message=message
+            )
+
+            logging.info("Test completed successfully.")
+
+        except Exception as e:
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+            os.makedirs(screenshot_dir, exist_ok=True)
+            screenshot_path = os.path.join(screenshot_dir, f"test_failure_{timestamp}.png")
+            self.driver.save_screenshot(screenshot_path)
+            logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
+            raise
+
     def test_mobile_booking_anonymous_user(self):
         hotel_name = "לאונרדו נגב, באר שבע"
         logging.info("Starting test: hotel search and booking flow")
@@ -566,7 +677,7 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_eilat_fattal_gift(self):
+    def test_mobile_booking_eilat_fattal_gift3(self):
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -606,7 +717,46 @@ class FattalTests(TestCase):
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+    def test_mobile_booking_eilat_fattal_gift1(self):
+        hotel_name = "אילת, ישראל"
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_region()
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead(stay_length = 5)
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
+        # Step 3: Search Vacation
+        self.mobile_main_page.click_room_continue_button(),
+        self.mobile_main_page.click_mobile_search_button()
+        # Step 5: Handle results
+        self.mobile_search_page.click_book_room_button()
+        self.mobile_search_page.click_show_prices_regional()
+        self.mobile_search_page.click_book_room_regional()
+        # Step 6 : Order Page
+        self.mobile_order_page.wait_until_personal_form_ready()
+        # Order Details
+        self.fill_guest_details(guest=self.default_guest)
 
+        self.mobile_order_page.set_id_number(random_id)
+        self.mobile_order_page.click_user_agreement_checkbox()
+        gifts = [os.getenv("GIFT1")]
+        for code in gifts:
+            self.mobile_order_page.apply_checkout_coupon(code)
+            sleep(1)  # Optional: wait between attempts
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9 : Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
     def test_mobile_booking_with_login_club_renew(self):
         hotel_name = "לאונרדו נגב, באר שבע"
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")

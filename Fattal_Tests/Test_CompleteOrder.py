@@ -6,12 +6,12 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from Fattal_Main_Page import FattalMainPage
-from Fattal_Tool_Bar import FattalToolBar
-from Fattal_Search_Result import FattalSearchResultPage
-from Fattal_Order_Page_ISR import FattalOrderPage
-from Fattal_Flight_OrderPage import FattalFlightOrderPage
-from Fattal_Confirmation_Page import FattalConfirmPage
+from Fattal_Pages.Fattal_Main_Page import FattalMainPage
+from Fattal_Pages.Fattal_Tool_Bar import FattalToolBar
+from Fattal_Pages.Fattal_Search_Result import FattalSearchResultPage
+from Fattal_Pages.Fattal_Order_Page_ISR import FattalOrderPage
+from Fattal_Pages.Fattal_Flight_OrderPage import FattalFlightOrderPage
+from Fattal_Pages.Fattal_Confirmation_Page import FattalConfirmPage
 import logging
 import platform
 from datetime import datetime
