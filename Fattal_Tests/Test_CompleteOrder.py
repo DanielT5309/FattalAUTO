@@ -73,7 +73,9 @@ class FattalTestsComplete(TestCase):
             sys.stdout.reconfigure(encoding="utf-8")
 
         self.driver = webdriver.Chrome(options=options)
-        self.driver.get("https://www.fattal.co.il/")
+        active_key = os.getenv("ENV_ACTIVE")
+        self.driver.get(active_key)
+        logging.info(f"Opened environment URL: {active_key}")
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
 

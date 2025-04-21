@@ -69,10 +69,9 @@ class FattalTests(TestCase):
             "configuration": "mobile"
         })
         self.driver.set_window_rect(x=540, y=0, width=420, height=800)
-        active_key = os.getenv("ENV_ACTIVE", "ENV_PROD_URL")
-        base_url = os.getenv(active_key, "https://www.fattal.co.il/")
-        self.driver.get(base_url)
-        logging.info(f"Opened environment URL: {base_url}")
+        active_key = os.getenv("ENV_ACTIVE")
+        self.driver.get(active_key)
+        logging.info(f"Opened environment URL: {active_key}")
         # Load defaults from .env
         self.default_guest = {
             "email": os.getenv("DEFAULT_EMAIL"),
