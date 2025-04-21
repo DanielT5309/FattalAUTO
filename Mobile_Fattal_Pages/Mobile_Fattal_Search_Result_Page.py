@@ -174,31 +174,41 @@ class FattalSearchResultPageMobile:
 
     def click_book_room_regional(self):
         """
-        Regional flow (with flights): Clicks the correct 'להזמנת חדר' button from price box layout.
+        Regional flow (with flights): Clicks the correct 'להזמנת חדר' button from price box layout,
+        with fallback selector and error-resilient behavior.
         """
         try:
             logging.info("[REGIONAL] Trying to click 'להזמנת חדר' from regional price container...")
 
-            # Scroll & find all potential "book room" buttons inside regional container
+            # Primary selector
             buttons = self.driver.find_elements(By.XPATH, "//button[contains(@id, 'room-price-button-choose-room')]")
 
+            # Fallback selector if primary yields nothing
             if not buttons:
-                raise Exception("[REGIONAL] No 'להזמנת חדר' buttons found in price container.")
+                logging.warning("[REGIONAL] No buttons found with primary selector. Trying fallback...")
+                buttons = self.driver.find_elements(By.XPATH, "//button[contains(text(), 'להזמנת חדר')]")
 
-            for btn in buttons:
+            if not buttons:
+                raise Exception("[REGIONAL] No 'להזמנת חדר' buttons found — both selectors failed.")
+
+            for idx, btn in enumerate(buttons):
                 try:
+                    logging.debug(f"[REGIONAL] Trying button index {idx}: {btn.get_attribute('outerHTML')[:100]}...")
                     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
                     WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable(btn))
                     btn.click()
                     logging.info("[REGIONAL] Clicked 'להזמנת חדר' successfully.")
                     return
-                except Exception:
+                except Exception as e:
+                    logging.warning(f"[REGIONAL] Failed to click button #{idx}: {e}")
                     continue
 
+            # If none succeeded
             raise Exception("[REGIONAL] Couldn't click any 'להזמנת חדר' button after loop.")
 
         except Exception as e:
             self.take_screenshot("click_book_room_regional_fail")
             logging.error(f"[REGIONAL] Failed to click regional 'להזמנת חדר': {e}")
             raise
+
 

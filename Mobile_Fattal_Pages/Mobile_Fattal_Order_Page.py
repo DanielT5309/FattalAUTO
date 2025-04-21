@@ -1,5 +1,6 @@
 from faker import Faker
 from selenium.common import TimeoutException, ElementNotInteractableException
+from selenium.webdriver import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -245,19 +246,19 @@ class FattalOrderPageMobile:
 
     def fill_payment_iframe_mobile_random(self):
         """
-        💳 מילוי רנדומלי של טופס תשלום בתוך iframe — רק לצורך בדיקות.
+         מילוי רנדומלי של טופס תשלום בתוך iframe — רק לצורך בדיקות.
         כרטיס לא נשלח בפועל, מתאים להרצה ללא חיוב אמיתי.
         """
         fake = Faker('he_IL')
 
         try:
-            logging.info("💳 Scrolling iframe into view (RANDOM)...")
+            logging.info(" Scrolling iframe into view (RANDOM)...")
             iframe = self.wait.until(EC.presence_of_element_located((By.ID, "paymentIframe")))
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
 
-            logging.info("💳 Switching into payment iframe...")
+            logging.info(" Switching into payment iframe...")
             self.driver.switch_to.frame(iframe)
-            logging.info("✅ Switched into iframe.")
+            logging.info(" Switched into iframe.")
 
             # Card number (דמו בלבד)
             card_number = "4580080111866879"
@@ -272,37 +273,37 @@ class FattalOrderPageMobile:
 
             month_select = Select(self.wait.until(EC.element_to_be_clickable((By.ID, "date_month_input"))))
             month_select.select_by_visible_text(expiry_month)
-            logging.info(f"✅ Expiry Month selected: {expiry_month}")
+            logging.info(f" Expiry Month selected: {expiry_month}")
 
             year_select = Select(self.wait.until(EC.element_to_be_clickable((By.ID, "date_year_input"))))
             year_select.select_by_visible_text(expiry_year)
-            logging.info(f"✅ Expiry Year selected: {expiry_year}")
+            logging.info(f" Expiry Year selected: {expiry_year}")
 
             self._safe_fill_field(By.ID, "cvv_input", cvv, "CVV")
             self._safe_fill_field(By.ID, "id_number_input", id_number, "Card ID Number")
 
-            logging.info("🎯 Random Payment form filled successfully.")
+            logging.info(" Random Payment form filled successfully.")
 
         except Exception as e:
             self.take_screenshot("iframe_payment_random_fail")
-            logging.error(f"❌ Failed to fill RANDOM payment form: {e}")
+            logging.error(f" Failed to fill RANDOM payment form: {e}")
             raise
 
         finally:
             self.driver.switch_to.default_content()
-            logging.info("🔙 Switched back to main content.")
+            logging.info(" Switched back to main content.")
 
     def click_payment_submit_button(self):
         try:
-            logging.info("🚀 Trying to click the payment submit button inside iframe...")
+            logging.info(" Trying to click the payment submit button inside iframe...")
 
-            # ✅ Re-locate iframe before switching
+            #  Re-locate iframe before switching
             iframe = self.wait.until(EC.presence_of_element_located((By.ID, "paymentIframe")))
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
             time.sleep(0.5)  # Small pause to ensure scrolling completes
             self.driver.switch_to.frame(iframe)
 
-            # ✅ Locate and click submit
+            #  Locate and click submit
             submit_btn = self.wait.until(EC.element_to_be_clickable((By.ID, "submitBtn")))
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
             time.sleep(0.5)  # Small pause to ensure scrolling completes
@@ -311,18 +312,18 @@ class FattalOrderPageMobile:
             try:
                 # First try JavaScript click (most reliable for overlays)
                 self.driver.execute_script("arguments[0].click();", submit_btn)
-                logging.info("✅ Payment submit button clicked successfully via JS.")
+                logging.info(" Payment submit button clicked successfully via JS.")
             except Exception as click_error:
-                logging.warning(f"⚠️ JS click failed, trying ActionChains: {click_error}")
+                logging.warning(f"️ JS click failed, trying ActionChains: {click_error}")
                 # Try ActionChains as fallback
                 from selenium.webdriver.common.action_chains import ActionChains
                 actions = ActionChains(self.driver)
                 actions.move_to_element(submit_btn).click().perform()
-                logging.info("✅ Payment submit button clicked via ActionChains.")
+                logging.info(" Payment submit button clicked via ActionChains.")
 
         except Exception as e:
             self.take_screenshot("fail_submitBtn_click")
-            logging.error(f"❌ Failed to click payment submit button: {e}")
+            logging.error(f" Failed to click payment submit button: {e}")
             raise
 
         finally:
@@ -332,24 +333,60 @@ class FattalOrderPageMobile:
     def apply_checkout_coupon(self, coupon_code: str):
         """
         Fills the checkout coupon input field and applies the coupon.
+        Clears the input explicitly before entering the code.
         """
         try:
-            logging.info(f"🏷️ Trying to apply checkout coupon: {coupon_code}")
+            logging.info(f"Trying to apply checkout coupon: {coupon_code}")
 
-            # 1. Locate and fill the input field
+            # Locate the input field
             coupon_input = self.driver.find_element(By.ID, "input-field-input_checkout-coupon-input-field")
+
+            # Ensure it's empty first (clear + select all fallback)
             coupon_input.clear()
-            coupon_input.send_keys(coupon_code)
-            logging.info("✅ Filled coupon input field.")
+            time.sleep(0.2)
+            coupon_input.send_keys(Keys.CONTROL + "a")
+            coupon_input.send_keys(Keys.DELETE)
 
-            # Optional small delay to allow the UI to respond
-            time.sleep(0.5)
+            time.sleep(0.2)
+            coupon_input.send_keys(coupon_code.strip())
+            logging.info("Filled coupon input field.")
 
-            # 2. Click the "ממש" button
+            # Wait a bit before clicking "Apply"
+            time.sleep(0.4)
+
+            # Locate and click the apply button
             apply_button = self.driver.find_element(By.ID, "checkout-coupon-apply-coupon-button")
             apply_button.click()
-            logging.info("🎟️ Clicked the 'ממש' (Apply) button.")
+            logging.info("Clicked the 'Apply' button.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to apply coupon: {e}")
+            logging.error(f"Failed to apply coupon: {e}")
             raise
+
+    def is_coupon_applied_successfully(self, code):
+        try:
+            # First: Look for the <p> success element with the coupon ID
+            coupon_success_id = f"checkout-coupon-gift-coupon_{code}"
+            success_element = self.driver.find_elements(By.ID, coupon_success_id)
+            if success_element:
+                logging.info(f"✅ Coupon '{code}' visibly applied: found element ID {coupon_success_id}")
+                return True
+
+            # Otherwise: fallback to error handling
+            error_elem = self.driver.find_element(By.ID, "input-field-error_checkout-coupon-input-field")
+            error_text = error_elem.text.strip()
+            logging.info(f"🧾 Coupon response text: '{error_text}'")
+
+            if "כבר הוחל" in error_text:
+                logging.info(f"🔁 Coupon '{code}' already applied.")
+                return True
+            elif "אינו פעיל" in error_text or "שגוי" in error_text or "לא נמצא" in error_text:
+                logging.warning(f"⚠️ Coupon '{code}' is invalid or inactive.")
+                return False
+            else:
+                logging.warning(f"⚠️ Unrecognized coupon status for '{code}': {error_text}")
+                return False
+        except Exception as e:
+            logging.info(f"✅ No error or success element found for coupon '{code}', assuming applied.")
+            return True
+

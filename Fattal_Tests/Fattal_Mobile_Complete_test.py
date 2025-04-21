@@ -678,84 +678,91 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_eilat_fattal_gift3(self):
         hotel_name = "אילת, ישראל"
-        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
-        # Step 1: City selection
+
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
-        # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead(stay_length = 5)
-        # Step 3: Room selection
+        self.mobile_main_page.select_date_range_two_months_ahead(stay_length=5)
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        # Step 3: Search Vacation
-        self.mobile_main_page.click_room_continue_button(),
+        self.mobile_main_page.click_room_continue_button()
         self.mobile_main_page.click_mobile_search_button()
-        # Step 5: Handle results
+
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
         self.mobile_search_page.click_book_room_regional()
-        # Step 6 : Order Page
-        self.mobile_order_page.wait_until_personal_form_ready()
-        # Order Details
-        self.fill_guest_details(guest=self.default_guest)
 
+        self.mobile_order_page.wait_until_personal_form_ready()
+        self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
-        for code in gifts:
-            self.mobile_order_page.apply_checkout_coupon(code)
-            sleep(1)  # Optional: wait between attempts
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
 
-        # Step 8: Switch BACK into iframe to click submit
+        # Apply all 3 gift codes
+        raw_gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
+        gifts = [code.strip() for code in raw_gifts if code and code.strip().isdigit()]
+        failed_gifts = []
+
+        for code in gifts:
+            logging.info(f"Applying gift coupon: '{code}'")
+            self.mobile_order_page.apply_checkout_coupon(code)
+            sleep(5)
+            if not self.mobile_order_page.is_coupon_applied_successfully(code):
+                logging.error(f"Gift code '{code}' was not applied successfully!")
+                failed_gifts.append(code)
+            else:
+                logging.info(f"Gift code '{code}' applied successfully.")
+
+        assert not failed_gifts, f"The following gift codes failed to apply: {', '.join(failed_gifts)}"
+
+        self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
     def test_mobile_booking_eilat_fattal_gift1(self):
         hotel_name = "אילת, ישראל"
-        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
-        # Step 1: City selection
+
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
-        # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead(stay_length = 5)
-        # Step 3: Room selection
+        self.mobile_main_page.select_date_range_two_months_ahead(stay_length=5)
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        # Step 3: Search Vacation
-        self.mobile_main_page.click_room_continue_button(),
+        self.mobile_main_page.click_room_continue_button()
         self.mobile_main_page.click_mobile_search_button()
-        # Step 5: Handle results
+
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
         self.mobile_search_page.click_book_room_regional()
-        # Step 6 : Order Page
-        self.mobile_order_page.wait_until_personal_form_ready()
-        # Order Details
-        self.fill_guest_details(guest=self.default_guest)
 
+        self.mobile_order_page.wait_until_personal_form_ready()
+        self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
-        gifts = [os.getenv("GIFT1")]
-        for code in gifts:
-            self.mobile_order_page.apply_checkout_coupon(code)
-            sleep(1)  # Optional: wait between attempts
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
 
-        # Step 8: Switch BACK into iframe to click submit
+        gift_code = os.getenv("GIFT1", "").strip()
+        assert gift_code and gift_code.isdigit(), "GIFT1 is missing or invalid in environment config"
+
+        logging.info(f"Applying single gift coupon: '{gift_code}'")
+        self.mobile_order_page.apply_checkout_coupon(gift_code)
+        sleep(5)
+
+        applied_successfully = self.mobile_order_page.is_coupon_applied_successfully(gift_code)
+        assert applied_successfully, f"Gift coupon '{gift_code}' failed to apply."
+
+        self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
     def test_mobile_booking_with_login_club_renew(self):
         hotel_name = "לאונרדו נגב, באר שבע"
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
