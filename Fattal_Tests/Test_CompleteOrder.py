@@ -78,6 +78,7 @@ class FattalTestsComplete(TestCase):
         logging.info(f"Opened environment URL: {active_key}")
         self.driver.maximize_window()
         self.driver.implicitly_wait(10)
+        self.default_hotel_name = os.getenv("DEFAULT_HOTEL_NAME")
 
         # Page object setup
         self.main_page = FattalMainPage(self.driver)
@@ -534,7 +535,8 @@ class FattalTestsComplete(TestCase):
             raise
 
     def test_anonymous_no_login(self):
-        hotel_name = "לאונרדו נגב, באר שבע"
+        hotel_name = self.default_hotel_name
+
         logging.info(" Starting test: hotel search and booking flow")
 
         self.main_page.deal_popup()
@@ -550,7 +552,8 @@ class FattalTestsComplete(TestCase):
         assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
 
     def test_anonymous_no_login_club_checkbox(self):
-        hotel_name = "לאונרדו נגב, באר שבע"
+        hotel_name = self.default_hotel_name
+
         logging.info(" Starting test: hotel search and booking flow")
 
         self.main_page.deal_popup()
@@ -632,7 +635,8 @@ class FattalTestsComplete(TestCase):
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
     def test_club_login(self):
-        hotel_name = "לאונרדו נגב, באר שבע"
+        hotel_name = self.default_hotel_name
+
         logging.info(" Starting test: hotel search and booking flow")
 
         # ✍️ Static test info
@@ -671,7 +675,8 @@ class FattalTestsComplete(TestCase):
 
     def test_full_random_no_login(self):
         fake = Faker('he_IL')
-        hotel_name = "לאונרדו נגב, באר שבע"
+        hotel_name = self.default_hotel_name
+
         logging.info("🚀 Starting FULL RANDOM anonymous booking test")
 
         self.main_page.deal_popup()

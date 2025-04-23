@@ -255,34 +255,25 @@ class FattalMainPage:
                 if len(valid_dates) < 4:
                     raise Exception("Not enough valid dates to form a 3-night stay.")
 
-                random.shuffle(valid_dates)  # Randomize the list for variety
-                for i in range(len(valid_dates) - 3):
-                    try:
-                        check_in = valid_dates[i]
-                        check_in_text = check_in.text
-                        check_in.click()
-                        time.sleep(0.5)
+                max_start_index = len(valid_dates) - 4
+                start_index = random.randint(0, max_start_index)
 
-                        # Re-fetch post DOM update
-                        valid_after_click = self.get_valid_date_buttons()
-                        if i + 3 >= len(valid_after_click):
-                            continue  # Try next index
+                check_in = valid_dates[start_index]
+                check_in_text = check_in.text
+                check_in.click()
+                time.sleep(0.5)
 
-                        check_out = valid_after_click[i + 3]
-                        check_out_text = check_out.text
-                        check_out.click()
+                valid_after_click = self.get_valid_date_buttons()
+                check_out = valid_after_click[start_index + 3]
+                check_out_text = check_out.text
+                check_out.click()
 
-                        self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                        logging.info(f"Selected random dates: {check_in_text} to {check_out_text}")
-                        return
-                    except Exception as inner_e:
-                        logging.warning(f"Failed attempt at index {i}: {inner_e}")
-                        continue
-
-                raise Exception("Could not find valid 4-day window in next month.")
+                self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                logging.info(f"Selected random dates: {check_in_text} to {check_out_text}")
 
             except Exception as e:
                 logging.error(f"Date selection failed: {e}")
+                self.take_screenshot("calendar_selection_fail")
                 raise
 
         def set_room_occupants(self, adults=2, children=0, infants=0):

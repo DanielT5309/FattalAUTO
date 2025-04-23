@@ -1,3 +1,4 @@
+import os
 import time
 
 from selenium.common import TimeoutException
@@ -116,30 +117,27 @@ class FattalMobileToolBar:
 
     def click_contact_us_button_mobile(self):
         """
-        Clicks the 'יצירת קשר' (Contact Us) tab under the 'More' footer menu in mobile view.
+        Clicks the 'יצירת קשר' (Contact Us) tab in the mobile footer using the known element ID.
         """
         try:
-            logging.info("Trying to click on the correct 'יצירת קשר' button in mobile footer...")
-
-            xpath = ("//div[@id='footer-mobile-more-menu-main-content']"
-                     "//div[contains(text(), 'יצירת קשר') and contains(@class, 'sc-e27ad7fa-10')]")
+            logging.info("Trying to click 'יצירת קשר' button in mobile footer using ID...")
 
             contact_btn = self.wait.until(
-                EC.element_to_be_clickable((By.XPATH, xpath))
+                EC.element_to_be_clickable((By.ID, "footer-mobile-more-menu-tab-headernull"))
             )
 
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", contact_btn)
             time.sleep(0.3)
             self.driver.execute_script("arguments[0].click();", contact_btn)
 
-            logging.info("Clicked the correct 'יצירת קשר' (Contact Us) button successfully.")
+            logging.info("✅ Clicked 'יצירת קשר' (Contact Us) button successfully by ID.")
 
         except Exception as e:
-            logging.error(f"Failed to click correct 'יצירת קשר' button: {e}")
+            logging.error(f"❌ Failed to click 'יצירת קשר' button by ID: {e}")
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_path = f"click_contact_us_correct_error_{timestamp}.png"
+            screenshot_path = f"screenshots/contact_us_click_error_{timestamp}.png"
             self.driver.save_screenshot(screenshot_path)
-            logging.error(f"Screenshot saved: {screenshot_path}")
+            logging.error(f"📸 Screenshot saved: {screenshot_path}")
             raise
 
     def click_fattal_friends_club_tab(self):

@@ -1,14 +1,15 @@
-from selenium.common import TimeoutException, StaleElementReferenceException
-from selenium.webdriver import ActionChains
-from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-import time
 import random
-import logging
-from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from selenium.common import TimeoutException, StaleElementReferenceException, MoveTargetOutOfBoundsException
+from selenium.webdriver import ActionChains
+from selenium import webdriver
+from datetime import datetime, date,timedelta
 import os
+import time
+import logging
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -81,14 +82,6 @@ class FattalMainPageMobile:
             self.take_screenshot("open_calendar_fail")
             raise
 
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    from selenium.webdriver.common.action_chains import ActionChains
-    import time
-    import random
-    import logging
-
     def select_date_range_two_months_ahead(self, stay_length=None):
         """
         Selects check-in and check-out dates from the 3rd calendar month shown (2 months ahead).
@@ -146,12 +139,129 @@ class FattalMainPageMobile:
             self.take_screenshot("calendar_selection_fail")
             raise
 
+    # def select_date_range_two_months_ahead(self, stay_length=None):
+    #     from datetime import timedelta
+    #
+    #     try:
+    #         logging.info("Starting full reset and date selection...")
+    #
+    #         # STEP 1: Dummy click to reset preselection
+    #         dummy_date = (date.today() + timedelta(days=4))
+    #         dummy_tile_id = f"search-engine-date-picker-mobile-tile{dummy_date.isoformat()}"
+    #
+    #         try:
+    #             dummy_tile = WebDriverWait(self.driver, 5).until(
+    #                 EC.element_to_be_clickable((By.ID, dummy_tile_id))
+    #             )
+    #             self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", dummy_tile)
+    #             time.sleep(0.5)
+    #
+    #             try:
+    #                 ActionChains(self.driver).move_to_element(dummy_tile).pause(0.3).click().perform()
+    #                 logging.info(f"Clicked dummy tile: {dummy_date.isoformat()} with ActionChains")
+    #             except Exception:
+    #                 self.driver.execute_script("arguments[0].click();", dummy_tile)
+    #                 logging.warning("Fallback: Clicked dummy tile with JS click")
+    #
+    #             time.sleep(1.5)  # Let the DOM update
+    #
+    #             WebDriverWait(self.driver, 6).until(
+    #                 lambda d: len(d.find_elements(By.CSS_SELECTOR, "button[aria-selected='true']")) >= 1
+    #             )
+    #             logging.info("Confirmed: dummy tile selected successfully")
+    #
+    #         except Exception as e:
+    #             logging.error(f"Dummy tile click failed: {e}")
+    #             self.take_screenshot("dummy_tile_click_fail")
+    #             raise
+    #
+    #         # STEP 2: Scroll to 3rd month and pick date range
+    #         months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
+    #         if len(months) < 3:
+    #             raise Exception("Calendar doesn't show 3 months — cannot proceed.")
+    #
+    #         target_month = months[2]
+    #         self.driver.execute_script("arguments[0].scrollIntoView({behavior:'smooth', block:'center'});",
+    #                                    target_month)
+    #         time.sleep(1.5)
+    #
+    #         valid_buttons = target_month.find_elements(By.XPATH, ".//button[not(@disabled)]")
+    #         if len(valid_buttons) < 8:
+    #             raise Exception("Not enough enabled date tiles to perform selection.")
+    #
+    #         stay_length = stay_length or random.randint(3, 5)
+    #         start_idx = random.randint(0, len(valid_buttons) - stay_length - 1)
+    #         checkin = valid_buttons[start_idx]
+    #         checkout = valid_buttons[start_idx + stay_length]
+    #
+    #         checkin_label = checkin.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
+    #         checkout_label = checkout.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
+    #         logging.info(f"Attempting to select: {checkin_label} to {checkout_label} ({stay_length} nights)")
+    #
+    #         # STEP 3: Scroll and real click (ActionChains)
+    #         actions = ActionChains(self.driver)
+    #         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkin)
+    #         actions.move_to_element(checkin).pause(0.5).click().pause(1.0)
+    #         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkout)
+    #         actions.move_to_element(checkout).pause(0.5).click().perform()
+    #
+    #         # STEP 4: Wait for at least 2 tiles selected
+    #         WebDriverWait(self.driver, 6).until(
+    #             lambda d: len(d.find_elements(By.CSS_SELECTOR, "button[aria-selected='true']")) >= 2
+    #         )
+    #         logging.info("Confirmed: 2+ tiles visually selected.")
+    #
+    #         # STEP 5: Click "המשך"
+    #         continue_btn = WebDriverWait(self.driver, 10).until(
+    #             EC.element_to_be_clickable(
+    #                 (By.XPATH, "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"))
+    #         )
+    #         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
+    #         time.sleep(0.4)
+    #         continue_btn.click()
+    #
+    #         logging.info(f"✅ Selected check-in: {checkin_label} → check-out: {checkout_label}")
+    #
+    #     except Exception as e:
+    #         logging.error(f"Date selection failed: {e}")
+    #         self.take_screenshot("calendar_selection_fail")
+    #         raise
+
     def get_valid_calendar_day_buttons(self):
         buttons = self.driver.find_elements(By.CSS_SELECTOR, ".react-calendar__month-view__days button")
         return [
             btn for btn in buttons
             if btn.is_enabled() and "neighboringMonth" not in btn.get_attribute("class")
         ]
+
+    def human_click(self, element):
+        """
+        Attempts a human-like click with offset and fallback to JS click.
+        """
+        from selenium.webdriver import ActionChains
+        from selenium.common.exceptions import MoveTargetOutOfBoundsException
+        import random
+        import time
+
+        # Scroll to element
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+        time.sleep(0.3)
+
+        # Try human offset click
+        try:
+            width = element.size.get('width', 100)
+            height = element.size.get('height', 30)
+            offset_x = random.randint(5, max(5, width - 5))
+            offset_y = random.randint(5, max(5, height - 5))
+
+            actions = ActionChains(self.driver)
+            actions.move_to_element_with_offset(element, offset_x, offset_y)
+            actions.pause(random.uniform(0.1, 0.2))
+            actions.click()
+            actions.perform()
+        except MoveTargetOutOfBoundsException:
+            logging.warning("Offset click failed — fallback to JS click.")
+            self.driver.execute_script("arguments[0].click();", element)
 
     def click_mobile_room_selection(self):
         try:
@@ -181,7 +291,6 @@ class FattalMainPageMobile:
             self.take_screenshot("open_room_modal_fail")
             raise
 
-    # ⬇️ Make sure this is NOT indented under the previous method
     def set_mobile_room_occupants(self, adults=2, children=0, infants=0):
         """Adjust room occupants assuming the modal is already open. Does NOT open modal or click 'המשך'."""
         try:
@@ -498,6 +607,8 @@ class FattalMainPageMobile:
         except Exception as e:
             logging.warning(f"Could not verify promo code input: {e}")
             return False
+
+
 
 
 

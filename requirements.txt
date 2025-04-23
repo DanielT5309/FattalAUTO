@@ -27,3 +27,5 @@ websocket-client==1.8.0
 wsproto==1.2.0
 
 python-dotenv~=1.1.0
+dotenv~=0.9.9
+python-dateutil~=2.9.0.post0
