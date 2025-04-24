@@ -3,6 +3,8 @@ import logging
 import sys
 import time
 import traceback
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
 from time import sleep
 from unittest import TestCase
 from selenium import webdriver
@@ -29,8 +31,6 @@ from openpyxl.utils import get_column_letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 class FattalTests(TestCase):
     def setUp(self):
         load_dotenv()
@@ -156,6 +156,7 @@ class FattalTests(TestCase):
         confirmation = getattr(self, "confirmation_result", {})
         order_number = confirmation.get("order_number", "")
         confirmed_email = confirmation.get("email", "")
+        id_number = getattr(self, 'entered_id_number', '')
         confirmation_screenshot = confirmation.get("screenshot_path", "")
 
         # Create one unified screenshot depending on test result
@@ -170,11 +171,12 @@ class FattalTests(TestCase):
         # Final test info dict
         test_info = {
             "name": test_method,
-            "description": "Test Description",
+            "description": getattr(self, "test_description", "No description provided"),
             "status": "FAILED" if has_failed else "PASSED",
             "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             "duration": f"{duration:.2f}s",
             "browser": browser,
+            "id_number": getattr(self, 'entered_id_number', ''),
             "os": os_name,
             "full_name": f"{getattr(self, 'entered_first_name', '')} {getattr(self, 'entered_last_name', '')}".strip(),
             "email": confirmed_email or getattr(self, 'entered_email', ''),
@@ -189,7 +191,6 @@ class FattalTests(TestCase):
         self.save_to_pdf(test_info)
 
     def save_to_excel(self, info: dict):
-        # Same base path logic as working version
         parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filename = os.path.join(parent_folder, "TestResults.xlsx")
 
@@ -200,7 +201,8 @@ class FattalTests(TestCase):
                 ws.title = "Test Results"
                 ws.append([
                     "Test Name", "Description", "Status", "Timestamp", "Duration",
-                    "Browser", "OS", "Full Name", "Email", "Order Number", "Screenshot", "Log File"
+                    "Browser", "OS", "Full Name", "Email", "Order Number", "ID Number",
+                    "Screenshot", "Log File"
                 ])
             else:
                 wb = load_workbook(filename)
@@ -219,27 +221,36 @@ class FattalTests(TestCase):
                 info.get("full_name", ""),
                 info.get("email", ""),
                 info.get("order_number", ""),
+                info.get("id_number", ""),
                 info.get("screenshot", ""),
                 info.get("log", "")
             ]
             ws.append(row)
             row_num = ws.max_row
 
-            # Add screenshot hyperlink (if file exists)
+            # 🎨 Add color to row based on pass/fail
+            red_fill = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid")
+            green_fill = PatternFill(start_color="CCFFCC", end_color="CCFFCC", fill_type="solid")
+            row_fill = red_fill if status == "FAILED" else green_fill
+
+            for col_idx in range(1, 14):
+                ws.cell(row=row_num, column=col_idx).fill = row_fill
+
+            # 📎 Add screenshot hyperlink
             screenshot_path = info.get("screenshot", "")
             if screenshot_path and os.path.exists(screenshot_path):
-                cell = ws.cell(row=row_num, column=11)
+                cell = ws.cell(row=row_num, column=12)
                 cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
-            # Add log file hyperlink (if file exists)
+            # 📎 Add log file hyperlink
             log_path = info.get("log", "")
             if log_path and os.path.exists(log_path):
-                cell = ws.cell(row=row_num, column=12)
+                cell = ws.cell(row=row_num, column=13)
                 cell.hyperlink = f"file:///{log_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
-            # Auto column width
+            # ↔️ Auto-fit column widths
             for col in ws.columns:
                 max_length = 0
                 col_letter = get_column_letter(col[0].column)
@@ -403,7 +414,8 @@ class FattalTests(TestCase):
         self.driver.save_screenshot(filename)
         logging.error(f" Screenshot taken: {filename}")
 
-    def test_join_fattal_club(self):
+    def test_mobile_join_fattal_and_friends_form(self):
+        self.test_description = "הצטפרות למועדון דרך טופס"
         logging.info("Starting test: Join Fattal Club")
 
         try:
@@ -416,6 +428,7 @@ class FattalTests(TestCase):
             birthdate = "01-01-1990"
             password = "Aa123456"
             id_number = self.mobile_order_page.generate_israeli_id()
+            self.entered_id_number = id_number  # ✅ Store for logging/export
             logging.info(f"Generated ID for club registration: {id_number}")
 
             # Step 2: Navigate to club join screen
@@ -460,7 +473,9 @@ class FattalTests(TestCase):
             logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
             raise
 
-    def test_customer_support_ticket(self):
+    def test_mobile_contact_form(self):
+        self.test_description = "בדיקת טופס צור קשר"
+
         logging.info("Starting test: Customer Support Ticket")
 
         try:
@@ -511,6 +526,7 @@ class FattalTests(TestCase):
             raise
 
     def test_mobile_booking_anonymous_user(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
         hotel_name = self.default_hotel_name
         logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
@@ -541,6 +557,8 @@ class FattalTests(TestCase):
         self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  #  Save for logging/export
+
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -551,7 +569,9 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_anonymous_with_club_checkbox(self):
+    def test_mobile_booking_anonymous_join_fattal_and_friends(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
+
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: hotel search and booking flow")
@@ -584,6 +604,7 @@ class FattalTests(TestCase):
         self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -595,6 +616,7 @@ class FattalTests(TestCase):
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_eilat_with_flight(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -634,6 +656,7 @@ class FattalTests(TestCase):
         self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -642,7 +665,8 @@ class FattalTests(TestCase):
         #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         #assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
-    def test_mobile_booking_eilat_no_flight(self):
+    def test_mobile_booking_anonymous_region_eilat(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -676,6 +700,7 @@ class FattalTests(TestCase):
         self.fill_guest_details(guest=self.default_guest)
 
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -686,7 +711,8 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_eilat_fattal_gift3(self):
+    def test_mobile_booking_fattal_gift3(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -708,6 +734,7 @@ class FattalTests(TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
 
         # Apply all 3 gift codes
@@ -733,7 +760,8 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_eilat_fattal_gift1(self):
+    def test_mobile_booking_fattal_gift1(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -755,10 +783,11 @@ class FattalTests(TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
 
-        gift_code = os.getenv("GIFT1", "").strip()
-        assert gift_code and gift_code.isdigit(), "GIFT1 is missing or invalid in environment config"
+        gift_code = os.getenv("GIFT4", "").strip()
+        assert gift_code and gift_code.isdigit(), "GIFT4 is missing or invalid in environment config"
 
         logging.info(f"Applying single gift coupon: '{gift_code}'")
         self.mobile_order_page.apply_checkout_coupon(gift_code)
@@ -773,7 +802,8 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_with_login_club_renew(self):
+    def test_mobile_booking_club_member_club_renew_expired(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס פג תוקף"
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
@@ -831,7 +861,8 @@ class FattalTests(TestCase):
         # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         # assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
-    def test_mobile_booking_with_login_club_about_to_expire(self):
+    def test_mobile_booking_club_member_club_renew_about_to_expire(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס עומד לפוג"
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
@@ -889,7 +920,8 @@ class FattalTests(TestCase):
         # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         # assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
-    def test_mobile_booking_with_club_login_11night(self):
+    def test_mobile_booking_club_member_11night(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
@@ -945,7 +977,8 @@ class FattalTests(TestCase):
         # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         # assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_with_club_login(self):
+    def test_mobile_booking_club_member(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
@@ -1001,7 +1034,8 @@ class FattalTests(TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
-    def test_mobile_booking_with_user_and_deals(self):
+    def test_mobile_booking_club_member_deals(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
         try:
             self.mobile_toolbar.open_login_menu()
             user = {
@@ -1040,6 +1074,7 @@ class FattalTests(TestCase):
         #assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_random_guest_details(self):
+        self.test_description = " בדיקה אנונימית רנדומלית ללא סיום הזמנה"
         fake = Faker('he_IL')  # עברית!
         hotel_name = self.default_hotel_name
 
@@ -1088,6 +1123,7 @@ class FattalTests(TestCase):
         self.mobile_order_page.set_first_name(random_first_name)
         self.mobile_order_page.set_last_name(random_last_name)
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: פרטי כרטיס רנדומליים (לא נשלח בפועל)
@@ -1103,6 +1139,7 @@ class FattalTests(TestCase):
         }
 
     def test_mobile_booking_anonymous_user_promo_code(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (FHVR)"
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: hotel search and booking flow")
@@ -1138,6 +1175,7 @@ class FattalTests(TestCase):
 
 
         self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -1179,6 +1217,7 @@ class FattalTests(TestCase):
     #     self.fill_guest_details(guest=self.default_guest_europe)
     #
     #     self.mobile_order_page.set_id_number(random_id)
+    #     self.entered_id_number = random_id  #  Save for logging/export
     #     self.mobile_order_page.click_user_agreement_checkbox()
     #     # Step 7: Fill the iframe using config.json
     #     self.fill_payment_details_from_config()
