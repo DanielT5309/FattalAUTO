@@ -4,7 +4,6 @@ import sys
 import time
 import traceback
 from openpyxl.styles import Font, PatternFill
-from openpyxl.utils import get_column_letter
 from time import sleep
 from unittest import TestCase
 from selenium import webdriver
