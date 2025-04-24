@@ -32,7 +32,6 @@ from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
 class FattalTests(TestCase):
     def setUp(self):
-        "Setup"
         load_dotenv()
         self.log_stream = io.StringIO()
         # Reset logging configuration
@@ -52,7 +51,8 @@ class FattalTests(TestCase):
 
         # Use a valid built-in Chrome emulation device (Pixel 2)
         mobile_emulation = {
-            "deviceName": "Pixel 2"
+            "deviceMetrics": {"width": 411, "height": 1000, "pixelRatio": 3.0},
+            "userAgent": "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
         }
 
         options = webdriver.ChromeOptions()
@@ -61,8 +61,13 @@ class FattalTests(TestCase):
         options.add_experimental_option('useAutomationExtension', False)
         options.add_argument("--disable-infobars")
 
-        self.test_start_time = datetime.now()
         self.driver = webdriver.Chrome(options=options)
+
+        # Override window size manually to make it taller 📸
+        # Pixel 2 is normally 411x731, so let's go 411x1200
+        self.driver.set_window_rect(x=620, y=0, width=411, height=1000)
+
+        self.test_start_time = datetime.now()
         self.driver.implicitly_wait(10)
 
         # Optional — force touch emulation for some mobile interactions
@@ -70,7 +75,6 @@ class FattalTests(TestCase):
             "enabled": True,
             "configuration": "mobile"
         })
-        self.driver.set_window_rect(x=540, y=0, width=420, height=800)
         active_key = os.getenv("ENV_ACTIVE")
         self.driver.get(active_key)
         logging.info(f"Opened environment URL: {active_key}")
@@ -398,8 +402,28 @@ class FattalTests(TestCase):
         filename = os.path.join(
             screenshot_dir, f"confirmation_{status}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
         )
-        self.driver.save_screenshot(filename)
-        logging.info(f"Screenshot saved at: {filename}")
+
+        try:
+            # Locate the element you want to anchor the screenshot from
+            element = self.driver.find_element(By.ID, "thank-you-page-top-bar-text")
+
+            # Get element's Y position and scroll there minus a bit (padding offset)
+            y_position = element.location['y']
+            self.driver.execute_script("window.scrollTo(0, arguments[0]);", max(y_position - 50, 0))
+
+            time.sleep(1)  # Let rendering stabilize
+
+            self.driver.save_screenshot(filename)
+            logging.info(f" Screenshot anchored with manual scroll saved at: {filename}")
+        except Exception as e:
+            logging.warning(f" Could not scroll to confirmation element: {e}")
+            try:
+                self.driver.save_screenshot(filename)
+                logging.info(f" Screenshot (fallback full view) saved at: {filename}")
+            except Exception as inner_e:
+                logging.error(f" Screenshot failed: {inner_e}")
+                raise
+
         return filename
 
     def run(self, result=None):
