@@ -45,24 +45,22 @@ class FattalMainPage:
 
         def select_flight_option_all_airports(self):
             try:
-                # Step 1: Click the flight dropdown
-                dropdown_btn = WebDriverWait(self.driver, 10).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button.sc-9f775e38-1"))
-                )
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", dropdown_btn)
-                dropdown_btn.click()
-                logging.info("Flight dropdown opened.")
-
-                # Step 2: Click the desired option ("מכל שדות התעופה")
-                option_btn = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[text()='מכל שדות התעופה']"))
-                )
-                self.driver.execute_script("arguments[0].click();", option_btn)
-                logging.info("Selected flight option: מכל שדות התעופה")
+                # Step 1: Open flight filter section (if applicable)
+                try:
+                    dropdown_btn = WebDriverWait(self.driver, 5).until(
+                        EC.element_to_be_clickable((By.ID, "search-engine-flight-select-option_all_flights"))
+                    )
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", dropdown_btn)
+                    dropdown_btn.click()
+                    logging.info("Selected flight option: מכל שדות התעופה")
+                except Exception as e:
+                    logging.warning(f"Primary flight button by ID not clickable: {e}")
+                    raise
 
             except Exception as e:
                 logging.error(f"Failed to select flight option: {e}")
                 raise
+
         def trigger_suggestions(self):
             try:
                 input_field = self.driver.find_element(By.ID, "main-input")
@@ -417,6 +415,76 @@ class FattalMainPage:
             path = os.path.join(screenshot_dir, f"{name}_{timestamp}.png")
             self.driver.save_screenshot(path)
             logging.error(f"Screenshot saved: {path}")
+
+        def select_specific_date_range_desktop(self, checkin_day: int, checkout_day: int, month: str = "יולי 2025"):
+            try:
+                logging.info(f"[DESKTOP] Selecting date range {checkin_day} to {checkout_day} in {month}")
+
+                # Open calendar
+                calendar_opener = WebDriverWait(self.driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//div[contains(@id, 'date-picker')]"))
+                )
+                calendar_opener.click()
+
+                WebDriverWait(self.driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "react-calendar"))
+                )
+
+                for attempt in range(3):  # try up to 3 next-month clicks
+                    calendar_months = self.driver.find_elements(By.CLASS_NAME, "react-calendar__month-view")
+                    checkin_btn = None
+                    checkout_btn = None
+
+                    for calendar in calendar_months:
+                        buttons = calendar.find_elements(By.XPATH, ".//button[not(@disabled)]")
+                        for btn in buttons:
+                            try:
+                                label = btn.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
+                                if f"{checkin_day} ב{month}" in label:
+                                    checkin_btn = btn
+                                if f"{checkout_day} ב{month}" in label:
+                                    checkout_btn = btn
+                            except:
+                                continue
+
+                    if checkin_btn and checkout_btn:
+                        break  # Found both dates
+
+                    # If not found, try clicking "next month"
+                    logging.info(f"Did not find dates in attempt {attempt + 1}. Clicking next month.")
+                    next_btn = WebDriverWait(self.driver, 5).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
+                    )
+                    next_btn.click()
+                    time.sleep(1)
+
+                if not checkin_btn or not checkout_btn:
+                    raise Exception(f"Could not find one or both dates: {checkin_day}, {checkout_day} in {month}")
+
+                actions = ActionChains(self.driver)
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkin_btn)
+                actions.move_to_element(checkin_btn).pause(0.5).click().pause(1.0)
+
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkout_btn)
+                actions.move_to_element(checkout_btn).pause(0.5).click().perform()
+
+                logging.info(f"Selected check-in {checkin_day} and check-out {checkout_day} for {month}")
+
+                try:
+                    continue_btn = WebDriverWait(self.driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'המשך')]"))
+                    )
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
+                    continue_btn.click()
+                    logging.info("Clicked continue after date selection.")
+                except TimeoutException:
+                    logging.info("No continue button found. Skipping.")
+
+            except Exception as e:
+                self.take_screenshot("select_specific_date_range_desktop_fail")
+                logging.error(f"Failed selecting date range: {e}")
+                raise
 
         def accessibility_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(1)').click()
         def customer_support_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(2)').click()

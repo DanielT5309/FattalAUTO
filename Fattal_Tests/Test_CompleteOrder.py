@@ -572,68 +572,79 @@ class FattalTestsComplete(TestCase):
         adults, children, infants = 2, 1, 1
 
         try:
-            logging.info(" Starting test for Eilat zone with flight")
+            logging.info("Starting test for Eilat zone with flight")
 
-            # --- HOTEL + ROOM + FLIGHT SELECTION ---
             self.main_page.deal_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
-            self.main_page.select_next_month_date_range()
-            self.main_page.select_flight_option_all_airports()
 
+            # Select specific date range via desktop calendar
+            #self.main_page.select_specific_date_range_desktop(6, 10, "יולי 2025")
+            self.main_page.select_next_month_date_range()
+
+            adults, children, infants = 2, 1, 0
             self.main_page.set_room_occupants(adults, children, infants)
+            self.main_page.select_flight_option_all_airports()
             self.main_page.search_button()
 
             self.retry_flight_search_if_no_results(hotel_name)
-            # self.search_result.wait_for_rooms_to_load()
+
             self.search_result.click_book_room_button()
             self.search_result.wait_for_prices_to_load()
             self.search_result.click_first_show_prices()
             self.search_result.click_first_book_room()
 
-            # --- FLIGHT SELECTION LOGIC ---
+            # Optional flight selection
             try:
                 self.flight_page.try_flight_options_by_time_of_day()
             except Exception as e:
-                logging.warning(f" Flight selection failed (non-blocking): {e}")
+                logging.warning(f"Flight selection failed (non-blocking): {e}")
 
-            # --- PASSENGER FORM ---
+            # Passenger form handling
             handled = self.flight_page.handle_passenger_form_if_flight_selection_skipped()
             if not handled:
                 self.flight_page.wait_for_passenger_form()
                 self.flight_page.fill_passenger_details_and_validate()
                 self.flight_page.click_continue_button()
 
-            #  Booking flow continues only if everything succeeded
             self.complete_booking_post_flight()
-            #self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
 
         except Exception as e:
-            logging.error(f" Test failed: {e}")
+            logging.error(f"Test failed: {e}")
             try:
                 self.take_screenshot("test_eilat_flight")
             except Exception:
-                logging.warning("📸 Couldn't capture screenshot due to earlier failure.")
+                logging.warning("Could not capture screenshot due to earlier failure.")
             raise
 
     def test_eilat(self):
         hotel_name = "אילת,ישראל"
-        logging.info(" Starting test: hotel search and booking flow")
         adults, children, infants = 2, 0, 0
+
+        logging.info("Starting test: hotel search and booking flow")
+
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
+
         self.main_page.select_next_month_date_range()
+
+        adults, children, infants = 2, 1, 0
+
         self.main_page.set_room_occupants(adults, children, infants)
         self.main_page.search_button()
+
         self.search_result.wait_for_rooms_to_load()
         self.search_result.click_book_room_button()
         self.search_result.wait_for_prices_to_load()
         self.search_result.click_first_show_prices()
         self.search_result.click_first_book_room()
+
         self.complete_booking_post_flight()
+
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
     def test_club_login(self):
         hotel_name = self.default_hotel_name
 

@@ -155,7 +155,8 @@ class FattalFlightOrderPage:
         logging.info("Filling passenger details (2 adults, 1 child, 1 infant)...")
         try:
             self.wait.until(lambda d: len(
-                d.find_elements(By.XPATH, "//input[@id='checkout.personal_details_form.label_first_name']")) >= 4)
+                d.find_elements(By.XPATH, "//input[starts-with(@id, 'checkout-form-field-input_adult_')]")) >= 2)
+
             logging.info("Passenger form is ready.")
 
             first_names = ["John", "Jane", "Tom", "Baby"]
@@ -165,18 +166,19 @@ class FattalFlightOrderPage:
 
             def type_passenger(index, label, dob=None, dob_position=None):
                 first = self.driver.find_element(
-                    By.XPATH, f"(//input[@id='checkout.personal_details_form.label_first_name'])[{index}]")
+                    By.ID, f"checkout-form-field-input_adult_{index - 1}"
+                )
                 self.scroll_and_type(first, first_names[index - 1])
                 logging.info(f"{label} First Name filled.")
 
-                last = self.driver.find_element(
-                    By.XPATH, f"(//input[@id='checkout.personal_details_form.label_last_name'])[{index}]")
+                last = self.driver.find_elements(By.ID, f"checkout-form-field-input_adult_{index - 1}")[1]
                 self.scroll_and_type(last, last_names[index - 1])
                 logging.info(f"{label} Last Name filled.")
 
                 if dob and dob_position is not None:
                     dob_fields = self.driver.find_elements(
-                        By.XPATH, "//input[@id='checkout.personal_details_form.label_birthDate']")
+                        By.XPATH, "//input[@id='checkout.personal_details_form.label_birthDate']"
+                    )
                     if len(dob_fields) > dob_position:
                         dob_field = dob_fields[dob_position]
                         self.scroll_and_type(dob_field, dob)
@@ -286,3 +288,14 @@ class FattalFlightOrderPage:
         except TimeoutException:
             logging.warning("No passenger form detected after flight selection.")
             return False
+
+    def wait_until_personal_form_ready(self):
+        try:
+            self.wait.until(
+                EC.presence_of_element_located((By.ID, "checkout-passenger-details-container"))
+            )
+            logging.info("Passenger form is ready.")
+        except TimeoutException:
+            logging.error("Passenger form not detected on time.")
+            self.take_screenshot("passenger_form_timeout")
+            raise
