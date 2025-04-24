@@ -32,6 +32,7 @@ from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
 class FattalTests(TestCase):
     def setUp(self):
+        "Setup"
         load_dotenv()
         self.log_stream = io.StringIO()
         # Reset logging configuration
