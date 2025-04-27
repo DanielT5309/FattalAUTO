@@ -185,12 +185,13 @@ class FattalMainPage:
 
         # Get valid (enabled) calendar day buttons
         def get_valid_date_buttons(self):
-            buttons = self.driver.find_elements(By.CSS_SELECTOR, ".react-calendar__month-view__days button")
-            return [
-                btn for btn in buttons
-                if btn.is_enabled() and "react-calendar__month-view__days__day--neighboringMonth" not in btn.get_attribute(
-                    "class")
-            ]
+            try:
+                buttons = self.driver.find_elements(By.XPATH,
+                                                    "//button[contains(@class, 'react-calendar__tile') and not(@disabled)]")
+                return buttons
+            except Exception as e:
+                logging.error(f"Failed getting valid date buttons: {e}")
+                return []
 
         def select_single_day_next_month(self):
             logging.info("Selecting a single day in next month")
@@ -226,12 +227,16 @@ class FattalMainPage:
                 logging.error(f"Failed to select single day: {e}")
                 raise
 
-        def select_next_month_date_range(self) -> None:
+        def select_next_month_date_range(self, min_nights: int = 3, max_nights: int = 5) -> None:
             try:
+                logging.info("Starting 2 months ahead date range selection (3-5 nights)")
+
+                # Open calendar
                 self.open_calendar()
                 self.switch_to_arrival_tab()
 
-                try:
+                # Navigate two months ahead
+                for _ in range(2):
                     next_button = WebDriverWait(self.driver, 5).until(
                         EC.element_to_be_clickable(
                             (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
@@ -240,39 +245,56 @@ class FattalMainPage:
                         next_button.click()
                         logging.info("Clicked next month.")
                     except Exception as click_err:
-                        logging.warning(f"Normal next button click failed: {click_err}. Trying JS fallback...")
+                        logging.warning(f"Normal click failed: {click_err}. Trying JS fallback...")
                         self.driver.execute_script("arguments[0].click();", next_button)
-                        logging.info("Clicked next month via JS.")
-                except Exception as e:
-                    logging.error(f"Failed to click next month: {e}")
-                    raise
+                        logging.info("Clicked next month via JS fallback.")
+                    time.sleep(1)
 
-                time.sleep(1)
+                # Get all valid date buttons
                 valid_dates = self.get_valid_date_buttons()
+                if not valid_dates or len(valid_dates) < min_nights:
+                    raise Exception("Not enough valid dates found to select range.")
 
-                if len(valid_dates) < 4:
-                    raise Exception("Not enough valid dates to form a 3-night stay.")
+                # Randomly select start and end date
+                max_start_index = len(valid_dates) - min_nights
+                if max_start_index <= 0:
+                    raise Exception("Calendar does not have enough dates available.")
 
-                max_start_index = len(valid_dates) - 4
                 start_index = random.randint(0, max_start_index)
+                nights = random.randint(min_nights, max_nights)
+                end_index = start_index + nights
+
+                if end_index >= len(valid_dates):
+                    end_index = len(valid_dates) - 1  # Avoid overflow
 
                 check_in = valid_dates[start_index]
                 check_in_text = check_in.text
-                check_in.click()
+                check_out = valid_dates[end_index]
+                check_out_text = check_out.text
+
+                # Click check-in
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_in)
+                ActionChains(self.driver).move_to_element(check_in).pause(0.2).click().perform()
                 time.sleep(0.5)
 
-                valid_after_click = self.get_valid_date_buttons()
-                check_out = valid_after_click[start_index + 3]
-                check_out_text = check_out.text
-                check_out.click()
+                # Click check-out
+                valid_dates_after_checkin = self.get_valid_date_buttons()  # Refresh after first click
+                check_out = valid_dates_after_checkin[min(end_index, len(valid_dates_after_checkin) - 1)]
 
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out)
+                ActionChains(self.driver).move_to_element(check_out).pause(0.2).click().perform()
+
+                logging.info(f"Selected stay from {check_in_text} to {check_out_text} ({nights} nights)")
+
+                # Close calendar (ESCAPE)
                 self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
-                logging.info(f"Selected random dates: {check_in_text} to {check_out_text}")
 
             except Exception as e:
-                logging.error(f"Date selection failed: {e}")
+                logging.error(f"Failed selecting date range 2 months ahead: {e}")
                 self.take_screenshot("calendar_selection_fail")
                 raise
+
+
 
         def set_room_occupants(self, adults=2, children=0, infants=0):
             try:
@@ -430,38 +452,56 @@ class FattalMainPage:
                     EC.presence_of_element_located((By.CLASS_NAME, "react-calendar"))
                 )
 
-                for attempt in range(3):  # try up to 3 next-month clicks
-                    calendar_months = self.driver.find_elements(By.CLASS_NAME, "react-calendar__month-view")
+                found_checkin = False
+                found_checkout = False
+                attempts = 0
+
+                while attempts < 5 and not (found_checkin and found_checkout):
+                    attempts += 1
                     checkin_btn = None
                     checkout_btn = None
 
-                    for calendar in calendar_months:
+                    calendars = self.driver.find_elements(By.CLASS_NAME, "react-calendar__month-view")
+
+                    for calendar in calendars:
                         buttons = calendar.find_elements(By.XPATH, ".//button[not(@disabled)]")
                         for btn in buttons:
                             try:
-                                label = btn.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-                                if f"{checkin_day} ב{month}" in label:
-                                    checkin_btn = btn
-                                if f"{checkout_day} ב{month}" in label:
-                                    checkout_btn = btn
-                            except:
+                                abbr = btn.find_element(By.TAG_NAME, "abbr")
+                                aria_label = abbr.get_attribute("aria-label")  # Ex: "יום שבת, 6 יולי 2025"
+                                if not aria_label:
+                                    continue
+                                parts = aria_label.split(",")[-1].strip()  # take "6 יולי 2025"
+                                parts_split = parts.split(" ")
+
+                                if len(parts_split) >= 2:
+                                    day_text, month_text = parts_split[0], parts_split[1] + " " + parts_split[2]
+
+                                    if int(day_text) == checkin_day and month_text == month:
+                                        checkin_btn = btn
+                                    if int(day_text) == checkout_day and month_text == month:
+                                        checkout_btn = btn
+                            except Exception as inner_e:
+                                logging.debug(f"Skipping button due to error: {inner_e}")
                                 continue
 
                     if checkin_btn and checkout_btn:
-                        break  # Found both dates
+                        found_checkin = True
+                        found_checkout = True
+                        break
+                    else:
+                        logging.info(f"Did not find dates in attempt {attempts}. Clicking next month.")
+                        next_btn = WebDriverWait(self.driver, 5).until(
+                            EC.element_to_be_clickable(
+                                (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
+                        )
+                        next_btn.click()
+                        time.sleep(1)
 
-                    # If not found, try clicking "next month"
-                    logging.info(f"Did not find dates in attempt {attempt + 1}. Clicking next month.")
-                    next_btn = WebDriverWait(self.driver, 5).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
-                    )
-                    next_btn.click()
-                    time.sleep(1)
+                if not found_checkin or not found_checkout:
+                    raise Exception(f"Could not find the specified dates: {checkin_day} and {checkout_day} in {month}")
 
-                if not checkin_btn or not checkout_btn:
-                    raise Exception(f"Could not find one or both dates: {checkin_day}, {checkout_day} in {month}")
-
+                # Select check-in and check-out
                 actions = ActionChains(self.driver)
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkin_btn)
                 actions.move_to_element(checkin_btn).pause(0.5).click().pause(1.0)
@@ -471,6 +511,7 @@ class FattalMainPage:
 
                 logging.info(f"Selected check-in {checkin_day} and check-out {checkout_day} for {month}")
 
+                # Optional continue button
                 try:
                     continue_btn = WebDriverWait(self.driver, 10).until(
                         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'המשך')]"))

@@ -1,5 +1,5 @@
 import traceback
-from unittest import TestCase
+import unittest
 from selenium import webdriver
 import random
 from openpyxl.styles import Font, PatternFill
@@ -28,7 +28,7 @@ from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import sys
 from dotenv import load_dotenv
-class FattalTestsComplete(TestCase):
+class FattalTestsComplete(unittest.TestCase):
     def setUp(self):
         load_dotenv()
 

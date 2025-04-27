@@ -5,7 +5,7 @@ import time
 import traceback
 from openpyxl.styles import Font, PatternFill
 from time import sleep
-from unittest import TestCase
+import unittest
 from selenium import webdriver
 import random
 from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
@@ -30,7 +30,7 @@ from openpyxl.utils import get_column_letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
-class FattalTests(TestCase):
+class FattalTests(unittest.TestCase):
     def setUp(self):
         load_dotenv()
         self.log_stream = io.StringIO()
@@ -737,7 +737,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_fattal_gift3(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
-        hotel_name = "אילת, ישראל"
+        hotel_name = "תל אביב, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
@@ -786,7 +786,7 @@ class FattalTests(TestCase):
 
     def test_mobile_booking_fattal_gift1(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
-        hotel_name = "אילת, ישראל"
+        hotel_name = "תל אביב, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
@@ -880,10 +880,10 @@ class FattalTests(TestCase):
         self.fill_payment_details_from_config()
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
-        # self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
         # # Step 9 : Confirm and Assert
-        # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        # assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_club_member_club_renew_about_to_expire(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס עומד לפוג"
@@ -939,10 +939,10 @@ class FattalTests(TestCase):
         self.fill_payment_details_from_config()
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
-        # self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
         # # Step 9 : Confirm and Assert
-        # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        # assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_club_member_11night(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"
@@ -996,10 +996,10 @@ class FattalTests(TestCase):
         self.fill_payment_details_from_config()
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
-        # self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
         # #Step 9 : Confirm and Assert
-        # self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        # assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_club_member(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
@@ -1092,10 +1092,10 @@ class FattalTests(TestCase):
         self.fill_payment_details_from_config()
 
         # Step 8: Click submit inside iframe (already inside from step 7)
-        #self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
-        #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        #assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_random_guest_details(self):
         self.test_description = " בדיקה אנונימית רנדומלית ללא סיום הזמנה"
