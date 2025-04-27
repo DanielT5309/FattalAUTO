@@ -227,6 +227,71 @@ class FattalMainPage:
                 logging.error(f"Failed to select single day: {e}")
                 raise
 
+        def select_random_date_range_two_months_ahead(self, min_nights: int = 3, max_nights: int = 5) -> None:
+            try:
+                logging.info("Starting 2 months ahead date range selection (with double click method)")
+
+                self.open_calendar()
+                self.switch_to_arrival_tab()
+
+                # Move 2 months ahead
+                for _ in range(2):
+                    next_button = WebDriverWait(self.driver, 5).until(
+                        EC.element_to_be_clickable(
+                            (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
+                    )
+                    try:
+                        next_button.click()
+                        logging.info("Clicked next month.")
+                    except Exception as click_err:
+                        logging.warning(f"Normal click failed: {click_err}. Trying JS fallback...")
+                        self.driver.execute_script("arguments[0].click();", next_button)
+                    time.sleep(1)
+
+                # Find valid dates
+                valid_dates = self.get_valid_date_buttons()
+                if not valid_dates or len(valid_dates) < min_nights:
+                    raise Exception("Not enough valid dates to select range.")
+
+                # Random pick
+                max_start_index = len(valid_dates) - min_nights
+                start_index = random.randint(0, max_start_index)
+                nights = random.randint(min_nights, max_nights)
+                end_index = start_index + nights
+                if end_index >= len(valid_dates):
+                    end_index = len(valid_dates) - 1
+
+                check_in = valid_dates[start_index]
+                check_in_text = check_in.text
+                check_out = valid_dates[end_index]
+                check_out_text = check_out.text
+
+                actions = ActionChains(self.driver)
+
+                # 1️⃣ Click End Date first (this clears previous selection!)
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out)
+                actions.move_to_element(check_out).pause(0.2).click().perform()
+                time.sleep(0.5)
+
+                # 2️⃣ Click Start Date
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_in)
+                actions.move_to_element(check_in).pause(0.2).click().perform()
+                time.sleep(0.5)
+
+                # 3️⃣ Click End Date Again
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out)
+                actions.move_to_element(check_out).pause(0.2).click().perform()
+
+                logging.info(f"Selected custom stay: {check_in_text} to {check_out_text} ({nights} nights)")
+
+                # Close the calendar
+                self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+
+            except Exception as e:
+                logging.error(f"Failed selecting 2 months ahead with corrected double-click logic: {e}")
+                self.take_screenshot("calendar_selection_fail")
+                raise
+
         def select_next_month_date_range(self, min_nights: int = 3, max_nights: int = 5) -> None:
             try:
                 logging.info("Starting 2 months ahead date range selection (3-5 nights)")

@@ -560,7 +560,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        self.main_page.select_next_month_date_range()
+        #self.main_page.select_next_month_date_range()
+        self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
 
@@ -578,7 +579,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        self.main_page.select_next_month_date_range()
+        #self.main_page.select_next_month_date_range()
+        self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 0, 0
 
@@ -600,7 +602,7 @@ class FattalTestsComplete(unittest.TestCase):
 
             # Select specific date range via desktop calendar
             #self.main_page.select_specific_date_range_desktop(6, 10, "יולי 2025")
-            self.main_page.select_next_month_date_range()
+            self.main_page.select_random_date_range_two_months_ahead()
 
             adults, children, infants = 2, 1, 0
             self.main_page.set_room_occupants(adults, children, infants)
@@ -640,7 +642,6 @@ class FattalTestsComplete(unittest.TestCase):
     def test_desktop_booking_anonymous_region_eilat(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
         hotel_name = "אילת,ישראל"
-        adults, children, infants = 2, 0, 0
 
         logging.info("Starting test: hotel search and booking flow")
 
@@ -648,7 +649,7 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
 
-        self.main_page.select_next_month_date_range()
+        self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
 
@@ -716,7 +717,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        self.main_page.select_next_month_date_range()
+        #self.main_page.select_next_month_date_range()
+        self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
         self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)

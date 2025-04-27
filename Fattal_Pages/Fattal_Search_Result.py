@@ -1,5 +1,7 @@
 import logging
 import time
+
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -103,14 +105,30 @@ class FattalSearchResultPage:
 
     def click_book_room_button(self):
         try:
-            button = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'להזמנת חדר')]"))
-            )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
-            button.click()
-            logging.info("Clicked 'להזמנת חדר' button.")
+            logging.info("Trying to find 'להזמנת חדר' button...")
+
+            try:
+                # Try finding the 'להזמנת חדר' button for 20 seconds
+                button = WebDriverWait(self.driver, 20).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'להזמנת חדר')]"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+                button.click()
+                logging.info("Clicked 'להזמנת חדר' button.")
+
+            except TimeoutException:
+                logging.warning("'להזמנת חדר' button not found after 20 seconds, trying alternative 'בחר חדר' link...")
+
+                # Try fallback 'בחר חדר' link
+                fallback_link = WebDriverWait(self.driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'בחר חדר')]"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", fallback_link)
+                fallback_link.click()
+                logging.info("Clicked fallback 'בחר חדר' link.")
+
         except Exception as e:
-            logging.error(f"Could not click 'להזמנת חדר': {e}")
+            logging.error(f"Could not click any booking button: {e}")
             raise
 
     def wait_for_prices_to_load(self):
