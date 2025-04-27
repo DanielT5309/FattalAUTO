@@ -30,7 +30,7 @@ from openpyxl.utils import get_column_letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
-class FattalTests(unittest.TestCase):
+class FattalMobileTests(unittest.TestCase):
     def setUp(self):
         load_dotenv()
         self.log_stream = io.StringIO()

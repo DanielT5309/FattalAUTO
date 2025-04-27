@@ -221,7 +221,18 @@ class FattalMainPage:
                 self.driver.execute_script("arguments[0].click();", selected_day)
                 time.sleep(0.5)
                 self.driver.execute_script("arguments[0].click();", selected_day)
-                self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                # Close calendar (ESCAPE)
+                body = self.driver.find_element(By.TAG_NAME, 'body')
+                body.send_keys(Keys.ESCAPE)
+                time.sleep(1)  # Give the browser a moment to react
+
+                # ✅ Wait until the calendar modal disappears before moving on
+                WebDriverWait(self.driver, 10).until(
+                    EC.invisibility_of_element_located((By.CLASS_NAME, "react-calendar"))
+                )
+
+                logging.info("Calendar closed successfully — ready to select room occupants.")
+
                 logging.info(f"Selected same check-in/out day: {selected_day_text}")
             except Exception as e:
                 logging.error(f"Failed to select single day: {e}")
@@ -286,13 +297,20 @@ class FattalMainPage:
 
                 # Close the calendar
                 self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                time.sleep(1)  # Give browser a moment to react
+
+                WebDriverWait(self.driver, 10).until(
+                    EC.invisibility_of_element_located((By.CLASS_NAME, "react-calendar"))
+                )
+
+                logging.info("Calendar closed successfully — ready to select room occupants.")
 
             except Exception as e:
                 logging.error(f"Failed selecting 2 months ahead with corrected double-click logic: {e}")
                 self.take_screenshot("calendar_selection_fail")
                 raise
 
-        def select_next_month_date_range(self, min_nights: int = 3, max_nights: int = 5) -> None:
+        def select_next_month_date_range(self, min_nights: int =3, max_nights: int = 4) -> None:
             try:
                 logging.info("Starting 2 months ahead date range selection (3-5 nights)")
 
@@ -300,7 +318,7 @@ class FattalMainPage:
                 self.open_calendar()
                 self.switch_to_arrival_tab()
 
-                # Navigate two months ahead
+                # Move 2 months forward
                 for _ in range(2):
                     next_button = WebDriverWait(self.driver, 5).until(
                         EC.element_to_be_clickable(
@@ -313,134 +331,145 @@ class FattalMainPage:
                         logging.warning(f"Normal click failed: {click_err}. Trying JS fallback...")
                         self.driver.execute_script("arguments[0].click();", next_button)
                         logging.info("Clicked next month via JS fallback.")
-                    time.sleep(1)
+                    time.sleep(0.5)
 
-                # Get all valid date buttons
+                # Find available dates
                 valid_dates = self.get_valid_date_buttons()
                 if not valid_dates or len(valid_dates) < min_nights:
                     raise Exception("Not enough valid dates found to select range.")
 
-                # Randomly select start and end date
+                # Random pick start date
                 max_start_index = len(valid_dates) - min_nights
-                if max_start_index <= 0:
-                    raise Exception("Calendar does not have enough dates available.")
-
                 start_index = random.randint(0, max_start_index)
                 nights = random.randint(min_nights, max_nights)
                 end_index = start_index + nights
 
                 if end_index >= len(valid_dates):
-                    end_index = len(valid_dates) - 1  # Avoid overflow
+                    end_index = len(valid_dates) - 1
 
-                check_in = valid_dates[start_index]
-                check_in_text = check_in.text
-                check_out = valid_dates[end_index]
-                check_out_text = check_out.text
+                check_in_element = valid_dates[start_index]
+                check_out_element = valid_dates[end_index]
+
+                check_in_text = check_in_element.get_attribute("aria-label") or check_in_element.text
+                check_out_text = check_out_element.get_attribute("aria-label") or check_out_element.text
 
                 # Click check-in
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_in)
-                ActionChains(self.driver).move_to_element(check_in).pause(0.2).click().perform()
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_in_element)
+                ActionChains(self.driver).move_to_element(check_in_element).pause(0.2).click().perform()
                 time.sleep(0.5)
 
                 # Click check-out
-                valid_dates_after_checkin = self.get_valid_date_buttons()  # Refresh after first click
-                check_out = valid_dates_after_checkin[min(end_index, len(valid_dates_after_checkin) - 1)]
+                valid_dates_after_checkin = self.get_valid_date_buttons()
+                if end_index >= len(valid_dates_after_checkin):
+                    end_index = len(valid_dates_after_checkin) - 1
+                check_out_element = valid_dates_after_checkin[end_index]
 
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out)
-                ActionChains(self.driver).move_to_element(check_out).pause(0.2).click().perform()
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out_element)
+                ActionChains(self.driver).move_to_element(check_out_element).pause(0.2).click().perform()
+                time.sleep(0.5)
 
-                logging.info(f"Selected stay from {check_in_text} to {check_out_text} ({nights} nights)")
+                # ✅ Try clicking the "המשך" (continue) button if exists
+                try:
+                    continue_date_button = WebDriverWait(self.driver, 5).until(
+                        EC.element_to_be_clickable((By.ID, "search-engine-date-picker-footer-side-button"))
+                    )
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_date_button)
+                    continue_date_button.click()
+                    logging.info("Clicked 'Continue' button after selecting dates.")
+                except TimeoutException:
+                    logging.info("No 'Continue' button found after selecting dates. Skipping.")
+                except Exception as e:
+                    logging.warning(f"Error clicking 'Continue' after dates: {e}")
 
-                # Close calendar (ESCAPE)
-                self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                # Save selections to instance for logging later 📋
+                self.selected_checkin_date = check_in_text
+                self.selected_checkout_date = check_out_text
+                self.selected_nights = nights
+
+                logging.info(
+                    f"✅ Selected stay: Check-in: {self.selected_checkin_date}, Check-out: {self.selected_checkout_date}, Nights: {self.selected_nights}"
+                )
 
             except Exception as e:
                 logging.error(f"Failed selecting date range 2 months ahead: {e}")
                 self.take_screenshot("calendar_selection_fail")
                 raise
 
-
-
         def set_room_occupants(self, adults=2, children=0, infants=0):
             try:
-                # Click to open the room selection modal
-                self.wait.until(EC.element_to_be_clickable((By.ID, "search-engine-room-selection-button-Main"))).click()
-                logging.info("Clicked room selection button.")
+                logging.info("Opening room selection modal...")
 
-                # Wait for the modal to be visible
-                self.wait.until(EC.visibility_of_element_located((By.ID, "search-engine-room-selection-popover")))
-                logging.info("Room selection modal is visible.")
+                # ⚡️ Updated ID!
+                button = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.ID, "main-search-rooms-select"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+                time.sleep(0.3)
 
-                # Give the modal a moment to fully render
-                time.sleep(1)
+                try:
+                    WebDriverWait(self.driver, 5).until(
+                        EC.element_to_be_clickable((By.ID, "main-search-rooms-select"))
+                    ).click()
+                    logging.info("Clicked room selection button normally.")
+                except Exception as click_error:
+                    logging.warning(f"Normal click failed: {click_error}. Trying JS fallback...")
+                    self.driver.execute_script("arguments[0].click();", button)
+                    logging.info("Clicked room selection button via JS fallback.")
 
-                def select_occupant(cell_id, value):
+                # Wait for room selection modal to appear
+                WebDriverWait(self.driver, 10).until(
+                    EC.visibility_of_element_located((By.ID, "search-engine-room-selection-popover"))
+                )
+                logging.info("Room selection modal is now visible.")
+                time.sleep(0.5)
+
+                # ⬇️ Inner function to select guests
+                def select_guest(cell_id, value):
                     try:
-                        # Find the container for this dropdown
-                        container = self.driver.find_element(By.ID, cell_id)
+                        container = WebDriverWait(self.driver, 5).until(
+                            EC.presence_of_element_located((By.ID, cell_id))
+                        )
+                        dropdown_button = container.find_element(By.TAG_NAME, "button")
+                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", dropdown_button)
+                        dropdown_button.click()
+                        logging.info(f"Opened dropdown for {cell_id}.")
+                        time.sleep(0.3)
 
-                        # Instead of relying on specific selectors, find all buttons in the container and click the first one
-                        dropdown_btn = container.find_element(By.TAG_NAME, "button")
-                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", dropdown_btn)
-                        self.driver.execute_script("arguments[0].click();", dropdown_btn)
-
-                        # Wait a moment for the dropdown to appear
-                        time.sleep(0.5)
-
-                        # Find all buttons in the document that appear to be dropdown options
-                        # This is more robust than trying to find a specific container first
                         options = WebDriverWait(self.driver, 5).until(
                             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div[id^='select-options_'] button"))
                         )
 
-                        if not options:
-                            raise Exception(f"No dropdown options found for {cell_id}")
-
-                        # Find button with exact text value or choose the one at the right index
-                        target_value = str(value)
-                        target_button = None
-
                         for option in options:
-                            if option.text == target_value:
-                                target_button = option
+                            if option.text.strip() == str(value):
+                                self.driver.execute_script("arguments[0].click();", option)
+                                logging.info(f"Selected {value} for {cell_id}.")
                                 break
-
-                        # If we didn't find an exact match, find by index (safer fallback)
-                        if not target_button and len(options) > value:
-                            target_button = options[value]
-                        # If that fails too, just pick the first option
-                        elif not target_button:
-                            target_button = options[0]
-
-                        # Click the selected option
-                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_button)
-                        self.driver.execute_script("arguments[0].click();", target_button)
-                        logging.info(f"Set {cell_id} to {target_button.text}")
-
-                        # Close any open dropdown by clicking away (if needed)
-                        time.sleep(0.5)
+                        else:
+                            logging.warning(f"No exact match found for {value} in {cell_id}. Clicking first option.")
+                            self.driver.execute_script("arguments[0].click();", options[0])
 
                     except Exception as e:
-                        logging.error(f"Failed to set {cell_id}: {e}")
+                        logging.error(f"Failed selecting guest for {cell_id}: {e}")
                         raise
 
-                # Set the room configuration values one by one
-                select_occupant("search-engine-build-room-room-row-cell-adults0", adults)
-                time.sleep(0.5)  # Add small delay between operations
-                select_occupant("search-engine-build-room-room-row-cell-kids0", children)
-                time.sleep(0.5)  # Add small delay between operations
-                select_occupant("search-engine-build-room-room-row-cell-babies0", infants)
-                time.sleep(0.5)  # Add small delay before clicking continue
+                # 👥 Set adults, children, infants
+                select_guest("search-engine-build-room-room-row-cell-adults0", adults)
+                time.sleep(0.3)
+                select_guest("search-engine-build-room-room-row-cell-kids0", children)
+                time.sleep(0.3)
+                select_guest("search-engine-build-room-room-row-cell-babies0", infants)
+                time.sleep(0.3)
 
-                # Click the continue button to confirm the selection
+                # ➡️ Click continue to confirm
                 continue_btn = WebDriverWait(self.driver, 5).until(
                     EC.element_to_be_clickable((By.ID, "search-engine-build-room-next-button"))
                 )
-                self.driver.execute_script("arguments[0].click();", continue_btn)
-                logging.info(f"Room set: {adults} adults, {children} children, {infants} infants.")
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
+                continue_btn.click()
+                logging.info(f"✅ Room occupants set: {adults} adults, {children} children, {infants} infants.")
 
             except Exception as e:
-                logging.error(f"Failed to select room occupants: {e}")
+                logging.error(f"Failed to complete room occupants selection: {e}")
                 self.take_screenshot("set_room_occupants_fail")
                 raise
 

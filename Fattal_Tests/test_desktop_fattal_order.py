@@ -2,8 +2,7 @@ import traceback
 import unittest
 from selenium import webdriver
 import random
-from openpyxl.styles import Font, PatternFill
-from openpyxl.utils import get_column_letter
+from openpyxl.styles import  PatternFill
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -28,7 +27,7 @@ from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import sys
 from dotenv import load_dotenv
-class FattalTestsComplete(unittest.TestCase):
+class FattalDesktopTests(unittest.TestCase):
     def setUp(self):
         load_dotenv()
 
@@ -335,8 +334,10 @@ class FattalTestsComplete(unittest.TestCase):
         return filename
 
     def run(self, result=None):
-        self._resultForDoCleanups = result
-        return super().run(result)
+        if result is None:
+            result = self.defaultTestResult()
+        self._final_result = result
+        super().run(result)
 
     def fill_payment_details(self):
         """
@@ -560,8 +561,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        #self.main_page.select_next_month_date_range()
-        self.main_page.select_random_date_range_two_months_ahead()
+        self.main_page.select_next_month_date_range()
+        #self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
 
@@ -579,8 +580,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        #self.main_page.select_next_month_date_range()
-        self.main_page.select_random_date_range_two_months_ahead()
+        self.main_page.select_next_month_date_range()
+        #self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 0, 0
 
@@ -602,9 +603,9 @@ class FattalTestsComplete(unittest.TestCase):
 
             # Select specific date range via desktop calendar
             #self.main_page.select_specific_date_range_desktop(6, 10, "יולי 2025")
-            self.main_page.select_random_date_range_two_months_ahead()
+            self.main_page.select_next_month_date_range()
 
-            adults, children, infants = 2, 1, 0
+            adults, children, infants = 2, 0, 0
             self.main_page.set_room_occupants(adults, children, infants)
             self.main_page.select_flight_option_all_airports()
             self.main_page.search_button()
@@ -648,8 +649,9 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
+        self.main_page.select_next_month_date_range()
 
-        self.main_page.select_random_date_range_two_months_ahead()
+        #self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
 
@@ -717,8 +719,8 @@ class FattalTestsComplete(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        #self.main_page.select_next_month_date_range()
-        self.main_page.select_random_date_range_two_months_ahead()
+        self.main_page.select_next_month_date_range()
+        #self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
         self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
@@ -799,13 +801,13 @@ class FattalTestsComplete(unittest.TestCase):
     def tearDown(self):
         if self.driver:
             try:
-                result = getattr(self, "_outcome", None)  # PyCharm and unittest store results here
+                result = getattr(self, "_outcome", None)
                 if result is None:
                     logging.warning("No result object found. Skipping post_test_logging.")
                 else:
                     self.post_test_logging(result)
 
-                #  Log runtime duration
+                # Log runtime duration
                 try:
                     duration = self.driver.execute_script("""
                         const [start] = window.performance.getEntriesByName('selenium-start');
@@ -817,6 +819,8 @@ class FattalTestsComplete(unittest.TestCase):
 
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")
+
+            logging.info("Waiting 2 seconds before closing browser...")
 
             logging.info("Closing browser (tearDown).")
             try:
