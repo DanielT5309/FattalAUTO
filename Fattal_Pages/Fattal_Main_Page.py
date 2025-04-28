@@ -310,90 +310,71 @@ class FattalMainPage:
                 self.take_screenshot("calendar_selection_fail")
                 raise
 
-        def select_next_month_date_range(self, min_nights: int =3, max_nights: int = 4) -> None:
-            try:
-                logging.info("Starting 2 months ahead date range selection (3-5 nights)")
+        def select_next_month_date_range(self, min_nights: int = 3, max_nights: int = 4) -> None:
+            logging.info(f"Selecting a {min_nights}–{max_nights}-night stay, two months out")
 
-                # Open calendar
-                self.open_calendar()
-                self.switch_to_arrival_tab()
+            # helper: scroll + JS click
+            def js_click(el):
+                self.driver.execute_script("""
+                    arguments[0].scrollIntoView({ block: 'center' });
+                    arguments[0].click();
+                """, el)
 
-                # Move 2 months forward
-                for _ in range(2):
-                    next_button = WebDriverWait(self.driver, 5).until(
-                        EC.element_to_be_clickable(
-                            (By.XPATH, "//button[contains(@class, 'react-calendar__navigation__next-button')]"))
-                    )
-                    try:
-                        next_button.click()
-                        logging.info("Clicked next month.")
-                    except Exception as click_err:
-                        logging.warning(f"Normal click failed: {click_err}. Trying JS fallback...")
-                        self.driver.execute_script("arguments[0].click();", next_button)
-                        logging.info("Clicked next month via JS fallback.")
-                    time.sleep(0.5)
+            # 1) open arrival calendar
+            self.open_calendar()
+            self.switch_to_arrival_tab()
 
-                # Find available dates
-                valid_dates = self.get_valid_date_buttons()
-                if not valid_dates or len(valid_dates) < min_nights:
-                    raise Exception("Not enough valid dates found to select range.")
-
-                # Random pick start date
-                max_start_index = len(valid_dates) - min_nights
-                start_index = random.randint(0, max_start_index)
-                nights = random.randint(min_nights, max_nights)
-                end_index = start_index + nights
-
-                if end_index >= len(valid_dates):
-                    end_index = len(valid_dates) - 1
-
-                check_in_element = valid_dates[start_index]
-                check_out_element = valid_dates[end_index]
-
-                check_in_text = check_in_element.get_attribute("aria-label") or check_in_element.text
-                check_out_text = check_out_element.get_attribute("aria-label") or check_out_element.text
-
-                # Click check-in
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_in_element)
-                ActionChains(self.driver).move_to_element(check_in_element).pause(0.2).click().perform()
-                time.sleep(0.5)
-
-                # Click check-out
-                valid_dates_after_checkin = self.get_valid_date_buttons()
-                if end_index >= len(valid_dates_after_checkin):
-                    end_index = len(valid_dates_after_checkin) - 1
-                check_out_element = valid_dates_after_checkin[end_index]
-
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", check_out_element)
-                ActionChains(self.driver).move_to_element(check_out_element).pause(0.2).click().perform()
-                time.sleep(0.5)
-
-                # ✅ Try clicking the "המשך" (continue) button if exists
-                try:
-                    continue_date_button = WebDriverWait(self.driver, 5).until(
-                        EC.element_to_be_clickable((By.ID, "search-engine-date-picker-footer-side-button"))
-                    )
-                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_date_button)
-                    continue_date_button.click()
-                    logging.info("Clicked 'Continue' button after selecting dates.")
-                except TimeoutException:
-                    logging.info("No 'Continue' button found after selecting dates. Skipping.")
-                except Exception as e:
-                    logging.warning(f"Error clicking 'Continue' after dates: {e}")
-
-                # Save selections to instance for logging later 📋
-                self.selected_checkin_date = check_in_text
-                self.selected_checkout_date = check_out_text
-                self.selected_nights = nights
-
-                logging.info(
-                    f"✅ Selected stay: Check-in: {self.selected_checkin_date}, Check-out: {self.selected_checkout_date}, Nights: {self.selected_nights}"
+            # 2) advance two months
+            for _ in range(2):
+                next_btn = WebDriverWait(self.driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, ".react-calendar__navigation__next-button"))
                 )
+                js_click(next_btn)
+                time.sleep(0.5)  # let the view update
 
-            except Exception as e:
-                logging.error(f"Failed selecting date range 2 months ahead: {e}")
-                self.take_screenshot("calendar_selection_fail")
-                raise
+            # 3) grab all valid tiles in this month
+            dates = self.get_valid_date_buttons()
+            if len(dates) < min_nights:
+                raise RuntimeError("Not enough dates available")
+
+            # pick a random window
+            start_idx = random.randint(0, len(dates) - min_nights)
+            nights = random.randint(min_nights, max_nights)
+            end_idx = min(start_idx + nights, len(dates) - 1)
+
+            # cache their labels _before_ clicking
+            check_in_el = dates[start_idx]
+            check_out_el = dates[end_idx]
+            check_in_text = check_in_el.get_attribute("aria-label") or check_in_el.text
+            check_out_text = check_out_el.get_attribute("aria-label") or check_out_el.text
+
+            # 4) click check-in
+            js_click(check_in_el)
+            time.sleep(0.3)
+
+            # 5) refetch tiles (calendar may rerender) and click the right check-out
+            new_dates = self.get_valid_date_buttons()
+            # clamp end_idx in case length changed
+            end_idx = min(end_idx, len(new_dates) - 1)
+            js_click(new_dates[end_idx])
+            time.sleep(0.3)
+
+            # 6) tap “המשך” if present
+            try:
+                cont = WebDriverWait(self.driver, 3).until(
+                    EC.element_to_be_clickable((By.ID, "search-engine-date-picker-footer-side-button"))
+                )
+                js_click(cont)
+            except TimeoutException:
+                pass
+
+            # 7) record into instance (use cached labels)
+            self.selected_checkin_date = check_in_text
+            self.selected_checkout_date = check_out_text
+            self.selected_nights = nights
+            logging.info(
+                f"✅ Chosen stay: {check_in_text} → {check_out_text} ({nights} nights)"
+            )
 
         def set_room_occupants(self, adults=2, children=0, infants=0):
             try:

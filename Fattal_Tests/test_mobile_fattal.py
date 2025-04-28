@@ -112,87 +112,96 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_flight_page = FattalFlightPageMobile(self.driver)
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
+
+    import os, platform, logging, traceback
+    from datetime import datetime
+
     def post_test_logging(self, result):
         test_method = self._testMethodName
         has_failed = False
         error_msg = ""
-        screenshot_path = ""
-        log_file_path = ""
+        screenshot = ""
+        log_file = ""
         duration = (datetime.now() - self.test_start_time).total_seconds()
 
+        # ── browser & os ─────────────────────────────────────
         try:
-            browser = self.driver.capabilities['browserName'] if self.driver else "unknown"
-        except Exception as e:
-            logging.warning(f"Could not get browser info: {e}")
+            browser = self.driver.capabilities.get("browserName", "unknown") if self.driver else "unknown"
+        except:
             browser = "unknown"
-
         os_name = platform.system()
 
-        # Save logs
-        log_summary = self.log_stream.getvalue()
+        # ── save raw logs ────────────────────────────────────
         logs_dir = os.path.join(self.base_dir, "logs")
         os.makedirs(logs_dir, exist_ok=True)
-        log_file_path = os.path.join(logs_dir, f"{test_method}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log")
-
+        log_file = os.path.join(logs_dir,
+                                f"{test_method}_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
+                                )
         try:
-            with open(log_file_path, "w", encoding="utf-8") as f:
-                f.write(log_summary)
-            print(f"[LOG DEBUG] Written log to {log_file_path}")
+            with open(log_file, "w", encoding="utf-8") as f:
+                f.write(self.log_stream.getvalue())
         except Exception as e:
-            print(f"[LOG DEBUG] Failed to write log: {e}")
+            logging.warning(f"Could not write log file: {e}")
 
-        # Detect real test failure using unittest outcome
-        try:
-            outcome = getattr(result, 'result', result)
-            for failed_test, exc_info in outcome.failures + outcome.errors:
-                if self._testMethodName in str(failed_test):
+        # ── 1) check unittest _outcome.errors ───────────────
+        outcome = getattr(self, "_outcome", None)
+        if outcome:
+            for _test, exc_info in getattr(outcome, "errors", []) or []:
+                if exc_info:
                     has_failed = True
-                    if len(exc_info) == 3:
-                        exc_type, exc_value, tb = exc_info
-                        error_msg = "".join(traceback.format_exception(exc_type, exc_value, tb))
-                    else:
-                        error_msg = f" Unrecognized exception format: {exc_info}"
+                    error_msg = "".join(traceback.format_exception(*exc_info))
                     break
-        except Exception as e:
-            logging.warning(f"Failed to analyze test outcome: {e}")
 
-        # Capture confirmation metadata if available
-        confirmation = getattr(self, "confirmation_result", {})
-        order_number = confirmation.get("order_number", "")
-        confirmed_email = confirmation.get("email", "")
-        id_number = getattr(self, 'entered_id_number', '')
-        confirmation_screenshot = confirmation.get("screenshot_path", "")
+        # ── 2) check the TestResult you were passed ──────────
+        if not has_failed and result:
+            for attr in ("failures", "errors"):
+                entries = getattr(result, attr, None) or []
+                for entry in entries:
+                    # entry is (testcase, exc_info) or (testcase, traceback_str)
+                    testcase, exc = entry
+                    if testcase.id().endswith(test_method):
+                        has_failed = True
+                        if isinstance(exc, tuple) and len(exc) == 3:
+                            error_msg = "".join(traceback.format_exception(*exc))
+                        else:
+                            error_msg = str(exc)
+                        break
+                if has_failed:
+                    break
 
-        # Create one unified screenshot depending on test result
+        # ── screenshot per result ────────────────────────────
         try:
             if self.driver:
-                status_label = "FAIL" if has_failed else ("PASS" if order_number else "FAIL")
-                screenshot_path = self.take_confirmation_screenshot(test_method, status_label)
-                confirmation_screenshot = screenshot_path
+                status_label = "FAIL" if has_failed else "PASS"
+                screenshot = self.take_confirmation_screenshot(test_method, status_label)
         except Exception as e:
-            logging.warning(f"Could not take confirmation screenshot: {e}")
+            logging.warning(f"Could not take screenshot: {e}")
 
-        # Final test info dict
-        test_info = {
+        # ── confirmation metadata ─────────────────────────────
+        conf = getattr(self, "confirmation_result", {}) or {}
+        order_no = conf.get("order_number", "")
+        email = conf.get("email", "") or getattr(self, "entered_email", "")
+
+        # ── assemble & persist ───────────────────────────────
+        status = "FAILED" if has_failed else "PASSED"
+        info = {
             "name": test_method,
-            "description": getattr(self, "test_description", "No description provided"),
-            "status": "FAILED" if has_failed else "PASSED",
-            "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            "description": getattr(self, "test_description", ""),
+            "status": status,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "duration": f"{duration:.2f}s",
             "browser": browser,
-            "id_number": getattr(self, 'entered_id_number', ''),
             "os": os_name,
             "full_name": f"{getattr(self, 'entered_first_name', '')} {getattr(self, 'entered_last_name', '')}".strip(),
-            "email": confirmed_email or getattr(self, 'entered_email', ''),
-            "order_number": order_number,
-            "screenshot": confirmation_screenshot,
-            "log": log_file_path,
+            "email": email,
+            "order_number": order_no,
+            "id_number": getattr(self, "entered_id_number", ""),
+            "screenshot": screenshot,
+            "log": log_file,
             "error": error_msg
         }
 
-        # Persist results
-        self.save_to_excel(test_info)
-        self.save_to_pdf(test_info)
+        self.save_to_excel(info)
 
     def save_to_excel(self, info: dict):
         parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -509,6 +518,10 @@ class FattalMobileTests(unittest.TestCase):
             phone = guest["phone"]
             email = guest["email"]
             id_number = self.mobile_order_page.generate_israeli_id()
+            self.entered_first_name = first_name
+            self.entered_last_name = last_name
+            self.entered_email = email
+            self.entered_id_number = id_number
             message = "בדיקה אוטומטית של צור קשר דרך המובייל"
             hotel_name = "הרודס בוטיק אילת"
 

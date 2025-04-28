@@ -2,8 +2,8 @@ import unittest
 import concurrent.futures
 
 # ✏️ Import your test classes normally
-from Fattal_Tests.test_desktop_fattal_order import FattalDesktopTests
-from Fattal_Tests.test_mobile_fattal import FattalMobileTests
+from test_desktop_fattal_order import FattalDesktopTests
+from test_mobile_fattal import FattalMobileTests
 
 def run_test_case(testcase):
     result = unittest.TextTestRunner(verbosity=2).run(testcase)

@@ -203,7 +203,6 @@ class FattalDesktopTests(unittest.TestCase):
 
         # 📦 Persist results
         self.save_to_excel(test_info)
-        self.save_to_pdf(test_info)
 
     def save_to_excel(self, info: dict):
         parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
