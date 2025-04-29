@@ -165,34 +165,37 @@ class FattalDealsPageMobile:
 
     def click_mobile_search_button(self):
         """
-        מנסה ללחוץ על כפתור 'המשך' במובייל לפי ID, ואם לא הצליח – לפי class fallback
+        מנסה ללחוץ על כפתור 'חפש חופשה' (main mobile button) לפי ID, ואם לא הצליח – לפי טקסט כגיבוי
         """
         try:
-            logging.info("מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
+            logging.info("מנסה ללחוץ על כפתור 'חפש חופשה' הראשי במובייל...")
 
             try:
-                # ניסיון ראשון לפי ID
+                # ניסיון ראשון לפי ID (המתוקן)
                 search_btn = WebDriverWait(self.driver, 7).until(
-                    EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-buttonMain"))
+                    EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-main"))
                 )
-                logging.info("כפתור 'המשך' נמצא לפי ID")
+                logging.info("כפתור 'חפש חופשה' נמצא לפי ID")
             except TimeoutException:
-                logging.warning("לא נמצא כפתור לפי ID — מנסה לפי class...")
+                logging.warning("לא נמצא כפתור לפי ID — מנסה לפי טקסט...")
+
                 search_btn = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "div.sc-f6382f5-0.edhILP"))
+                    EC.element_to_be_clickable((
+                        By.XPATH, "//div[contains(text(), 'חפש חופשה')]"
+                    ))
                 )
-                logging.info("כפתור 'המשך' נמצא לפי class")
+                logging.info("כפתור 'חפש חופשה' נמצא לפי טקסט")
 
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_btn)
             self.driver.execute_script("arguments[0].click();", search_btn)
 
-            logging.info("נלחץ כפתור 'המשך' (main search button במובייל)")
+            logging.info("נלחץ כפתור 'חפש חופשה' (main search button במובייל)")
 
         except TimeoutException:
-            logging.error("Timeout – לא נמצא כפתור 'המשך' לפי ID וגם לפי class.")
+            logging.error("Timeout – לא נמצא כפתור 'חפש חופשה' לפי ID וגם לא לפי טקסט.")
             raise
         except Exception as e:
-            logging.error(f"שגיאה בלחיצה על כפתור 'המשך': {e}")
+            logging.error(f"שגיאה בלחיצה על כפתור 'חפש חופשה': {e}")
             raise
 
     def click_mobile_show_prices_button(self):

@@ -123,9 +123,9 @@ class FattalMainPageMobile:
             except:
                 raise Exception("Calendar closed before both dates were selected!")
 
+            # 🛠️ Here is the ONLY FIX applied:
             continue_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"))
+                EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-next-field"))
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
             time.sleep(0.4)
@@ -482,13 +482,11 @@ class FattalMainPageMobile:
             if len(months) < 2:
                 raise Exception("Not enough months rendered in calendar.")
 
-            # We'll loop through both available months to find our buttons
             checkin_btn = None
             checkout_btn = None
 
             for month in months:
                 buttons = month.find_elements(By.XPATH, ".//button[not(@disabled)]")
-
                 for btn in buttons:
                     try:
                         label = btn.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
@@ -502,7 +500,6 @@ class FattalMainPageMobile:
             if not checkin_btn or not checkout_btn:
                 raise Exception(f"Could not find one or both dates: {checkin_day}, {checkout_day}")
 
-            # Scroll and click
             actions = ActionChains(self.driver)
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkin_btn)
             actions.move_to_element(checkin_btn).pause(0.5).click().pause(1.0)
@@ -513,9 +510,9 @@ class FattalMainPageMobile:
             logging.info(f"Clicked check-in: {checkin_day} ביוני")
             logging.info(f"Clicked check-out: {checkout_day} ביוני")
 
+            # 🛠️ Fixed selector for continue button
             continue_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, "//div[contains(@class, 'sc-f6382f5-0') and contains(text(), 'המשך')]"))
+                EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-next-field"))
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
             time.sleep(0.4)
