@@ -212,7 +212,7 @@ class FattalMobileTests(unittest.TestCase):
                 ws.append([
                     "Test Name", "Description", "Status", "Timestamp", "Duration",
                     "Browser", "OS", "Full Name", "Email", "Order Number", "ID Number",
-                    "Screenshot", "Log File"
+                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot", "Log File"
                 ])
             else:
                 wb = load_workbook(filename)
@@ -232,31 +232,34 @@ class FattalMobileTests(unittest.TestCase):
                 info.get("email", ""),
                 info.get("order_number", ""),
                 info.get("id_number", ""),
+                getattr(self, "screenshot_room_selection", ""),
+                getattr(self, "screenshot_payment_stage", ""),
                 info.get("screenshot", ""),
                 info.get("log", "")
             ]
             ws.append(row)
             row_num = ws.max_row
 
-            # 🎨 Add color to row based on pass/fail
+            # 🎨 Color row based on result
             red_fill = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid")
             green_fill = PatternFill(start_color="CCFFCC", end_color="CCFFCC", fill_type="solid")
             row_fill = red_fill if status == "FAILED" else green_fill
 
-            for col_idx in range(1, 14):
+            for col_idx in range(1, 16):  # Adjusted to match 15 columns
                 ws.cell(row=row_num, column=col_idx).fill = row_fill
 
-            # 📎 Add screenshot hyperlink
-            screenshot_path = info.get("screenshot", "")
-            if screenshot_path and os.path.exists(screenshot_path):
-                cell = ws.cell(row=row_num, column=12)
-                cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
-                cell.font = Font(color="0000EE", underline="single")
+            # 📎 Add hyperlinks for screenshots (Room, Payment, Confirmation)
+            for col_idx in [12, 13, 14]:  # Screenshot columns
+                screenshot_path = row[col_idx - 1]
+                if screenshot_path and os.path.exists(screenshot_path):
+                    cell = ws.cell(row=row_num, column=col_idx)
+                    cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
+                    cell.font = Font(color="0000EE", underline="single")
 
-            # 📎 Add log file hyperlink
+            # 📎 Add hyperlink for log file
             log_path = info.get("log", "")
             if log_path and os.path.exists(log_path):
-                cell = ws.cell(row=row_num, column=13)
+                cell = ws.cell(row=row_num, column=15)
                 cell.hyperlink = f"file:///{log_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
@@ -444,6 +447,19 @@ class FattalMobileTests(unittest.TestCase):
         self.driver.save_screenshot(filename)
         logging.error(f" Screenshot taken: {filename}")
 
+    def take_stage_screenshot(self, label: str):
+        screenshot_dir = os.path.join(self.base_dir, "Screenshots")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        filename = os.path.join(
+            screenshot_dir, f"{label}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+        )
+        try:
+            self.driver.save_screenshot(filename)
+            logging.info(f"📸 Screenshot '{label}' saved at: {filename}")
+            setattr(self, f"screenshot_{label}", filename)  # Dynamically set
+        except Exception as e:
+            logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
+
     def test_mobile_join_fattal_and_friends_form(self):
         self.test_description = "הצטפרות למועדון דרך טופס"
         logging.info("Starting test: Join Fattal Club")
@@ -578,18 +594,20 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
         self.mobile_main_page.click_room_continue_button()
-
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
         #Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
+
         #Step 6 : Order Page
+        #self.mobile_order_page.click_room_selection_summary()
         self.mobile_order_page.wait_until_personal_form_ready()
         #Order Details
+        self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
-
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  #  Save for logging/export
 
@@ -630,10 +648,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
         # Step 6 : Order Page
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         # Order Details
         self.fill_guest_details(guest=self.default_guest)
 
@@ -675,6 +695,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 5: Handle results
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         # Step 7: Select flight or continue
@@ -686,6 +707,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Payment form
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         # Order Details
         self.fill_guest_details(guest=self.default_guest)
 
@@ -727,9 +749,11 @@ class FattalMobileTests(unittest.TestCase):
         # Step 5: Handle results
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
         # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         # Order Details
         self.fill_guest_details(guest=self.default_guest)
 
@@ -763,9 +787,11 @@ class FattalMobileTests(unittest.TestCase):
 
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
@@ -812,9 +838,11 @@ class FattalMobileTests(unittest.TestCase):
 
         self.mobile_search_page.click_book_room_button()
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
@@ -879,10 +907,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
 
@@ -938,10 +968,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
 
@@ -996,10 +1028,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_user_agreement_checkbox()
 
         # Step 7: Fill the iframe using config.json
@@ -1053,10 +1087,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_user_agreement_checkbox()
 
         # Step 7: Fill the iframe using config.json
@@ -1137,10 +1173,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5: בחר חדר
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
         # Step 6: הזנת פרטים רנדומליים
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         random_email = fake.email()
         random_phone = fake.phone_number().replace("-", "").replace("+", "")
         random_first_name = fake.first_name()
@@ -1201,9 +1239,11 @@ class FattalMobileTests(unittest.TestCase):
 
         #Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
         #Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         #Order Details
         self.fill_guest_details(guest=self.default_guest)
 
@@ -1245,10 +1285,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5: Choose Room and click it
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         # Step 6: Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         # Order Details
         self.fill_guest_details(guest=self.default_guest_europe)
 
@@ -1308,10 +1350,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5: Choose Room and click it
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         # Step 6: Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.set_first_name("Chen")
         self.mobile_order_page.set_last_name("Test")
         self.mobile_order_page.click_user_agreement_checkbox()
@@ -1368,10 +1412,12 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5: Choose Room and click it
         self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_regional()
 
         # Step 6: Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.set_first_name("Chen")
         self.mobile_order_page.set_last_name("Test")
         self.mobile_order_page.click_user_agreement_checkbox()

@@ -204,6 +204,19 @@ class FattalDesktopTests(unittest.TestCase):
         # 📦 Persist results
         self.save_to_excel(test_info)
 
+    def take_stage_screenshot(self, label: str):
+        screenshot_dir = os.path.join(self.base_dir, "Screenshots")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        filename = os.path.join(
+            screenshot_dir, f"{label}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+        )
+        try:
+            self.driver.save_screenshot(filename)
+            logging.info(f"📸 Screenshot '{label}' saved at: {filename}")
+            setattr(self, f"screenshot_{label}", filename)  # Dynamically track it
+        except Exception as e:
+            logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
+
     def save_to_excel(self, info: dict):
         parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filename = os.path.join(parent_folder, "TestResults.xlsx")
@@ -216,7 +229,7 @@ class FattalDesktopTests(unittest.TestCase):
                 ws.append([
                     "Test Name", "Description", "Status", "Timestamp", "Duration",
                     "Browser", "OS", "Full Name", "Email", "Order Number", "ID Number",
-                    "Screenshot", "Log File"
+                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot", "Log File"
                 ])
             else:
                 wb = load_workbook(filename)
@@ -236,31 +249,34 @@ class FattalDesktopTests(unittest.TestCase):
                 info.get("email", ""),
                 info.get("order_number", ""),
                 info.get("id_number", ""),
-                info.get("screenshot", ""),
+                getattr(self, "screenshot_room_selection", ""),
+                getattr(self, "screenshot_payment_stage", ""),
+                info.get("screenshot", ""),  # Confirmation
                 info.get("log", "")
             ]
             ws.append(row)
             row_num = ws.max_row
 
-            # 🎨 Add color to row based on pass/fail
+            # 🎨 Color row based on result
             red_fill = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid")
             green_fill = PatternFill(start_color="CCFFCC", end_color="CCFFCC", fill_type="solid")
             row_fill = red_fill if status == "FAILED" else green_fill
 
-            for col_idx in range(1, 14):
+            for col_idx in range(1, 16):  # Columns A to O (1-15)
                 ws.cell(row=row_num, column=col_idx).fill = row_fill
 
-            # 📎 Add screenshot hyperlink
-            screenshot_path = info.get("screenshot", "")
-            if screenshot_path and os.path.exists(screenshot_path):
-                cell = ws.cell(row=row_num, column=12)
-                cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
-                cell.font = Font(color="0000EE", underline="single")
+            # 📎 Hyperlink screenshots (Room, Payment, Confirmation)
+            for col_idx in [12, 13, 14]:
+                screenshot_path = row[col_idx - 1]
+                if screenshot_path and os.path.exists(screenshot_path):
+                    cell = ws.cell(row=row_num, column=col_idx)
+                    cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
+                    cell.font = Font(color="0000EE", underline="single")
 
-            # 📎 Add log file hyperlink
+            # 📎 Hyperlink log file
             log_path = info.get("log", "")
             if log_path and os.path.exists(log_path):
-                cell = ws.cell(row=row_num, column=13)
+                cell = ws.cell(row=row_num, column=15)
                 cell.hyperlink = f"file:///{log_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
@@ -397,6 +413,7 @@ class FattalDesktopTests(unittest.TestCase):
     def complete_booking_post_flight(self):
         self.order_page.switch_to_default_content()
         self.order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
 
         random_id = self.order_page.generate_israeli_id()
         self.entered_id_number = random_id  # 💾 For Excel logging
@@ -459,9 +476,11 @@ class FattalDesktopTests(unittest.TestCase):
         self.retry_search_if_no_results(hotel_name, adults, children, infants)
 
         self.search_result.click_first_show_prices()
+        self.take_stage_screenshot("room_selection")
         self.search_result.click_first_book_room()
 
         self.order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
 
         guest = self.default_guest
         self.order_page.set_email(guest["email"])
@@ -505,10 +524,14 @@ class FattalDesktopTests(unittest.TestCase):
         self.retry_search_if_no_results(hotel_name, adults, children, infants)
 
         self.search_result.click_first_show_prices()
+        self.take_stage_screenshot("room_selection")
+
         self.search_result.click_first_book_room()
 
         self.order_page.switch_to_default_content()
         self.order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
+
         self.order_page.club_checkbox()
 
         random_id = self.order_page.generate_israeli_id()
@@ -729,10 +752,14 @@ class FattalDesktopTests(unittest.TestCase):
         self.retry_search_if_no_results(hotel_name, adults, children, infants)
 
         self.search_result.click_first_show_prices()
+        self.take_stage_screenshot("room_selection")
+
         self.search_result.click_first_book_room()
 
         self.order_page.switch_to_default_content()
         self.order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
+
         logging.info("📝 Order form visible — filling random data")
 
         # Generate fake guest info

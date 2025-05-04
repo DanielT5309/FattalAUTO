@@ -390,3 +390,47 @@ class FattalOrderPageMobile:
             logging.info(f"✅ No error or success element found for coupon '{code}', assuming applied.")
             return True
 
+    def click_room_selection_summary(self):
+        """
+        Clicks the summary section that contains room + guest count,
+        using partial text fallback if class selectors fail.
+        No scroll is performed before clicking.
+        """
+        try:
+            logging.info("Attempting to click the room selection summary header...")
+
+            # List of alternative selectors to try (ordered fallback)
+            selectors = [
+                (By.CSS_SELECTOR, "div[class*='MuiAccordionSummary'] h2"),
+                (By.XPATH, "//h2[contains(text(), 'חדר') and contains(text(), 'אורחים')]"),
+                (By.XPATH, "//div[contains(@class, 'MuiAccordionSummary')]//h2")
+            ]
+
+            summary_h2 = None
+            for by, value in selectors:
+                try:
+                    summary_h2 = WebDriverWait(self.driver, 6).until(
+                        EC.element_to_be_clickable((by, value))
+                    )
+                    break  # ✅ Found one, exit loop
+                except Exception:
+                    continue  # Try next
+
+            if not summary_h2:
+                raise TimeoutException("Could not locate room selection summary element using any selector.")
+
+            time.sleep(0.5)  # Optional short delay
+            summary_h2.click()
+            logging.info("Room summary header clicked successfully.")
+
+        except Exception as e:
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+            os.makedirs(screenshot_dir, exist_ok=True)
+            screenshot_path = os.path.join(screenshot_dir, f"click_room_summary_fail_{timestamp}.png")
+            self.driver.save_screenshot(screenshot_path)
+            logging.error(f"📸 Screenshot saved: {screenshot_path}")
+            logging.error(f"❌ Failed to click room summary header: {e}")
+            raise
+
+

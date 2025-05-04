@@ -82,7 +82,7 @@ class FattalMainPageMobile:
             self.take_screenshot("open_calendar_fail")
             raise
 
-    def select_date_range_two_months_ahead(self, stay_length=None):
+    def select_date_range_two_months_ahead(self, stay_length=3):
         """
         Selects check-in and check-out dates from the 3rd calendar month shown (2 months ahead).
         :param stay_length: Optional integer for number of nights. If None, chooses randomly (3-5).

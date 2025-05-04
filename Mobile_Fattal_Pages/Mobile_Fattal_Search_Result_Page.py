@@ -38,6 +38,23 @@ class FattalSearchResultPageMobile:
             self.take_screenshot("wait_for_rooms_failed")
             raise
 
+    def wait_for_show_prices_button(self, timeout=25):
+        """
+        Waits until the 'הצג מחירים' button is present and interactable, but does NOT click it.
+        Useful if you want to take a screenshot right after the button appears.
+        """
+        try:
+            logging.info("ממתין להופעת כפתור 'הצג מחירים'...")
+            show_price_button = WebDriverWait(self.driver, timeout).until(
+                EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", show_price_button)
+            logging.info("כפתור 'הצג מחירים' נמצא ומוכן.")
+            return show_price_button  # In case you want to pass it elsewhere
+        except Exception as e:
+            self.take_screenshot("wait_for_show_prices_fail")
+            logging.error(f"❌ לא הצליח להמתין לכפתור 'הצג מחירים': {e}")
+            raise
     def click_show_prices_button(self):
         logging.info("מחפש ולוחץ על כפתור 'הצג מחירים'...")
 
