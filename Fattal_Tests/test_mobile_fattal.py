@@ -113,9 +113,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
 
-    import os, platform, logging, traceback
-    from datetime import datetime
-
     def post_test_logging(self, result):
         test_method = self._testMethodName
         has_failed = False
