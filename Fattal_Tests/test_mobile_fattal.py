@@ -1260,11 +1260,11 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
-        #self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
 
         # Step 9: Confirm and Assert
-        #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        #assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_with_club_login_europe(self):
         hotel_name = self.default_hotel_name_europe
@@ -1320,11 +1320,11 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
 
         # Step 8: Click submit inside iframe (already inside from step 7)
-        #self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
 
         # Step 9: Confirm and Assert
-        #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        #assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_mobile_booking_with_club_login_11night_europe(self):
         hotel_name = self.default_hotel_name_europe
@@ -1380,11 +1380,11 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
 
         # Step 8: Click submit inside iframe (already inside from step 7)
-        #self.mobile_order_page.click_payment_submit_button()
+        self.mobile_order_page.click_payment_submit_button()
 
         # Step 9: Confirm and Assert
-        #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        #assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def tearDown(self):
         if self.driver:
