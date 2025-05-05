@@ -115,7 +115,7 @@ class FattalMobileTests(unittest.TestCase):
 
     def post_test_logging(self, result):
         test_method = self._testMethodName
-        has_failed = False
+        has_failed = result.get("has_failed", False)
         error_msg = ""
         screenshot = ""
         log_file = ""
@@ -131,40 +131,12 @@ class FattalMobileTests(unittest.TestCase):
         # ── save raw logs ────────────────────────────────────
         logs_dir = os.path.join(self.base_dir, "logs")
         os.makedirs(logs_dir, exist_ok=True)
-        log_file = os.path.join(logs_dir,
-                                f"{test_method}_{datetime.now():%Y-%m-%d_%H-%M-%S}.log"
-                                )
+        log_file = os.path.join(logs_dir, f"{test_method}_{datetime.now():%Y-%m-%d_%H-%M-%S}.log")
         try:
             with open(log_file, "w", encoding="utf-8") as f:
                 f.write(self.log_stream.getvalue())
         except Exception as e:
             logging.warning(f"Could not write log file: {e}")
-
-        # ── 1) check unittest _outcome.errors ───────────────
-        outcome = getattr(self, "_outcome", None)
-        if outcome:
-            for _test, exc_info in getattr(outcome, "errors", []) or []:
-                if exc_info:
-                    has_failed = True
-                    error_msg = "".join(traceback.format_exception(*exc_info))
-                    break
-
-        # ── 2) check the TestResult you were passed ──────────
-        if not has_failed and result:
-            for attr in ("failures", "errors"):
-                entries = getattr(result, attr, None) or []
-                for entry in entries:
-                    # entry is (testcase, exc_info) or (testcase, traceback_str)
-                    testcase, exc = entry
-                    if testcase.id().endswith(test_method):
-                        has_failed = True
-                        if isinstance(exc, tuple) and len(exc) == 3:
-                            error_msg = "".join(traceback.format_exception(*exc))
-                        else:
-                            error_msg = str(exc)
-                        break
-                if has_failed:
-                    break
 
         # ── screenshot per result ────────────────────────────
         try:
@@ -195,7 +167,7 @@ class FattalMobileTests(unittest.TestCase):
             "id_number": getattr(self, "entered_id_number", ""),
             "screenshot": screenshot,
             "log": log_file,
-            "error": error_msg
+            "error": "" if not has_failed else "See log"
         }
 
         self.save_to_excel(info)
@@ -210,8 +182,8 @@ class FattalMobileTests(unittest.TestCase):
                 ws = wb.active
                 ws.title = "Test Results"
                 ws.append([
-                    "Test Name", "Description", "Status", "Timestamp", "Duration",
-                    "Browser", "OS", "Full Name", "Email", "Order Number", "ID Number",
+                    "Test Name", "Order Number", "ID Number", "Description", "Status", "Timestamp", "Duration",
+                    "Browser", "OS", "Full Name", "Email",
                     "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot", "Log File"
                 ])
             else:
@@ -222,6 +194,8 @@ class FattalMobileTests(unittest.TestCase):
 
             row = [
                 info.get("name", ""),
+                info.get("order_number", ""),
+                info.get("id_number", ""),
                 info.get("description", ""),
                 status,
                 info.get("timestamp", ""),
@@ -230,8 +204,6 @@ class FattalMobileTests(unittest.TestCase):
                 info.get("os", ""),
                 info.get("full_name", ""),
                 info.get("email", ""),
-                info.get("order_number", ""),
-                info.get("id_number", ""),
                 getattr(self, "screenshot_room_selection", ""),
                 getattr(self, "screenshot_payment_stage", ""),
                 info.get("screenshot", ""),
@@ -436,7 +408,7 @@ class FattalMobileTests(unittest.TestCase):
         return filename
 
     def run(self, result=None):
-        self._resultForDoCleanups = result
+        self._test_result_for_teardown = result  # Save for later
         return super().run(result)
 
     def take_screenshot(self, test_method_name):
@@ -604,7 +576,9 @@ class FattalMobileTests(unittest.TestCase):
 
         #Step 6 : Order Page
         #self.mobile_order_page.click_room_selection_summary()
+
         self.mobile_order_page.wait_until_personal_form_ready()
+
         #Order Details
         self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
@@ -716,10 +690,10 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_user_agreement_checkbox()
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
-
-        # Step 10: Confirmation
-        #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        #assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.mobile_order_page.click_payment_submit_button()
+        #Step 10: Confirmation
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_region_eilat(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
@@ -871,12 +845,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_RENEW_ID"),
+            "password": os.getenv("CLUB_RENEW_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_RENEW_ID"),
-                "password": os.getenv("CLUB_RENEW_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -884,6 +858,7 @@ class FattalMobileTests(unittest.TestCase):
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")# For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
 
@@ -932,12 +907,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
+            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
-                "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -946,6 +921,7 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
         # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
 
@@ -993,12 +969,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_11NIGHT_ID"),
+            "password": os.getenv("CLUB_11NIGHT_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_11NIGHT_ID"),
-                "password": os.getenv("CLUB_11NIGHT_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1007,6 +983,7 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
         # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
         # Step 1: City selection
@@ -1052,12 +1029,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_REGULAR_ID"),
-                "password": os.getenv("CLUB_REGULAR_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1066,9 +1043,10 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
         # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-        # Step 1: City selection
+        # Step 1: City selectionX
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1106,12 +1084,12 @@ class FattalMobileTests(unittest.TestCase):
 
     def test_mobile_booking_club_member_deals(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_REGULAR_ID"),
-                "password": os.getenv("CLUB_REGULAR_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1120,6 +1098,7 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
         # ✅ For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
 
@@ -1313,12 +1292,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_REGULAR_ID"),
-                "password": os.getenv("CLUB_REGULAR_PASSWORD")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1328,6 +1307,7 @@ class FattalMobileTests(unittest.TestCase):
             logging.warning(f"Login failed or already logged in: {e}")
 
         # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
 
@@ -1375,12 +1355,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
         # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_11NIGHT_ID_EUROPE"),
+            "password": os.getenv("CLUB_11NIGHT_PASSWORD_EUROPE")
+        }
         try:
             self.mobile_toolbar.open_login_menu()
-            user = {
-                "id": os.getenv("CLUB_11NIGHT_ID_EUROPE"),
-                "password": os.getenv("CLUB_11NIGHT_PASSWORD_EUROPE")
-            }
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1390,6 +1370,7 @@ class FattalMobileTests(unittest.TestCase):
             logging.warning(f"Login failed or already logged in: {e}")
 
         # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
 
@@ -1435,38 +1416,34 @@ class FattalMobileTests(unittest.TestCase):
     def tearDown(self):
         if self.driver:
             try:
-                result = getattr(self, "_outcome", None)
-                if result is None:
-                    logging.warning("No result object found. Skipping post_test_logging.")
-                else:
-                    self.post_test_logging(result)
+                # ⛑️ Check if the test failed
+                has_failed = False
+                outcome = getattr(self, "_outcome", None)
+                if outcome:
+                    result = outcome.result if hasattr(outcome, "result") else outcome
 
-                # Log runtime duration
-                try:
-                    duration = self.driver.execute_script("""
-                        const [start] = window.performance.getEntriesByName('selenium-start');
-                        return Date.now() - start.startTime;
-                    """)
-                    logging.info(f" Test runtime: {int(duration)}ms")
-                except Exception as e:
-                    logging.warning(f" Could not get test runtime: {e}")
+                    # Unittest stores errors as tuples: (testcase, traceback string)
+                    for method_name, exc_info in (getattr(result, "failures", []) + getattr(result, "errors", [])):
+                        if method_name.id().endswith(self._testMethodName):
+                            has_failed = True
+                            break
+
+                # 📝 Log using our helper, but now explicitly pass failure state
+                self.post_test_logging({"has_failed": has_failed})
 
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")
-
-            logging.info("Waiting 2 seconds before closing browser...")
-            sleep(2)  # Pause while browser is still open
-
-            logging.info("Closing browser (tearDown).")
-            try:
-                self.driver.quit()
-            except Exception as e:
-                logging.warning(f"Browser quit failed: {e}")
+            finally:
+                logging.info("Waiting 2 seconds before closing browser...")
+                sleep(2)
+                try:
+                    self.driver.quit()
+                except Exception as e:
+                    logging.warning(f"Browser quit failed: {e}")
 
     if __name__ == "__main__":
         import unittest
         unittest.main()
-
 
 
 

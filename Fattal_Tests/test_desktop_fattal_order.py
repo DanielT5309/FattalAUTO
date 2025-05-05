@@ -530,10 +530,8 @@ class FattalDesktopTests(unittest.TestCase):
 
         self.order_page.switch_to_default_content()
         self.order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-
         self.order_page.club_checkbox()
-
+        self.take_stage_screenshot("payment_stage")
         random_id = self.order_page.generate_israeli_id()
         self.entered_id_number = random_id  # 💾 For Excel logging
 
@@ -721,9 +719,51 @@ class FattalDesktopTests(unittest.TestCase):
         self.main_page.select_next_month_date_range()
 
         adults, children, infants = 2, 1, 0
+        self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
+        logging.info(f" Guests: {adults} adults, {children} children, {infants} infants")
 
-        # ✅ Booking flow: now includes clicking the submit button
-        self.complete_booking_flow(hotel_name, adults, children, infants)
+        self.main_page.search_button()
+        self.retry_search_if_no_results(hotel_name, adults, children, infants)
+
+        self.search_result.click_first_show_prices()
+        self.take_stage_screenshot("room_selection")
+        self.search_result.click_first_book_room()
+
+        self.order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
+
+        guest = self.default_guest
+        self.order_page.set_email(guest["email"])
+        self.order_page.set_phone(guest["phone"])
+        self.order_page.set_first_name(guest["first_name"])
+        self.order_page.set_last_name(guest["last_name"])
+
+        self.entered_email = guest["email"]
+        self.entered_first_name = guest["first_name"]
+        self.entered_last_name = guest["last_name"]
+
+        self.order_page.click_terms_approval_checkbox_js()
+        self.order_page.expand_special_requests_section()
+        textarea = self.order_page.get_special_request_textarea()
+        textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
+
+        for checkbox in [
+            self.order_page.get_adjacent_rooms_checkbox(),
+            self.order_page.get_high_floor_checkbox(),
+            self.order_page.get_low_floor_checkbox()
+        ]:
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+            self.driver.execute_script("arguments[0].click();", checkbox)
+
+        self.fill_payment_details()
+
+        try:
+            self.order_page.click_submit_button()
+            logging.info(" Submit button clicked successfully.")
+        except Exception as e:
+            logging.error(f" Failed to click submit button: {e}")
+            self.take_screenshot("submit_click_failure")
+            raise
 
         # ✅ NEW: Only wait for confirmation and extract order info
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)

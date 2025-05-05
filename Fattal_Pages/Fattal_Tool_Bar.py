@@ -64,45 +64,45 @@ class FattalToolBar:
 
     def personal_zone(self):
         try:
-            # Try multiple approaches to find the personal zone button
+            wait = WebDriverWait(self.driver, 10)
+
+            # 1️⃣ Try direct button with visible text (best case)
             try:
-                # First try by text content (most reliable)
-                btn = self.wait.until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'אזור אישי')]"))
+                btn = wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[.//div[text()='לאזור האישי']]"))
                 )
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
                 self.driver.execute_script("arguments[0].click();", btn)
-                logging.info("Clicked personal zone button via text content")
+                logging.info("✅ Clicked personal zone button via inner text <div>")
                 return
-            except:
-                # Try by position/location if text search fails
-                personal_buttons = self.driver.find_elements(By.CSS_SELECTOR, "header button")
-                for btn in personal_buttons:
-                    if "אזור אישי" in btn.text:
-                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
-                        self.driver.execute_script("arguments[0].click();", btn)
-                        logging.info("Clicked personal zone button from header buttons")
-                        return
-                
-                # If all else fails, try JavaScript to find the button
-                clicked = self.driver.execute_script("""
-                    const buttons = Array.from(document.querySelectorAll('button'));
-                    const personalBtn = buttons.find(btn => btn.textContent.includes('אזור אישי'));
-                    if (personalBtn) {
-                        personalBtn.scrollIntoView({block: 'center'});
-                        personalBtn.click();
-                        return true;
-                    }
-                    return false;
-                """)
-                
-                if clicked:
-                    logging.info("Clicked personal zone button via JavaScript")
+            except Exception as e:
+                logging.warning(f"⚠️ XPATH strategy failed: {e}")
+
+            # 2️⃣ Try by aria-label (reliable fallback)
+            try:
+                btn = wait.until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[aria-label='אזור אישי']"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                self.driver.execute_script("arguments[0].click();", btn)
+                logging.info("✅ Clicked personal zone button via aria-label")
+                return
+            except Exception as e:
+                logging.warning(f"⚠️ Aria-label strategy failed: {e}")
+
+            # 3️⃣ Try by looping visible header buttons
+            personal_buttons = self.driver.find_elements(By.CSS_SELECTOR, "header button")
+            for btn in personal_buttons:
+                if "אזור אישי" in btn.text:
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                    self.driver.execute_script("arguments[0].click();", btn)
+                    logging.info("✅ Clicked personal zone button by scanning header buttons")
                     return
-                
-                raise Exception("Could not find personal zone button")
+
+            raise Exception("🔍 Could not locate the personal zone button using any method.")
+
         except Exception as e:
-            logging.error(f"Failed to click personal zone button: {e}")
+            logging.error(f"❌ Failed to click personal zone button: {e}")
             raise
 
     def user_id_input(self):
@@ -161,44 +161,59 @@ class FattalToolBar:
 
     def login_button(self):
         try:
-            # Try multiple approaches to find the login button
+            # 1️⃣ Try by visible text "כניסה" (login)
             try:
-                # First try by text content (most reliable)
                 btn = self.wait.until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[text()='התחברות']"))
+                    EC.element_to_be_clickable((By.XPATH, "//button[normalize-space(text())='כניסה']"))
                 )
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
                 self.driver.execute_script("arguments[0].click();", btn)
-                logging.info("Clicked login button via text content")
+                logging.info("✅ Clicked login button via visible text 'כניסה'")
                 return
-            except:
-                # If text search fails, try to find any button in the login form
-                form_buttons = self.driver.find_elements(By.CSS_SELECTOR, "form button")
-                if form_buttons:
-                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", form_buttons[0])
-                    self.driver.execute_script("arguments[0].click();", form_buttons[0])
-                    logging.info("Clicked login button (first form button)")
+            except Exception as e:
+                logging.warning(f"🔍 Text-based login button not found: {e}")
+
+            # 2️⃣ Try by ID
+            try:
+                btn = self.wait.until(
+                    EC.element_to_be_clickable((By.ID, "login-with-password-button"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                self.driver.execute_script("arguments[0].click();", btn)
+                logging.info("✅ Clicked login button via ID 'login-with-password-button'")
+                return
+            except Exception as e:
+                logging.warning(f"🔍 ID-based login button not found: {e}")
+
+            # 3️⃣ Try fallback in form button list
+            form_buttons = self.driver.find_elements(By.CSS_SELECTOR, "form button")
+            for btn in form_buttons:
+                if "כניסה" in btn.text:
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+                    self.driver.execute_script("arguments[0].click();", btn)
+                    logging.info("✅ Clicked login button from form (text match)")
                     return
-                
-                # If all else fails, try JavaScript to find the button
-                clicked = self.driver.execute_script("""
-                    const buttons = Array.from(document.querySelectorAll('button'));
-                    const loginBtn = buttons.find(btn => btn.textContent.includes('התחברות'));
-                    if (loginBtn) {
-                        loginBtn.scrollIntoView({block: 'center'});
-                        loginBtn.click();
-                        return true;
-                    }
-                    return false;
-                """)
-                
-                if clicked:
-                    logging.info("Clicked login button via JavaScript")
-                    return
-                
-                raise Exception("Could not find login button")
+
+            # 4️⃣ Try JavaScript brute-force fallback
+            clicked = self.driver.execute_script("""
+                const buttons = Array.from(document.querySelectorAll('button'));
+                const loginBtn = buttons.find(btn => btn.textContent.includes('כניסה'));
+                if (loginBtn) {
+                    loginBtn.scrollIntoView({block: 'center'});
+                    loginBtn.click();
+                    return true;
+                }
+                return false;
+            """)
+            if clicked:
+                logging.info("✅ Clicked login button via JavaScript fallback")
+                return
+
+            # 5️⃣ Give up
+            raise Exception("❌ Could not find login button via any strategy")
+
         except Exception as e:
-            logging.error(f"Failed to click login button: {e}")
+            logging.error(f"🚨 Failed to click login button: {e}")
             raise
 
     def single_use_code(self):
