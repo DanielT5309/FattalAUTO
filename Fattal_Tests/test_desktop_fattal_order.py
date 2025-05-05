@@ -228,9 +228,12 @@ class FattalDesktopTests(unittest.TestCase):
                 ws.title = "Test Results"
                 ws.append([
                     "Test Name", "Description", "Status", "Timestamp", "Duration",
-                    "Browser", "OS", "Full Name", "Email", "Order Number", "ID Number",
-                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot", "Log File"
+                    "Browser", "OS",
+                    "Full Name", "Email", "ID Number", "Order Number",
+                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot",
+                    "Log File"
                 ])
+
             else:
                 wb = load_workbook(filename)
                 ws = wb.active
@@ -247,8 +250,8 @@ class FattalDesktopTests(unittest.TestCase):
                 info.get("os", ""),
                 info.get("full_name", ""),
                 info.get("email", ""),
-                info.get("order_number", ""),
                 info.get("id_number", ""),
+                info.get("order_number", ""),
                 getattr(self, "screenshot_room_selection", ""),
                 getattr(self, "screenshot_payment_stage", ""),
                 info.get("screenshot", ""),  # Confirmation
