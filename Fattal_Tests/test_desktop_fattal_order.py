@@ -227,13 +227,10 @@ class FattalDesktopTests(unittest.TestCase):
                 ws = wb.active
                 ws.title = "Test Results"
                 ws.append([
-                    "Test Name", "Description", "Status", "Timestamp", "Duration",
-                    "Browser", "OS",
-                    "Full Name", "Email", "ID Number", "Order Number",
-                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot",
-                    "Log File"
+                    "Test Name", "Order Number", "ID Number", "Description", "Status",
+                    "Timestamp", "Duration", "Browser", "OS", "Full Name", "Email",
+                    "Room Screenshot", "Payment Screenshot", "Confirmation Screenshot", "Log File"
                 ])
-
             else:
                 wb = load_workbook(filename)
                 ws = wb.active
@@ -242,6 +239,8 @@ class FattalDesktopTests(unittest.TestCase):
 
             row = [
                 info.get("name", ""),
+                info.get("order_number", ""),
+                info.get("id_number", ""),
                 info.get("description", ""),
                 status,
                 info.get("timestamp", ""),
@@ -250,11 +249,9 @@ class FattalDesktopTests(unittest.TestCase):
                 info.get("os", ""),
                 info.get("full_name", ""),
                 info.get("email", ""),
-                info.get("id_number", ""),
-                info.get("order_number", ""),
                 getattr(self, "screenshot_room_selection", ""),
                 getattr(self, "screenshot_payment_stage", ""),
-                info.get("screenshot", ""),  # Confirmation
+                info.get("screenshot", ""),
                 info.get("log", "")
             ]
             ws.append(row)
@@ -268,7 +265,7 @@ class FattalDesktopTests(unittest.TestCase):
             for col_idx in range(1, 16):  # Columns A to O (1-15)
                 ws.cell(row=row_num, column=col_idx).fill = row_fill
 
-            # 📎 Hyperlink screenshots (Room, Payment, Confirmation)
+            # 📎 Hyperlink screenshots
             for col_idx in [12, 13, 14]:
                 screenshot_path = row[col_idx - 1]
                 if screenshot_path and os.path.exists(screenshot_path):
