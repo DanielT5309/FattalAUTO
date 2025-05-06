@@ -33,6 +33,7 @@ ORDERED_TESTS = [
     ("FattalMobileTests", "test_mobile_booking_club_member_deals"),
     ("FattalMobileTests", "test_mobile_booking_anonymous_random_guest_details"),
     ("FattalMobileTests", "test_mobile_booking_anonymous_user_promo_code"),
+    ("FattalMobileTests", "test_mobile_club_renew_expired_form"),
 ]
 
 # === Custom Result Class with Live Progress ===

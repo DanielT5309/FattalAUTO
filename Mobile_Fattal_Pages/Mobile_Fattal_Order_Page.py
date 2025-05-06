@@ -433,4 +433,28 @@ class FattalOrderPageMobile:
             logging.error(f"❌ Failed to click room summary header: {e}")
             raise
 
+    def click_user_agreement_checkbox_by_label_id(self):
+        """
+        Clicks the styled user agreement checkbox using the wrapping <label> element by ID,
+        with scrollIntoView and JS-based click for maximum compatibility.
+        """
+        try:
+            logging.info("📜 Clicking User Agreement checkbox by label ID (with scroll)...")
+
+            label = self.wait.until(EC.presence_of_element_located((
+                By.ID, "checkbox-field-control-label_terms-and-conditions"
+            )))
+
+            # Scroll into view (centered)
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", label)
+
+            # Perform JavaScript-based click
+            self.driver.execute_script("arguments[0].click();", label)
+
+            logging.info("✅ Checkbox clicked via label ID.")
+        except Exception as e:
+            self.take_screenshot("user_agreement_checkbox_by_label_fail")
+            logging.error(f"❌ Failed to click User Agreement checkbox by label: {e}")
+            raise
+
 

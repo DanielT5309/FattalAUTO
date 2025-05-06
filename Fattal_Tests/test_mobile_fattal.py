@@ -3,11 +3,13 @@ import logging
 import sys
 import time
 import traceback
+from selenium.webdriver.support import expected_conditions as EC
 from openpyxl.styles import Font, PatternFill
 from time import sleep
 import unittest
 from selenium import webdriver
 import random
+from selenium.webdriver.support.wait import WebDriverWait
 from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
 from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
 from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
@@ -961,6 +963,68 @@ class FattalMobileTests(unittest.TestCase):
         # # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+
+    def test_mobile_club_renew_expired_form(self):
+        self.test_description = "חידוש מועדון דרך טופס"
+        hotel_name = self.default_hotel_name
+        logging.info("Starting test: Club renew expired form (mobile)")
+
+        # Step 0: Club Login
+        user = {
+            "id": os.getenv("CLUB_ABOUT_EXPIRE_ID_FORM"),
+            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD_FORM")
+        }
+
+        try:
+            self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
+            self.mobile_toolbar.click_login_button()
+            self.mobile_toolbar.close_post_login_popup()
+            logging.info("Logged in successfully.")
+        except Exception as e:
+            logging.warning(f"Login failed or already logged in: {e}")
+
+        # 📊 For reporting
+        self.entered_id_number = user["id"]
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
+
+        self.mobile_toolbar.click_more_tab_mobile()
+        self.mobile_toolbar.click_fattal_friends_club_tab()
+        self.mobile_club_join_page.click_join_fattal_friends_button()
+
+        # Step 1: Navigate to renewal page
+
+        # Step 2: Agreement & Payment
+        self.mobile_order_page.click_user_agreement_checkbox_by_label_id()
+        self.take_stage_screenshot("payment_stage")
+        self.fill_payment_details_from_config()
+
+        # Step 3: Submit payment
+        self.mobile_order_page.click_payment_submit_button()
+
+        # Step 4: Verify price
+        try:
+            logging.info("Waiting for confirmation price element...")
+            price_element = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located((By.ID, "club-checkout-order-details-price"))
+            )
+            price_text = price_element.text.strip().replace('\u200f', '').replace('\xa0', ' ')
+            logging.info(f"Found price text: '{price_text}'")
+            expected_price = "150 ₪"
+            assert expected_price in price_text, f"Price mismatch! Expected '{expected_price}', got '{price_text}'"
+            logging.info("✅ Final price matches expected value.")
+        except Exception as e:
+            logging.error(f"❌ Failed to assert price: {e}")
+            raise
+
+        # Step 5: Optional Confirmation Log
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        if self.confirmation_result:
+            logging.info("ℹ️ Confirmation page loaded. Skipping order number check.")
+        else:
+            logging.warning("⚠️ Confirmation result was empty — order number not available.")
 
     def test_mobile_booking_club_member_11night(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"

@@ -160,3 +160,19 @@ class FattalMobileToolBar:
             self.driver.save_screenshot(path)
             logging.error(f"Failed to click 'מועדון פתאל וחברים' tab. Screenshot saved: {path}")
             raise
+
+    def click_renew_membership_link(self, timeout=10):
+        """
+        Clicks the 'חידוש המועדון' link using class and href.
+        """
+        try:
+            logging.info("Waiting for renew link to be clickable by class + href...")
+            selector = "a[href*='/fattal-and-friends/checkout']"
+            link = WebDriverWait(self.driver, timeout).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
+            )
+            link.click()
+            logging.info("✅ Clicked 'חידוש המועדון' link successfully (via CSS selector).")
+        except Exception as e:
+            logging.error(f"❌ Failed to click renew link: {e}")
+            raise
