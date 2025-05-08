@@ -34,8 +34,9 @@ ORDERED_TESTS = [
     ("FattalMobileTests", "test_mobile_booking_anonymous_random_guest_details"),
     ("FattalMobileTests", "test_mobile_booking_anonymous_user_promo_code"),
     ("FattalMobileTests", "test_mobile_club_renew_expired_form"),
-]
+    ("FattalMobileTests", "test_mobile_booking_anonymous_fattal_employee_promo_code")
 
+]
 # === Custom Result Class with Live Progress ===
 class ProgressTrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):

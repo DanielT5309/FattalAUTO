@@ -592,6 +592,37 @@ class FattalMainPageMobile:
         except Exception as e:
             logging.error(f"Failed to enter promo code: {e}")
 
+    def enter_id(self, user_id: str):
+        """Inputs the user ID and triggers validation by clicking outside the input field."""
+        try:
+            WebDriverWait(self.driver, 5).until(
+                EC.visibility_of_element_located((By.ID, "search-engine-promo-code-validation-input"))
+            )
+            id_input = self.driver.find_element(By.ID, "search-engine-promo-code-validation-input")
+            id_input.clear()
+            id_input.send_keys(user_id)
+            logging.info(f"ID '{user_id}' entered successfully.")
+
+            # Click outside to trigger blur (e.g., body or another element)
+            self.driver.find_element(By.TAG_NAME, "body").click()
+            logging.info("Clicked outside to trigger input validation.")
+
+        except Exception as e:
+            logging.error(f"Failed to enter ID: {e}")
+
+    def click_validation_button(self):
+        """Clicks the eligibility validation button after entering the ID."""
+        try:
+            # Wait until the button is clickable (i.e., enabled and visible)
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "search-engine-promo-code-validation-button"))
+            )
+            button = self.driver.find_element(By.ID, "search-engine-promo-code-validation-button")
+            button.click()
+            logging.info("✅ Validation button clicked successfully.")
+
+        except Exception as e:
+            logging.error(f"❌ Failed to click validation button: {e}")
     def is_promo_code_applied(self, expected_code: str = "FHVR") -> bool:
         """
         Verifies that the promo code input field contains the expected value.

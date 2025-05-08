@@ -1303,6 +1303,69 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
+    def test_mobile_booking_anonymous_fattal_employee_promo_code(self):
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (EMP23FA)"
+        hotel_name = self.default_hotel_name
+        user = {
+            "id": os.getenv("EMPLOYEE_COUPON_ID"),
+            "email": os.getenv("DEFAULT_EMAIL"),
+            "phone": os.getenv("DEFAULT_PHONE"),
+        }
+        logging.info("Starting test: hotel search and booking flow")
+
+        # Step 1: City selection
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+
+        # Step 4: Promo code input
+        self.mobile_main_page.open_promo_code_input()
+        self.mobile_main_page.enter_promo_code("EMP23FA")
+        assert self.mobile_main_page.is_promo_code_applied("EMP23FA"), "Promo code was not correctly applied!"
+
+        # Step 5: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+        self.mobile_main_page.enter_id(user["id"])
+        self.mobile_main_page.click_validation_button()
+
+        # Step 6: Choose Room
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 7: Order Page
+        self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
+
+        # ✅ Fill in guest details
+        self.mobile_order_page.set_email(user["email"])
+        self.mobile_order_page.set_phone(user["phone"])
+        self.entered_id_number = user["id"]
+
+        # ✅ Save for export/logging
+        self.entered_email = user["email"]
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+
+        # Step 8: Fill payment iframe
+        self.fill_payment_details_from_config()
+
+        # Step 9: Submit
+        self.mobile_order_page.click_payment_submit_button()
+
+        # Step 10: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+
     def test_mobile_booking_anonymous_europe(self):
         hotel_name = self.default_hotel_name_europe
         logging.info("Starting test: hotel search and booking flow")
