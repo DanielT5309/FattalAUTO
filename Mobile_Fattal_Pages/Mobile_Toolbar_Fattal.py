@@ -71,22 +71,23 @@ class FattalMobileToolBar:
 
     def click_deals_and_packages_tab(self):
         """
-        Clicks on the 'דילים וחבילות' tab (Deals & Packages) using visible text, not ID.
+        Clicks on the 'דילים וחבילות' tab using its unique ID instead of unreliable text matching.
         """
         try:
-            logging.info("Clicking on 'דילים וחבילות' tab...")
+            logging.info("Clicking on 'דילים וחבילות' tab using ID...")
 
             deals_tab = WebDriverWait(self.driver, 15).until(
-                EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'דילים וחבילות')]"))
+                EC.element_to_be_clickable((By.ID, "footer-mobile-tab_deals"))
             )
 
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deals_tab)
+            time.sleep(0.3)  # brief wait for potential animation
             self.driver.execute_script("arguments[0].click();", deals_tab)
 
-            logging.info("Clicked on 'דילים וחבילות' tab successfully.")
+            logging.info("✅ Clicked on 'דילים וחבילות' tab successfully.")
 
         except Exception as e:
-            logging.error(f"Failed to click 'דילים וחבילות' tab: {e}")
+            logging.error(f"❌ Failed to click 'דילים וחבילות' tab: {e}")
             self.driver.save_screenshot("click_deals_tab_error.png")
             raise
 

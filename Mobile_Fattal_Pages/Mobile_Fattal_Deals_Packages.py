@@ -23,23 +23,23 @@ class FattalDealsPageMobile:
 
     def click_view_all_deals_link(self):
         """
-        Clicks the 'לכל הדילים והחבילות' anchor link that navigates to the full deals page.
+        Clicks the 'לכל הדילים והחבילות' link, if available.
         """
         try:
-            logging.info("Trying to click 'לכל הדילים והחבילות' link...")
+            logging.info("Waiting for 'לכל הדילים והחבילות' link to be clickable...")
 
-            deals_link = WebDriverWait(self.driver, 15).until(
-                EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'לכל הדילים והחבילות')]"))
+            deals_link = WebDriverWait(self.driver, 20).until(
+                EC.element_to_be_clickable((By.XPATH, "//a[normalize-space()='לכל הדילים והחבילות']"))
             )
 
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deals_link)
             time.sleep(0.3)
             self.driver.execute_script("arguments[0].click();", deals_link)
 
-            logging.info("Clicked 'לכל הדילים והחבילות' link successfully.")
+            logging.info("✅ Clicked 'לכל הדילים והחבילות' link successfully.")
 
         except Exception as e:
-            logging.error(f"Failed to click 'לכל הדילים והחבילות': {e}")
+            logging.error(f"❌ Failed to click 'לכל הדילים והחבילות': {e}")
             self.driver.save_screenshot("view_all_deals_click_fail.png")
             raise
 

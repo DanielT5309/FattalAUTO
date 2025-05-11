@@ -53,7 +53,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Use a valid built-in Chrome emulation device (Pixel 2)
         mobile_emulation = {
-            "deviceMetrics": {"width": 411, "height": 900, "pixelRatio": 3.0},
+            "deviceMetrics": {"width": 411, "height": 800, "pixelRatio": 3.0},
             "userAgent": "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
         }
 
@@ -67,7 +67,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Override window size manually to make it taller 📸
         # Pixel 2 is normally 411x731, so let's go 411x1200
-        self.driver.set_window_rect(x=620, y=0, width=411, height=900)
+        self.driver.set_window_rect(x=620, y=0, width=411, height=950)
 
         self.test_start_time = datetime.now()
         self.driver.implicitly_wait(10)
