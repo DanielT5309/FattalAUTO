@@ -218,6 +218,8 @@ class FattalDesktopTests(unittest.TestCase):
             logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
 
     def save_to_excel(self, info: dict):
+        SCREENSHOT_LABEL = "📷 Screenshot"
+        LOG_LABEL = "🧾 Log File"
         parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filename = os.path.join(parent_folder, "TestResults.xlsx")
 
@@ -265,18 +267,20 @@ class FattalDesktopTests(unittest.TestCase):
             for col_idx in range(1, 16):  # Columns A to O (1-15)
                 ws.cell(row=row_num, column=col_idx).fill = row_fill
 
-            # 📎 Hyperlink screenshots
+            # 📎 Hyperlink screenshots with label
             for col_idx in [12, 13, 14]:
                 screenshot_path = row[col_idx - 1]
                 if screenshot_path and os.path.exists(screenshot_path):
                     cell = ws.cell(row=row_num, column=col_idx)
+                    cell.value = SCREENSHOT_LABEL
                     cell.hyperlink = f"file:///{screenshot_path.replace(os.sep, '/')}"
                     cell.font = Font(color="0000EE", underline="single")
 
-            # 📎 Hyperlink log file
+            # 📎 Hyperlink log file with label
             log_path = info.get("log", "")
             if log_path and os.path.exists(log_path):
                 cell = ws.cell(row=row_num, column=15)
+                cell.value = LOG_LABEL
                 cell.hyperlink = f"file:///{log_path.replace(os.sep, '/')}"
                 cell.font = Font(color="0000EE", underline="single")
 
