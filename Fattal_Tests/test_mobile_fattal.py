@@ -115,45 +115,65 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
 
-    def post_test_logging(self, result):
+    def post_test_logging_mobile(self, result):
         test_method = self._testMethodName
-        has_failed = result.get("has_failed", False)
+        has_failed = False
         error_msg = ""
         screenshot = ""
         log_file = ""
         duration = (datetime.now() - self.test_start_time).total_seconds()
 
-        # ── browser & os ─────────────────────────────────────
+        # ── Browser & OS Detection ────────────────────────
         try:
             browser = self.driver.capabilities.get("browserName", "unknown") if self.driver else "unknown"
         except:
             browser = "unknown"
         os_name = platform.system()
 
-        # ── save raw logs ────────────────────────────────────
-        logs_dir = os.path.join(self.base_dir, "logs")
+        # ── Raw Logs ───────────────────────────────────────
+        logs_dir = os.path.join(self.base_dir, "logs_mobile")
         os.makedirs(logs_dir, exist_ok=True)
         log_file = os.path.join(logs_dir, f"{test_method}_{datetime.now():%Y-%m-%d_%H-%M-%S}.log")
         try:
             with open(log_file, "w", encoding="utf-8") as f:
                 f.write(self.log_stream.getvalue())
         except Exception as e:
-            logging.warning(f"Could not write log file: {e}")
+            logging.warning(f"[MOBILE] Could not write log file: {e}")
 
-        # ── screenshot per result ────────────────────────────
+        # ── Result Analysis ────────────────────────────────
+        try:
+            outcome = getattr(result, 'result', result)
+            for failed_test, exc_info in outcome.failures + outcome.errors:
+                if self._testMethodName in str(failed_test):
+                    has_failed = True
+                    if len(exc_info) == 3:
+                        exc_type, exc_value, tb = exc_info
+                        error_msg = "".join(traceback.format_exception(exc_type, exc_value, tb))
+                    else:
+                        error_msg = str(exc_info)
+                    break
+        except Exception as e:
+            logging.warning(f"[MOBILE] Failed to parse result: {e}")
+
+        # ── Screenshot Handling ────────────────────────────
         try:
             if self.driver:
-                status_label = "FAIL" if has_failed else "PASS"
-                screenshot = self.take_confirmation_screenshot(test_method, status_label)
+                if has_failed:
+                    error_screenshot_path = self.take_confirmation_screenshot(test_method, "MOBILE_FAIL")
+                    confirmation_screenshot_path = ""
+                else:
+                    confirmation_screenshot_path = self.take_confirmation_screenshot(test_method, "MOBILE_PASS")
+                    error_screenshot_path = ""
         except Exception as e:
-            logging.warning(f"Could not take screenshot: {e}")
+            logging.warning(f"[MOBILE] Screenshot failed: {e}")
 
-        # ── confirmation metadata ─────────────────────────────
+        # ── Confirmation Data ──────────────────────────────
         conf = getattr(self, "confirmation_result", {}) or {}
         order_no = conf.get("order_number", "")
         email = conf.get("email", "") or getattr(self, "entered_email", "")
 
-        # ── assemble & persist ───────────────────────────────
+        # ── Final Struct & Save ────────────────────────────
+        # ── Final Struct & Save ────────────────────────────
         status = "FAILED" if has_failed else "PASSED"
         info = {
             "name": test_method,
@@ -167,12 +187,17 @@ class FattalMobileTests(unittest.TestCase):
             "email": email,
             "order_number": order_no,
             "id_number": getattr(self, "entered_id_number", ""),
-            "screenshot": screenshot,
+            "confirmation_screenshot": confirmation_screenshot_path,
+            "error_screenshot": error_screenshot_path,
             "log": log_file,
-            "error": "" if not has_failed else "See log"
+            "error": error_msg if has_failed else ""
         }
 
+        # ✅ Mobile type defined correctly
+        info["test_type"] = "mobile"
+
         self.save_to_excel(info)
+        self.save_to_html(info)
 
     def save_to_excel(self, info: dict):
         SCREENSHOT_LABEL = "📷 Screenshot"
@@ -210,7 +235,7 @@ class FattalMobileTests(unittest.TestCase):
                 info.get("email", ""),
                 getattr(self, "screenshot_room_selection", ""),
                 getattr(self, "screenshot_payment_stage", ""),
-                info.get("screenshot", ""),
+                info.get("error_screenshot" if info.get("status") == "FAILED" else "confirmation_screenshot", ""),
                 info.get("log", "")
             ]
             ws.append(row)
@@ -261,43 +286,208 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.error(f"Failed to save Excel file: {e}")
 
-    def save_to_pdf(self, info: dict):
-        pdf_dir = "reports"
-        os.makedirs(pdf_dir, exist_ok=True)
-        filename = f"{pdf_dir}/{info['name']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        c = canvas.Canvas(filename, pagesize=A4)
+    def save_to_html(self, info: dict):
+        html_dir = os.path.join(self.base_dir, "html_reports")
+        os.makedirs(html_dir, exist_ok=True)
 
-        width, height = A4
-        y = height - 72
+        dashboard_path = os.path.join(html_dir, "TestDashboard.html")
 
-        c.setFont("Helvetica-Bold", 18)
-        c.drawString(72, y, "Test Execution Report")
-        y -= 40
+        def image_tag(path):
+            if path and os.path.exists(path):
+                normalized = path.replace(os.sep, '/')
+                return f'<img src="file:///{normalized}" onclick="openModal(this.src)" style="max-height:120px; border:1px solid #ccc; margin:5px; cursor: pointer;" />'
+            return "<em>No screenshot</em>"
 
-        c.setFont("Helvetica", 12)
-        lines = [
-            f"Test Name: {info.get('name')}",
-            f"Description: {info.get('description')}",
-            f"Status: {info.get('status')}",
-            f"Timestamp: {info.get('timestamp')}",
-            f"Browser: {info.get('browser')}",
-            f"OS: {info.get('os')}",
-        ]
-        if info.get("error"):
-            lines.append(f"Error: {info.get('error')}")
+        room_img = image_tag(getattr(self, 'screenshot_room_selection', ''))
+        pay_img = image_tag(getattr(self, 'screenshot_payment_stage', ''))
+        confirm_img = image_tag(
+            info.get('error_screenshot') if info.get('status') == 'FAILED' else info.get('confirmation_screenshot'))
 
-        for line in lines:
-            c.drawString(72, y, line)
-            y -= 20
+        test_type_class = info.get("test_type", "desktop").lower()
 
-        if info.get("screenshot") and os.path.exists(info["screenshot"]):
-            c.drawString(72, y, "Screenshot:")
-            y -= 250
-            c.drawImage(info["screenshot"], 72, y, width=5 * inch, preserveAspectRatio=True, mask='auto')
+        html_entry = f"""
+        <div class="test-block {test_type_class}">
+            <h2>{info.get('name')} — <span class="{'fail' if info.get('status') == 'FAILED' else 'pass'}">{info.get('status')}</span></h2>
+            <p><strong>Description:</strong> {info.get('description')}</p>
+            <p><strong>Timestamp:</strong> {info.get('timestamp')} | <strong>Duration:</strong> {info.get('duration')}</p>
+            <p><strong>Browser:</strong> {info.get('browser')} | <strong>OS:</strong> {info.get('os')}</p>
+            <p><strong>Guest:</strong> {info.get('full_name')} | <strong>Email:</strong> {info.get('email')}</p>
+            <p><strong>Order #:</strong> {info.get('order_number')} | <strong>ID:</strong> {info.get('id_number')}</p>
+            <p><strong>Log File:</strong> <a href="file:///{info.get('log', '').replace(os.sep, '/')}">View Log</a></p>
+            {'<p style="color:red;"><strong>Error:</strong> ' + info['error'] + '</p>' if info.get('error') else ''}
+            <div class="grid">
+                <div><h4>Room</h4>{room_img}</div>
+                <div><h4>Payment</h4>{pay_img}</div>
+                <div><h4>{'Failure Screenshot' if info.get('status') == 'FAILED' else 'Confirmation'}</h4>{confirm_img}</div>
+            </div>
+            <hr>
+        </div>
+        """
 
-        c.showPage()
-        c.save()
-        print(f" PDF saved: {filename}")
+        if not os.path.exists(dashboard_path):
+            html_start = f"""<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fattal Selenium Test Dashboard</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 40px; }}
+            .pass {{ color: green; font-weight: bold; }}
+            .fail {{ color: red; font-weight: bold; }}
+            .grid {{ display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap; }}
+            .grid div {{ flex: 1; min-width: 250px; }}
+            .test-block {{ margin-bottom: 40px; }}
+            hr {{ border: 1px dashed #ccc; }}
+            img {{ display: block; max-width: 100%; }}
+            img:hover {{
+                transform: scale(1.05);
+                transition: transform 0.2s ease-in-out;
+                box-shadow: 0 0 10px rgba(0,0,0,0.4);
+            }}
+            .summary-bar {{
+                background-color: #f5f5f5;
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 20px;
+            }}
+            .filters {{
+                margin-bottom: 20px;
+            }}
+            .filters label {{
+                margin-right: 15px;
+                cursor: pointer;
+                font-weight: normal;
+            }}
+            .filters input[type="checkbox"] {{
+                margin-right: 5px;
+                transform: scale(1.1);
+                vertical-align: middle;
+            }}
+            .modal {{
+                display: none;
+                position: fixed;
+                z-index: 999;
+                padding-top: 40px;
+                left: 0; top: 0;
+                width: 100%; height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.85);
+            }}
+            .modal-content {{
+                margin: auto;
+                display: block;
+                ax-width: 90vw;
+                max-height: 80vh;
+                object-fit: contain;
+                border-radius: 8px;
+            }}
+            .modal-content, .close {{
+                animation-name: zoom;
+                animation-duration: 0.3s;
+            }}
+            @keyframes zoom {{
+                from {{transform: scale(0)}} to {{transform: scale(1)}}
+            }}
+            .close {{
+                position: absolute;
+                top: 15px;
+                right: 35px;
+                color: #fff;
+                font-size: 40px;
+                font-weight: bold;
+                cursor: pointer;
+            }}
+            @media (max-width: 768px) {{
+                .modal-content {{
+                    max-width: 95%;
+                    transform: none !important;
+                }}
+                img:hover {{
+                    transform: none;
+                }}
+            }}
+        </style>
+        <script>
+            function updateSummary() {{
+                let total = document.querySelectorAll('.test-block').length;
+                let passed = document.querySelectorAll('.test-block .pass').length;
+                let failed = document.querySelectorAll('.test-block .fail').length;
+                document.getElementById('summary-total').textContent = total;
+                document.getElementById('summary-passed').textContent = passed;
+                document.getElementById('summary-failed').textContent = failed;
+            }}
+
+            function applyFilters() {{
+                const showPassed = document.getElementById('filter-pass').checked;
+                const showFailed = document.getElementById('filter-fail').checked;
+                const showMobile = document.getElementById('filter-mobile').checked;
+                const showDesktop = document.getElementById('filter-desktop').checked;
+
+                document.querySelectorAll('.test-block').forEach(block => {{
+                    const isPass = block.querySelector('span').classList.contains('pass');
+                    const isFail = block.querySelector('span').classList.contains('fail');
+                    const isMobile = block.classList.contains('mobile');
+                    const isDesktop = block.classList.contains('desktop');
+
+                    let visible = false;
+                    if ((showPassed && isPass) || (showFailed && isFail)) {{
+                        if ((showMobile && isMobile) || (showDesktop && isDesktop)) {{
+                            visible = true;
+                        }}
+                    }}
+
+                    block.style.display = visible ? 'block' : 'none';
+                }});
+            }}
+
+            function openModal(imgSrc) {{
+                const modal = document.getElementById("screenshotModal");
+                const modalImg = document.getElementById("modalImage");
+                modal.style.display = "block";
+                modalImg.src = imgSrc;
+            }}
+            function closeModal() {{
+                document.getElementById("screenshotModal").style.display = "none";
+            }}
+            window.onload = function() {{
+                updateSummary();
+                applyFilters();
+            }};
+        </script>
+    </head>
+    <body>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="margin: 0;">🧪 Fattal Selenium Test Dashboard</h1>
+            <img src="fattal_logo.png" alt="Fattal Logo" style="height: 150px;" />
+        </div>
+        <div class="summary-bar">
+            <strong>Total Tests:</strong> <span id="summary-total">-</span> |
+            <strong style="color:green;">Passed:</strong> <span id="summary-passed">-</span> |
+            <strong style="color:red;">Failed:</strong> <span id="summary-failed">-</span>
+        </div>
+        <div class="filters">
+            <label><input type="checkbox" id="filter-pass" checked onchange="applyFilters()">✅ Passed</label>
+            <label><input type="checkbox" id="filter-fail" checked onchange="applyFilters()">❌ Failed</label>
+            <label><input type="checkbox" id="filter-desktop" checked onchange="applyFilters()">💻 Desktop</label>
+            <label><input type="checkbox" id="filter-mobile" checked onchange="applyFilters()">📱 Mobile</label>
+        </div>
+    """
+
+            with open(dashboard_path, "w", encoding="utf-8") as f:
+                f.write(html_start)
+
+        with open(dashboard_path, "a", encoding="utf-8") as f:
+            f.write(html_entry)
+
+        with open(dashboard_path, "a", encoding="utf-8") as f:
+            f.write("""
+        <div id="screenshotModal" class="modal" onclick="closeModal()">
+          <span class="close">&times;</span>
+          <img class="modal-content" id="modalImage">
+        </div>
+    </body>
+    </html>
+    """)
 
     def fill_guest_details(self, guest=None, email=None, phone=None, first_name=None, last_name=None):
         """
@@ -496,7 +686,6 @@ class FattalMobileTests(unittest.TestCase):
             self.driver.save_screenshot(screenshot_path)
             logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
             raise
-
     def test_mobile_contact_form(self):
         self.test_description = "בדיקת טופס צור קשר"
 
@@ -1560,7 +1749,7 @@ class FattalMobileTests(unittest.TestCase):
                             break
 
                 # 📝 Log using our helper, but now explicitly pass failure state
-                self.post_test_logging({"has_failed": has_failed})
+                self.post_test_logging_mobile({"has_failed": has_failed})
 
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")
