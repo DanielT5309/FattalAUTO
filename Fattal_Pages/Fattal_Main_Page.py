@@ -319,11 +319,11 @@ class FattalMainPage:
                     arguments[0].click();
                 """, el)
 
-            # 1) Open calendar and switch to arrival tab
+            # Step 1: Open calendar and switch to arrival tab
             self.open_calendar()
             self.switch_to_arrival_tab()
 
-            # 2) Advance calendar by two months
+            # Step 2: Advance calendar two months
             for _ in range(2):
                 next_btn = WebDriverWait(self.driver, 10).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, ".react-calendar__navigation__next-button"))
@@ -331,7 +331,7 @@ class FattalMainPage:
                 js_click(next_btn)
                 time.sleep(0.5)
 
-            # 3) Get available date tiles
+            # Step 3: Get all valid selectable dates
             def get_valid_date_buttons():
                 return self.driver.find_elements(
                     By.CSS_SELECTOR,
@@ -339,37 +339,38 @@ class FattalMainPage:
                 )
 
             dates = get_valid_date_buttons()
-            if len(dates) < min_nights:
+            if len(dates) < min_nights + 1:
                 raise RuntimeError("❌ Not enough selectable dates available.")
 
-            # 4) Pick random check-in and check-out within the available range
+            # Step 4: Choose random check-in and check-out indexes
             start_idx = random.randint(0, len(dates) - min_nights)
             nights = random.randint(min_nights, max_nights)
             end_idx = min(start_idx + nights, len(dates) - 1)
 
             check_in_el = dates[start_idx]
-            check_out_el = dates[end_idx]
+            check_in_text = check_in_el.get_attribute("aria-label") or check_in_el.text  # ✅ BEFORE click
 
-            check_in_text = check_in_el.get_attribute("aria-label") or check_in_el.text
-            check_out_text = check_out_el.get_attribute("aria-label") or check_out_el.text
+            logging.info(f"Selecting stay from index {start_idx} to {end_idx} ({nights} nights)")
 
-            # 5) Click check-in date
+            # Step 5: Click check-in
             js_click(check_in_el)
             time.sleep(0.3)
 
-            # 6) Re-fetch and locate the exact check-out element by aria-label (not index)
+            # Step 6: Re-fetch dates to get fresh references (DOM has re-rendered)
             new_dates = get_valid_date_buttons()
-            for el in new_dates:
-                label = el.get_attribute("aria-label") or el.text
-                if label == check_out_text:
-                    js_click(el)
-                    break
-            else:
-                raise RuntimeError(f"❌ Check-out date '{check_out_text}' not found after re-render")
 
+            if end_idx >= len(new_dates):
+                logging.warning("⚠️ Calendar shrank after re-render — adjusting check-out index")
+                end_idx = len(new_dates) - 1
+
+            check_out_el = new_dates[end_idx]
+            check_out_text = check_out_el.get_attribute("aria-label") or check_out_el.text
+
+            # Step 7: Click check-out
+            js_click(check_out_el)
             time.sleep(0.3)
 
-            # 7) Click continue if present
+            # Step 8: Click continue if it appears
             try:
                 cont = WebDriverWait(self.driver, 3).until(
                     EC.element_to_be_clickable((By.ID, "search-engine-date-picker-footer-side-button"))
@@ -378,12 +379,12 @@ class FattalMainPage:
             except TimeoutException:
                 logging.warning("⚠️ 'Continue' button not found — skipping.")
 
-            # 8) Store selection
+            # Step 9: Store values for logs/report
             self.selected_checkin_date = check_in_text
             self.selected_checkout_date = check_out_text
             self.selected_nights = nights
 
-            logging.info(f"✅ Chosen stay: {check_in_text} → {check_out_text} ({nights} nights)")
+            logging.info(f"✅ Selected: {check_in_text} → {check_out_text} ({nights} nights)")
 
         def set_room_occupants(self, adults=2, children=0, infants=0):
             try:

@@ -809,12 +809,8 @@ class FattalDesktopTests(unittest.TestCase):
             self.main_page.deal_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
-
-            # Select specific date range via desktop calendar
-            #self.main_page.select_specific_date_range_desktop(6, 10, "יולי 2025")
             self.main_page.select_next_month_date_range()
 
-            adults, children, infants = 2, 0, 0
             self.main_page.set_room_occupants(adults, children, infants)
             self.main_page.select_flight_option_all_airports()
             self.main_page.search_button()
@@ -824,6 +820,10 @@ class FattalDesktopTests(unittest.TestCase):
             self.search_result.click_book_room_button()
             self.search_result.wait_for_prices_to_load()
             self.search_result.click_first_show_prices()
+
+            # 💡 Take room selection screenshot
+            self.take_stage_screenshot("room_selection")
+
             self.search_result.click_first_book_room()
 
             # Optional flight selection
@@ -839,7 +839,11 @@ class FattalDesktopTests(unittest.TestCase):
                 self.flight_page.fill_passenger_details_and_validate()
                 self.flight_page.click_continue_button()
 
+            # 💳 Payment screenshot is already inside complete_booking_post_flight
             self.complete_booking_post_flight()
+
+            # ✅ Take confirmation screenshot manually here (just to be safe)
+            self.take_stage_screenshot("confirmation_page")
 
         except Exception as e:
             logging.error(f"Test failed: {e}")
@@ -871,6 +875,8 @@ class FattalDesktopTests(unittest.TestCase):
         self.search_result.click_book_room_button()
         self.search_result.wait_for_prices_to_load()
         self.search_result.click_first_show_prices()
+        self.take_stage_screenshot("room_selection")
+
         self.search_result.click_first_book_room()
 
         self.complete_booking_post_flight()
