@@ -774,7 +774,7 @@ class FattalDesktopTests(unittest.TestCase):
 
         adults, children, infants = 2, 1, 0
 
-        #self.complete_booking_flow(hotel_name, adults, children, infants)
+        self.complete_booking_flow(hotel_name, adults, children, infants)
 
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
         assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
