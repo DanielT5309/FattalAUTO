@@ -670,6 +670,7 @@ class FattalMobileTests(unittest.TestCase):
 
             logging.info("Fattal Club form filled and validated successfully.")
             self.mobile_club_join_page.click_accept_terms_checkbox()
+            sleep(10)
             # Assuming you've already navigated to the payment step
             self.fill_payment_details_from_config()
             # Step 8: Switch BACK into iframe to click submit
@@ -1760,7 +1761,7 @@ class FattalMobileTests(unittest.TestCase):
                             break
 
                 # 📝 Log using our helper, but now explicitly pass failure state
-                self.post_test_logging_mobile({"has_failed": has_failed})
+                self.post_test_logging_mobile(self._test_result_for_teardown)
 
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")

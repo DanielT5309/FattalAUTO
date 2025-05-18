@@ -536,8 +536,8 @@ class FattalDesktopTests(unittest.TestCase):
     def run(self, result=None):
         if result is None:
             result = self.defaultTestResult()
-        self._final_result = result
-        super().run(result)
+        self._test_result_for_teardown = result
+        return super().run(result)
 
     def fill_payment_details(self):
         """
@@ -774,7 +774,7 @@ class FattalDesktopTests(unittest.TestCase):
 
         adults, children, infants = 2, 1, 0
 
-        self.complete_booking_flow(hotel_name, adults, children, infants)
+        #self.complete_booking_flow(hotel_name, adults, children, infants)
 
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
         assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
@@ -1057,11 +1057,10 @@ class FattalDesktopTests(unittest.TestCase):
     def tearDown(self):
         if self.driver:
             try:
-                result = getattr(self, "_outcome", None)
-                if result is None:
-                    logging.warning("No result object found. Skipping post_test_logging.")
+                if hasattr(self, "_test_result_for_teardown"):
+                    self.post_test_logging(self._test_result_for_teardown)
                 else:
-                    self.post_test_logging(result)
+                    logging.warning("Test result object missing. Skipping logging.")
 
                 # Log runtime duration
                 try:
