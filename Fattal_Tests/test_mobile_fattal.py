@@ -781,6 +781,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = random_id  #  Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -829,6 +830,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -883,6 +885,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
@@ -929,6 +932,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -965,6 +969,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         # Apply all 3 gift codes
         raw_gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
@@ -1016,6 +1021,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         gift_code = os.getenv("GIFT4", "").strip()
         assert gift_code and gift_code.isdigit(), "GIFT4 is missing or invalid in environment config"
@@ -1085,6 +1091,7 @@ class FattalMobileTests(unittest.TestCase):
         self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -1147,6 +1154,7 @@ class FattalMobileTests(unittest.TestCase):
         self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -1191,6 +1199,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 2: Agreement & Payment
         self.mobile_order_page.click_user_agreement_checkbox_by_label_id()
+        sleep(2)
         self.take_stage_screenshot("payment_stage")
         self.fill_payment_details_from_config()
 
@@ -1269,7 +1278,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_user_agreement_checkbox()
-
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -1329,7 +1338,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_user_agreement_checkbox()
-
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -1369,7 +1378,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_deals_page.click_mobile_show_prices_button()
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.click_user_agreement_checkbox()
-
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -1434,6 +1443,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = random_id  # Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: פרטי כרטיס רנדומליים (לא נשלח בפועל)
         self.mobile_order_page.fill_payment_iframe_mobile_random()
 
@@ -1487,6 +1497,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -1548,6 +1559,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_email = user["email"]
 
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         # Step 8: Fill payment iframe
         self.fill_payment_details_from_config()
@@ -1596,6 +1608,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(2)
 
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
@@ -1659,7 +1672,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_first_name("Chen")
         self.mobile_order_page.set_last_name("Test")
         self.mobile_order_page.click_user_agreement_checkbox()
-
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
@@ -1722,7 +1735,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_first_name("Chen")
         self.mobile_order_page.set_last_name("Test")
         self.mobile_order_page.click_user_agreement_checkbox()
-
+        sleep(2)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
