@@ -24,6 +24,7 @@ from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 import sys
 from dotenv import load_dotenv
+from time import sleep
 class FattalDesktopTests(unittest.TestCase):
     def setUp(self):
         load_dotenv()
@@ -616,6 +617,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.set_id_number(random_id)
 
         self.order_page.click_terms_approval_checkbox_js()
+        sleep(5)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("טקסט לדוגמא .....")
@@ -678,6 +680,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
 
         self.order_page.click_terms_approval_checkbox_js()
+        sleep(5)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
@@ -734,6 +737,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
 
         self.order_page.click_terms_approval_checkbox_js()
+        sleep(5)
         self.order_page.expand_special_requests_section()
 
         textarea = self.order_page.get_special_request_textarea()
@@ -927,6 +931,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
 
         self.order_page.click_terms_approval_checkbox_js()
+        sleep(5)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
@@ -1009,6 +1014,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.set_id_number(random_id)
 
         self.order_page.click_terms_approval_checkbox_js()
+        sleep(5)
         self.order_page.expand_special_requests_section()
 
         textarea = self.order_page.get_special_request_textarea()
