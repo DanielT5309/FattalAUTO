@@ -522,8 +522,8 @@ class FattalMobileTests(unittest.TestCase):
         Fills payment details using the credit card information from config.json
         """
         try:
-            card_number = self.payment_card["card_number"]
             cardholder_name = self.payment_card["cardholder_name"]
+            card_number = self.payment_card["card_number"]
             expiry_month = self.payment_card["expiry_month"]
             expiry_year = self.payment_card["expiry_year"]
             cvv = self.payment_card["cvv"]
@@ -535,17 +535,15 @@ class FattalMobileTests(unittest.TestCase):
             iframe = self.driver.find_element(By.ID, "paymentIframe")
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
             self.driver.switch_to.frame(iframe)
-            
-            # Fill Card Number
-            card_number_input = self.driver.find_element(By.ID, "credit_card_number_input")
-            card_number_input.clear()
-            card_number_input.send_keys(card_number)
-            
             # Fill Cardholder Name
             cardholder_input = self.driver.find_element(By.ID, "card_holder_name_input")
             cardholder_input.clear()
             cardholder_input.send_keys(cardholder_name)
-            
+            # Fill Card Number
+            card_number_input = self.driver.find_element(By.ID, "credit_card_number_input")
+            card_number_input.clear()
+            card_number_input.send_keys(card_number)
+
             # Select Expiry Month
             month_select = Select(self.driver.find_element(By.ID, "date_month_input"))
             month_select.select_by_visible_text(expiry_month)

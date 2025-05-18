@@ -544,11 +544,11 @@ class FattalDesktopTests(unittest.TestCase):
             Fills in credit card payment form fields from self.payment_card inside iframe context.
         """
         self.order_page.switch_to_payment_iframe()
+        self.order_page.set_cardholder_name(self.payment_card["cardholder_name"])
         self.order_page.set_card_number(self.payment_card["card_number"])
         self.order_page.select_expiry_month(self.payment_card["expiry_month"])
         self.order_page.select_expiry_year(self.payment_card["expiry_year"])
         self.order_page.set_cvv(self.payment_card["cvv"])
-        self.order_page.set_cardholder_name(self.payment_card["cardholder_name"])
         self.order_page.set_id_number_card(self.payment_card["id_number"])
         self.order_page.switch_to_default_content()
 
