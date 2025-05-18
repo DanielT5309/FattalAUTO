@@ -770,13 +770,14 @@ class FattalDesktopTests(unittest.TestCase):
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
-        #self.main_page.select_random_date_range_two_months_ahead()
 
         adults, children, infants = 2, 1, 0
 
         self.complete_booking_flow(hotel_name, adults, children, infants)
 
+        # 👇 Add ID back into confirmation result
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
+        self.confirmation_result["id_number"] = self.entered_id_number  # <- This is the missing piece
         assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
 
     def test_desktop_booking_anonymous_join_fattal_and_friends(self):

@@ -91,14 +91,22 @@ class FattalOrderPage:
 
     def club_checkbox(self):
         try:
-            # Click the visible part of the checkbox (not the hidden input)
-            checkbox_label = self.wait.until(EC.presence_of_element_located((
-                By.CSS_SELECTOR, "label.MuiFormControlLabel-root span.MuiButtonBase-root"
+            # Wait for the entire label container to appear
+            label = self.wait.until(EC.presence_of_element_located((
+                By.CSS_SELECTOR,
+                "label#checkbox-field-control-label_membershipCheckbox"
             )))
 
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox_label)
+            # Scroll the label into view
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", label)
+
+            # Click the visible checkbox span inside the label
+            checkbox_span = label.find_element(
+                By.CSS_SELECTOR, "span.MuiButtonBase-root"
+            )
+
             self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, "label.MuiFormControlLabel-root span.MuiButtonBase-root"
+                By.CSS_SELECTOR, "label#checkbox-field-control-label_membershipCheckbox span.MuiButtonBase-root"
             ))).click()
 
             logging.info("✅ Club checkbox clicked successfully.")
