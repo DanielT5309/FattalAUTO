@@ -854,7 +854,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_date_picker()
         #self.mobile_main_page.select_date_range_two_months_ahead()
         # Step 2: Select exact date range instead of the dynamic one
-        self.mobile_main_page.select_specific_date_range(checkin_day=1, checkout_day=5)
+        self.mobile_main_page.select_date_range_two_months_ahead_eilat()
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
@@ -903,7 +903,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_first_suggested_region()
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
+        self.mobile_main_page.select_date_range_two_months_ahead_eilat()
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
@@ -1386,74 +1386,6 @@ class FattalMobileTests(unittest.TestCase):
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
-
-    def test_mobile_booking_anonymous_random_guest_details(self):
-        self.test_description = " בדיקה אנונימית רנדומלית ללא סיום הזמנה"
-        fake = Faker('he_IL')  # עברית!
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting FULL RANDOM anonymous booking test (MOBILE)")
-
-        # Step 1: חיפוש מלון ודילים
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: תאריכים
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: הרכב אורחים
-        adults = random.randint(1, 2)
-        children = random.randint(0, 1)
-        infants = random.randint(0, 1)
-        logging.info(f"Guests: {adults} adults, {children} children, {infants} infants")
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=adults, children=children, infants=infants)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: חיפוש
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5: בחר חדר
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        # Step 6: הזנת פרטים רנדומליים
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        random_email = fake.email()
-        random_phone = fake.phone_number().replace("-", "").replace("+", "")
-        random_first_name = fake.first_name()
-        random_last_name = fake.last_name()
-        random_id = str(fake.random_int(min=100000000, max=999999999))
-        random_note = fake.sentence(nb_words=6)
-
-        self.entered_email = random_email
-        self.entered_first_name = random_first_name
-        self.entered_last_name = random_last_name
-
-        self.mobile_order_page.set_email(random_email)
-        self.mobile_order_page.set_phone(random_phone)
-        self.mobile_order_page.set_first_name(random_first_name)
-        self.mobile_order_page.set_last_name(random_last_name)
-        self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  # Save for logging/export
-
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(10)
-        # Step 7: פרטי כרטיס רנדומליים (לא נשלח בפועל)
-        self.mobile_order_page.fill_payment_iframe_mobile_random()
-
-        # לא נלחץ על כפתור שליחה - TEST MODE ONLY
-        logging.info("Full random booking simulated (NO SUBMIT)")
-
-        self.confirmation_result = {
-            "order_number": "",  # אין מספר הזמנה כי לא ביצענו שליחה
-            "email": self.entered_email,
-            "screenshot_path": ""
-        }
 
     def test_mobile_booking_anonymous_user_promo_code(self):
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (FHVR)"

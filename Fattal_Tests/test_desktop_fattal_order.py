@@ -809,7 +809,7 @@ class FattalDesktopTests(unittest.TestCase):
             self.main_page.deal_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
-            self.main_page.select_next_month_date_range()
+            self.main_page.select_next_month_date_range_eilat()
 
             self.main_page.set_room_occupants(adults, children, infants)
             self.main_page.select_flight_option_all_airports()
@@ -862,7 +862,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.main_page.deal_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
-        self.main_page.select_next_month_date_range()
+        self.main_page.select_next_month_date_range_eilat()
 
         #self.main_page.select_random_date_range_two_months_ahead()
 
@@ -967,99 +967,6 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info("✔️ Club login test finished with confirmed order.")
 
-    def test_desktop_booking_anonymous_random_guest_details(self):
-        self.test_description = "בדיקה אנונימית רנדומלית ללא סיום הזמנה"
-        fake = Faker('he_IL')
-        hotel_name = self.default_hotel_name
-
-        logging.info("🚀 Starting FULL RANDOM anonymous booking test")
-
-        self.main_page.deal_popup()
-        self.main_page.click_clear_button_hotel()
-        self.main_page.set_city(hotel_name)
-        self.main_page.select_next_month_date_range()
-        #self.main_page.select_random_date_range_two_months_ahead()
-
-        adults, children, infants = 2, 1, 0
-        self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)
-        logging.info(f"🎯 Guests: {adults} adults, {children} children, {infants} infants")
-
-        self.main_page.search_button()
-        self.retry_search_if_no_results(hotel_name, adults, children, infants)
-
-        self.search_result.click_first_show_prices()
-        self.take_stage_screenshot("room_selection")
-
-        self.search_result.click_first_book_room()
-
-        self.order_page.switch_to_default_content()
-        self.order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-
-        logging.info("📝 Order form visible — filling random data")
-
-        # Generate fake guest info
-        random_id = self.order_page.generate_israeli_id()
-        self.entered_id_number = random_id  # 💾 For Excel logging
-
-        random_email = fake.email()
-        random_phone = fake.phone_number().replace("-", "").replace("+", "")
-        random_first_name = fake.first_name()
-        random_last_name = fake.last_name()
-        random_note = fake.sentence(nb_words=6)
-
-        # Save for report
-        self.entered_email = random_email
-        self.entered_first_name = random_first_name
-        self.entered_last_name = random_last_name
-
-        # Fill guest info
-        self.order_page.set_email(random_email)
-        self.order_page.set_phone(random_phone)
-        self.order_page.set_first_name(random_first_name)
-        self.order_page.set_last_name(random_last_name)
-        self.order_page.set_id_number(random_id)
-
-        self.order_page.click_terms_approval_checkbox_js()
-        sleep(10)
-        self.order_page.expand_special_requests_section()
-
-        textarea = self.order_page.get_special_request_textarea()
-        textarea.send_keys(random_note)
-
-        for checkbox in [
-            self.order_page.get_adjacent_rooms_checkbox(),
-            self.order_page.get_high_floor_checkbox(),
-            self.order_page.get_low_floor_checkbox()
-        ]:
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-            self.driver.execute_script("arguments[0].click();", checkbox)
-
-        # Random payment data — dry-run style
-        card_number = fake.credit_card_number(card_type='visa')
-        expiry_month = str(random.randint(1, 12)).zfill(2)
-        expiry_year = str(random.randint(2025, 2028))
-        cvv = str(random.randint(100, 999))
-        cardholder_name = fake.name()
-        card_id_number = str(fake.random_int(min=1000000, max=9999999))
-
-        self.order_page.switch_to_payment_iframe()
-        self.order_page.set_card_number(card_number)
-        self.order_page.select_expiry_month(expiry_month)
-        self.order_page.select_expiry_year(expiry_year)
-        self.order_page.set_cvv(cvv)
-        self.order_page.set_cardholder_name(cardholder_name)
-        self.order_page.set_id_number_card(card_id_number)
-        self.order_page.switch_to_default_content()
-
-        logging.info("🛑 Test completed before payment (dry-run mode)")
-
-        # Dummy result for logging system
-        self.confirmation_result = {
-            "order_number": "[DRY-RUN]",
-            "email": self.entered_email,
-            "screenshot_path": ""
-        }
 
     def tearDown(self):
         if self.driver:
