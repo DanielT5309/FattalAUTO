@@ -115,6 +115,12 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
 
+    def soft_assert(self, condition, msg, errors_list):
+        try:
+            assert condition, msg
+        except AssertionError as e:
+            errors_list.append(str(e))
+
     def post_test_logging_mobile(self, result):
         test_method = self._testMethodName
         has_failed = False
@@ -627,6 +633,8 @@ class FattalMobileTests(unittest.TestCase):
             logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
 
     def test_mobile_join_fattal_and_friends_form(self):
+        self.soft_assert_errors = []
+
         self.test_description = "הצטפרות למועדון דרך טופס"
         logging.info("Starting test: Join Fattal Club")
 
@@ -677,7 +685,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_order_page.click_payment_submit_button()
             # Step 9 : Confirm and Assert
             #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-            #assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+            #self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
 
         except Exception as e:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -685,9 +693,13 @@ class FattalMobileTests(unittest.TestCase):
             self.driver.save_screenshot(screenshot_path)
             logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
             raise
-    def test_mobile_contact_form(self):
-        self.test_description = "בדיקת טופס צור קשר"
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
+    def test_mobile_contact_form(self):
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת טופס צור קשר"
         logging.info("Starting test: Customer Support Ticket")
 
         try:
@@ -720,6 +732,9 @@ class FattalMobileTests(unittest.TestCase):
             # Step 4: Select hotel name
             self.mobile_customer_support.select_dropdown_by_label("שם המלון", option_text=hotel_name)
 
+            # 🖼️ Screenshot after form is filled
+            self.take_stage_screenshot("contact_form_filled")
+
             # Step 5: Verify form data
             self.mobile_customer_support.assert_form_data_matches_input(
                 first_name=first_name,
@@ -730,6 +745,8 @@ class FattalMobileTests(unittest.TestCase):
                 message=message
             )
 
+            # ✅ Soft assert success
+            self.soft_assert(True, "Contact form submitted and verified successfully.", self.soft_assert_errors)
             logging.info("Test completed successfully.")
 
         except Exception as e:
@@ -741,7 +758,13 @@ class FattalMobileTests(unittest.TestCase):
             logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
             raise
 
+        # ❗ Final check for soft assert errors
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
+
     def test_mobile_booking_anonymous_user(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
         hotel_name = self.default_hotel_name
         logging.info("Starting test: hotel search and booking flow")
@@ -788,9 +811,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_join_fattal_and_friends(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
 
         hotel_name = self.default_hotel_name
@@ -837,9 +864,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_eilat_with_flight(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
@@ -893,6 +924,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_region_eilat(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
         hotel_name = "אילת, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
@@ -939,9 +972,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_fattal_gift3(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
         hotel_name = "תל אביב, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
@@ -991,9 +1028,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
 
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_fattal_gift1(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
         hotel_name = "תל אביב, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
@@ -1036,9 +1077,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
 
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_club_renew_expired(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס פג תוקף"
         hotel_name = self.default_hotel_name
 
@@ -1102,6 +1147,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_club_member_club_renew_about_to_expire(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס עומד לפוג"
         hotel_name = self.default_hotel_name
 
@@ -1165,6 +1212,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_club_renew_expired_form(self):
+        self.soft_assert_errors = []
+
         self.test_description = "חידוש מועדון דרך טופס"
         hotel_name = self.default_hotel_name
         logging.info("Starting test: Club renew expired form (mobile)")
@@ -1228,6 +1277,8 @@ class FattalMobileTests(unittest.TestCase):
             logging.warning("⚠️ Confirmation result was empty — order number not available.")
 
     def test_mobile_booking_club_member_11night(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"
         hotel_name = self.default_hotel_name
 
@@ -1285,9 +1336,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         # #Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
         hotel_name = self.default_hotel_name
 
@@ -1345,9 +1400,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         #Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_deals(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
@@ -1390,6 +1449,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_user_promo_code(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (FHVR)"
         hotel_name = self.default_hotel_name
 
@@ -1438,9 +1499,13 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
         # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_fattal_employee_promo_code(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (EMP23FA)"
         hotel_name = self.default_hotel_name
         user = {
@@ -1502,9 +1567,13 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 10: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_europe(self):
+        self.soft_assert_errors = []
+
         hotel_name = self.default_hotel_name_europe
         logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
@@ -1551,9 +1620,13 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_with_club_login_europe(self):
+        self.soft_assert_errors = []
+
         hotel_name = self.default_hotel_name_europe
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
@@ -1614,9 +1687,13 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_with_club_login_11night_europe(self):
+        self.soft_assert_errors = []
+
         hotel_name = self.default_hotel_name_europe
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
 
@@ -1677,7 +1754,9 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def tearDown(self):
         if self.driver:

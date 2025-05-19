@@ -90,6 +90,23 @@ class FattalDesktopTests(unittest.TestCase):
         # Start performance marker
         self.driver.execute_script("window.performance.mark('selenium-start')")
 
+    def soft_assert(self, condition, msg, errors_list):
+        try:
+            assert condition, msg
+        except AssertionError as e:
+            errors_list.append(str(e))
+
+    def confirm_and_assert_order(self):
+        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
+        self.confirmation_result["id_number"] = self.entered_id_number
+        self.soft_assert(
+            condition=self.confirmation_result.get("order_number"),
+            msg="❌ Booking failed — no order number found.",
+            errors_list=self.soft_assert_errors
+        )
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
+
     def retry_flight_search_if_no_results(self, hotel_name):
         def no_results_displayed():
             try:
@@ -762,6 +779,8 @@ class FattalDesktopTests(unittest.TestCase):
             raise
 
     def test_desktop_anonymous_booking(self):
+        self.soft_assert_errors = []
+
         hotel_name = self.default_hotel_name
         self.test_description = "בדיקת השלמת הזמנה מתשמש אנונימי"
         logging.info(" Starting test: hotel search and booking flow")
@@ -778,9 +797,12 @@ class FattalDesktopTests(unittest.TestCase):
         # 👇 Add ID back into confirmation result
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
         self.confirmation_result["id_number"] = self.entered_id_number  # <- This is the missing piece
-        assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
+        self.soft_assert_errors = []
+        self.confirm_and_assert_order()
 
     def test_desktop_booking_anonymous_join_fattal_and_friends(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בידקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
         hotel_name = self.default_hotel_name
 
@@ -796,9 +818,12 @@ class FattalDesktopTests(unittest.TestCase):
 
         self.complete_booking_flow_club_checkbox(hotel_name, adults, children, infants)
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        assert self.confirmation_result.get("order_number"), " Booking failed — no order number found."
+        self.soft_assert_errors = []
+        self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member_eilat_with_flight(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
         hotel_name = "אילת,ישראל"
         adults, children, infants = 2, 0, 0
@@ -853,7 +878,10 @@ class FattalDesktopTests(unittest.TestCase):
                 logging.warning("Could not capture screenshot due to earlier failure.")
             raise
 
+
     def test_desktop_booking_anonymous_region_eilat(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
         hotel_name = "אילת,ישראל"
 
@@ -885,6 +913,8 @@ class FattalDesktopTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_desktop_booking_club_member(self):
+        self.soft_assert_errors = []
+
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
         hotel_name = self.default_hotel_name
 
