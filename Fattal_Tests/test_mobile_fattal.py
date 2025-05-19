@@ -1374,9 +1374,11 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_deals_page.click_continue_search_button_mobile()
         self.mobile_deals_page.click_continue_room_button()
         self.mobile_deals_page.click_mobile_search_button()
+        self.take_stage_screenshot("room_selection")
         self.mobile_deals_page.click_mobile_show_prices_button()
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.click_user_agreement_checkbox()
+        self.take_stage_screenshot("payment_stage")
         sleep(10)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
