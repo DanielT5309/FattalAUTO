@@ -613,9 +613,11 @@ class FattalMobileTests(unittest.TestCase):
 
     def take_screenshot(self, test_method_name):
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+        screenshot_dir = os.path.join(self.base_dir, "Screenshots")
         os.makedirs(screenshot_dir, exist_ok=True)
-        filename = f"{screenshot_dir}/{test_method_name}_{timestamp}.png"
+        filename = os.path.join(
+            screenshot_dir, f"{test_method_name}_{timestamp}.png"
+        )
         self.driver.save_screenshot(filename)
         logging.error(f" Screenshot taken: {filename}")
 
@@ -689,7 +691,11 @@ class FattalMobileTests(unittest.TestCase):
 
         except Exception as e:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_path = os.path.join("Fattal_Tests", "Screenshots", f"join_club_test_fail_{timestamp}.png")
+            screenshot_dir = os.path.join(self.base_dir, "Screenshots")
+            os.makedirs(screenshot_dir, exist_ok=True)
+            screenshot_path = os.path.join(
+                screenshot_dir, f"join_club_test_fail_{timestamp}.png"
+            )
             self.driver.save_screenshot(screenshot_path)
             logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
             raise
@@ -751,9 +757,11 @@ class FattalMobileTests(unittest.TestCase):
 
         except Exception as e:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+            screenshot_dir = os.path.join(self.base_dir, "Screenshots")
             os.makedirs(screenshot_dir, exist_ok=True)
-            screenshot_path = os.path.join(screenshot_dir, f"test_failure_{timestamp}.png")
+            screenshot_path = os.path.join(
+                screenshot_dir, f"test_failure_{timestamp}.png"
+            )
             self.driver.save_screenshot(screenshot_path)
             logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
             raise
