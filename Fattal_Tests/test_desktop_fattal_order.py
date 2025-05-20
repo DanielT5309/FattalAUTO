@@ -644,8 +644,8 @@ class FattalDesktopTests(unittest.TestCase):
         #     self.order_page.get_high_floor_checkbox(),
         #     self.order_page.get_low_floor_checkbox()
         # ]:
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-            self.driver.execute_script("arguments[0].click();", checkbox)
+        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+        #     self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.fill_payment_details()
 
@@ -707,8 +707,8 @@ class FattalDesktopTests(unittest.TestCase):
         #     self.order_page.get_high_floor_checkbox(),
         #     self.order_page.get_low_floor_checkbox()
         # ]:
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-            self.driver.execute_script("arguments[0].click();", checkbox)
+        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+        #     self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.fill_payment_details()
 
@@ -765,8 +765,8 @@ class FattalDesktopTests(unittest.TestCase):
         #     self.order_page.get_high_floor_checkbox(),
         #     self.order_page.get_low_floor_checkbox()
         # ]:
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-            self.driver.execute_script("arguments[0].click();", checkbox)
+        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+        #     self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.fill_payment_details()
 
@@ -978,8 +978,8 @@ class FattalDesktopTests(unittest.TestCase):
         #     self.order_page.get_high_floor_checkbox(),
         #     self.order_page.get_low_floor_checkbox()
         # ]:
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-            self.driver.execute_script("arguments[0].click();", checkbox)
+        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+        #     self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.fill_payment_details()
 
