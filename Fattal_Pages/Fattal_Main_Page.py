@@ -9,7 +9,7 @@ import time
 import random
 import logging
 from datetime import datetime
-import os
+from pathlib import Path
 # Set up logging configuration once
 logging.basicConfig(
     level=logging.INFO,
@@ -594,10 +594,10 @@ class FattalMainPage:
         # In FattalMainPage.py
         def take_screenshot(self, name="error_screenshot"):
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            screenshot_dir = os.path.join(os.getcwd(), "Screenshots")
-            os.makedirs(screenshot_dir, exist_ok=True)
-            path = os.path.join(screenshot_dir, f"{name}_{timestamp}.png")
-            self.driver.save_screenshot(path)
+            screenshot_dir = Path.cwd() / "Screenshots"
+            screenshot_dir.mkdir(exist_ok=True)
+            path = screenshot_dir / f"{name}_{timestamp}.png"
+            self.driver.save_screenshot(str(path))
             logging.error(f"Screenshot saved: {path}")
 
         def select_specific_date_range_desktop(self, checkin_day: int, checkout_day: int, month: str = "יולי 2025"):
