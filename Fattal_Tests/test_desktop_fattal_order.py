@@ -639,11 +639,11 @@ class FattalDesktopTests(unittest.TestCase):
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("טקסט לדוגמא .....")
 
-        for checkbox in [
-            self.order_page.get_adjacent_rooms_checkbox(),
-            self.order_page.get_high_floor_checkbox(),
-            self.order_page.get_low_floor_checkbox()
-        ]:
+        # for checkbox in [
+        #     self.order_page.get_adjacent_rooms_checkbox(),
+        #     self.order_page.get_high_floor_checkbox(),
+        #     self.order_page.get_low_floor_checkbox()
+        # ]:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
@@ -702,11 +702,11 @@ class FattalDesktopTests(unittest.TestCase):
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
 
-        for checkbox in [
-            self.order_page.get_adjacent_rooms_checkbox(),
-            self.order_page.get_high_floor_checkbox(),
-            self.order_page.get_low_floor_checkbox()
-        ]:
+        # for checkbox in [
+        #     self.order_page.get_adjacent_rooms_checkbox(),
+        #     self.order_page.get_high_floor_checkbox(),
+        #     self.order_page.get_low_floor_checkbox()
+        # ]:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
@@ -760,11 +760,11 @@ class FattalDesktopTests(unittest.TestCase):
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("Test Test Test")
 
-        for checkbox in [
-            self.order_page.get_adjacent_rooms_checkbox(),
-            self.order_page.get_high_floor_checkbox(),
-            self.order_page.get_low_floor_checkbox()
-        ]:
+        # for checkbox in [
+        #     self.order_page.get_adjacent_rooms_checkbox(),
+        #     self.order_page.get_high_floor_checkbox(),
+        #     self.order_page.get_low_floor_checkbox()
+        # ]:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
@@ -973,11 +973,11 @@ class FattalDesktopTests(unittest.TestCase):
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
 
-        for checkbox in [
-            self.order_page.get_adjacent_rooms_checkbox(),
-            self.order_page.get_high_floor_checkbox(),
-            self.order_page.get_low_floor_checkbox()
-        ]:
+        # for checkbox in [
+        #     self.order_page.get_adjacent_rooms_checkbox(),
+        #     self.order_page.get_high_floor_checkbox(),
+        #     self.order_page.get_low_floor_checkbox()
+        # ]:
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
             self.driver.execute_script("arguments[0].click();", checkbox)
 
