@@ -639,8 +639,7 @@ class FattalDesktopTests(unittest.TestCase):
         sleep(10)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
-        textarea.send_keys("טקסט לדוגמא .....")
-
+        textarea.send_keys("בדיקת טסט נא לבטל")
         # for checkbox in [
         #     self.order_page.get_adjacent_rooms_checkbox(),
         #     self.order_page.get_high_floor_checkbox(),
@@ -702,7 +701,7 @@ class FattalDesktopTests(unittest.TestCase):
         sleep(10)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
-        textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
+        textarea.send_keys("בדיקת טסט נא לבטל")
 
         # for checkbox in [
         #     self.order_page.get_adjacent_rooms_checkbox(),
@@ -760,7 +759,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.expand_special_requests_section()
 
         textarea = self.order_page.get_special_request_textarea()
-        textarea.send_keys("Test Test Test")
+        textarea.send_keys("בדיקת טסט נא לבטל")
 
         # for checkbox in [
         #     self.order_page.get_adjacent_rooms_checkbox(),
@@ -973,7 +972,7 @@ class FattalDesktopTests(unittest.TestCase):
         sleep(10)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
-        textarea.send_keys("לינה ועוד דברים. שיהיה לנו בכיף")
+        textarea.send_keys("בדיקת טסט נא לבטל")
 
         # for checkbox in [
         #     self.order_page.get_adjacent_rooms_checkbox(),
