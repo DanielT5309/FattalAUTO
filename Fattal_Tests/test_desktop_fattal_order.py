@@ -571,9 +571,11 @@ class FattalDesktopTests(unittest.TestCase):
 
     def take_screenshot(self, test_method_name):
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+        screenshot_dir = os.path.join(self.base_dir, "Screenshots")
         os.makedirs(screenshot_dir, exist_ok=True)
-        filename = f"{screenshot_dir}/{test_method_name}_{timestamp}.png"
+        filename = os.path.join(
+            screenshot_dir, f"{test_method_name}_{timestamp}.png"
+        )
         self.driver.save_screenshot(filename)
         logging.error(f" Screenshot taken: {filename}")
 

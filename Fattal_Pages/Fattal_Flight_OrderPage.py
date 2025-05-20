@@ -1,5 +1,6 @@
 import time
 import logging
+import os
 from selenium.common import TimeoutException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -99,7 +100,11 @@ class FattalFlightOrderPage:
             logging.warning(f"'עריכה' not present or already dismissed: {e}")
 
     def take_screenshot(self, name):
-        filename = f"Screenshots/{name}_{int(time.time())}.png"
+        screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        filename = os.path.join(
+            screenshot_dir, f"{name}_{int(time.time())}.png"
+        )
         self.driver.save_screenshot(filename)
         logging.info(f"Screenshot saved to {filename}")
 
