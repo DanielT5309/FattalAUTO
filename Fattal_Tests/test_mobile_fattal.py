@@ -884,7 +884,24 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         logging.info("Starting mobile booking test for Eilat including flights...")
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
+        try:
+            self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
+            self.mobile_toolbar.click_login_button()
+            self.mobile_toolbar.close_post_login_popup()
+            logging.info("Logged in successfully.")
+        except Exception as e:
+            logging.warning(f"Login failed or already logged in: {e}")
 
+        # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
         # Step 1: City selection
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
@@ -918,9 +935,9 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
         # Order Details
-        self.fill_guest_details(guest=self.default_guest)
-
-        self.mobile_order_page.set_id_number(random_id)
+        # self.fill_guest_details(guest=self.default_guest)
+        #
+        # self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(10)
@@ -1765,6 +1782,73 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.click_payment_submit_button()
 
         # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        if self.soft_assert_errors:
+            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
+    def test_mobile_booking_anonymous_user_login_at_checkout(self):
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי וחיבור במסך תשלום"
+        hotel_name = self.default_hotel_name
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        #Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        #Step 6 : Order Page
+        #self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        #Order Details
+        self.take_stage_screenshot("payment_stage")
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
+        try:
+            self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
+            self.mobile_toolbar.click_login_button()
+            self.mobile_toolbar.close_post_login_popup()
+            logging.info("Logged in successfully.")
+        except Exception as e:
+            logging.warning(f"Login failed or already logged in: {e}")
+        # For report logging only — because form fields are autofilled
+        self.entered_id_number = user["id"]
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
+        self.entered_id_number = random_id  #  Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(10)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
         if self.soft_assert_errors:
