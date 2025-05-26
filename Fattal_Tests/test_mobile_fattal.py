@@ -1925,6 +1925,7 @@ class FattalMobileTests(unittest.TestCase):
         self.take_stage_screenshot("payment_stage")
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
+        #test
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
