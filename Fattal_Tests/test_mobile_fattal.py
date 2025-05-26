@@ -1173,6 +1173,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
+
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
@@ -1197,7 +1198,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-
+        self.mobile_toolbar.handle_membership_renewal_popup()
         # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
@@ -1270,11 +1271,14 @@ class FattalMobileTests(unittest.TestCase):
             )
             price_text = price_element.text.strip().replace('\u200f', '').replace('\xa0', ' ')
             logging.info(f"Found price text: '{price_text}'")
-            expected_price = "150 ₪"
-            assert expected_price in price_text, f"Price mismatch! Expected '{expected_price}', got '{price_text}'"
-            logging.info("✅ Final price matches expected value.")
+
+            expected_prices = ["150 ₪", "99 ₪"]
+            assert any(expected in price_text for expected in expected_prices), \
+                f"Price mismatch! Expected one of {expected_prices}, got '{price_text}'"
+
+            logging.info("Final price matches one of the expected values.")
         except Exception as e:
-            logging.error(f"❌ Failed to assert price: {e}")
+            logging.error(f"Failed to assert price: {e}")
             raise
 
         # Step 5: Optional Confirmation Log

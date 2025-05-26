@@ -154,17 +154,30 @@ class FattalOrderPageMobile:
 
     # ✅ USER AGREEMENT CHECKBOX
     def click_user_agreement_checkbox(self):
+        """Clicks the 'I agree to terms' checkbox during checkout."""
         try:
-            logging.info("📜 Clicking 'User Agreement' checkbox (Mobile)...")
+            logging.info("Clicking 'User Agreement' checkbox...")
+
+            # Wait for the checkbox's label to be present
             label = self.wait.until(EC.presence_of_element_located((
-                By.XPATH, "//span[contains(text(),'אני מאשר')]/ancestor::label"
+                By.ID, "checkbox-field-control-label_agree-terms"
             )))
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", label)
-            self.driver.execute_script("arguments[0].click();", label)
-            logging.info("✅ Clicked 'User Agreement' checkbox.")
+
+            # Ensure checkbox input is interactable and scroll to view
+            checkbox_input = label.find_element(By.ID, "checkbox-field-checkbox_agree-terms")
+
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox_input)
+
+            # Only click if not already selected
+            if not checkbox_input.is_selected():
+                self.driver.execute_script("arguments[0].click();", checkbox_input)
+                logging.info("Clicked 'User Agreement' checkbox.")
+            else:
+                logging.info("Checkbox already selected. Skipping click.")
+
         except Exception as e:
             self.take_screenshot("user_agreement_checkbox_fail")
-            logging.error(f"❌ Failed to click 'User Agreement' checkbox: {e}")
+            logging.error(f"Failed to click 'User Agreement' checkbox: {e}")
             raise
 
     # ✅ ISRAELI ID UTILS

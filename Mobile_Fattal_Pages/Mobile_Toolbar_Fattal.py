@@ -69,6 +69,33 @@ class FattalMobileToolBar:
         except TimeoutException:
             logging.info("No post-login popup appeared.")
 
+    def handle_membership_renewal_popup(self):
+        """Handles the optional 'membership renewal' popup by clicking the renewal button if it appears."""
+        try:
+            logging.info("Checking for membership renewal popup...")
+
+            popup_container = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.ID, "search-expired-before-vacation-dialog-container"))
+            )
+
+            if popup_container.is_displayed():
+                logging.info("Membership renewal popup is displayed.")
+                try:
+                    renew_button = self.wait.until(
+                        EC.element_to_be_clickable((By.ID, "search-expired-before-vacation-dialog-button-main"))
+                    )
+                    renew_button.click()
+                    logging.info("Clicked on 'לחידוש המועדון בתהליך ההזמנה' button.")
+                except TimeoutException:
+                    logging.warning("Renewal button not clickable even though popup is present.")
+            else:
+                logging.info("Membership renewal popup is not visible. Continuing test flow.")
+
+        except TimeoutException:
+            logging.info("Membership renewal popup did not appear. Proceeding without renewal.")
+        except Exception as e:
+            logging.error(f"Unexpected error while handling membership renewal popup: {e}")
+
     def click_deals_and_packages_tab(self):
         """
         Clicks on the 'דילים וחבילות' tab using its unique ID instead of unreliable text matching.
