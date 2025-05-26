@@ -228,4 +228,39 @@ class FattalSearchResultPageMobile:
             logging.error(f"[REGIONAL] Failed to click regional 'להזמנת חדר': {e}")
             raise
 
+    def click_book_room_for_all_rooms(self, room_count=5):
+        """
+        Mobile flow: Click one 'הצג מחירים', then click 'הזמן' for each room in the unified flow.
+        """
+        try:
+            logging.info(f"Attempting to book {room_count} rooms in mobile flow...")
+
+            # Step 1: Click the single 'הצג מחירים'
+            show_price_button = WebDriverWait(self.driver, 20).until(
+                EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'הצג מחירים')]"))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", show_price_button)
+            self.driver.execute_script("arguments[0].click();", show_price_button)
+            logging.info("Clicked 'הצג מחירים' button (single expected in mobile).")
+
+            # Step 2: Sequentially click 'הזמן' buttons for each room
+            for i in range(room_count):
+                logging.info(f"Waiting for room selection {i + 1} 'הזמן' button...")
+
+                book_button = WebDriverWait(self.driver, 20).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'הזמן')]"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", book_button)
+                time.sleep(0.3)
+                self.driver.execute_script("arguments[0].click();", book_button)
+                logging.info(f"Clicked 'הזמן' for room {i + 1}")
+                time.sleep(1.0)  # Wait between steps to allow modal to update
+
+            logging.info("✅ All room selections completed successfully.")
+
+        except Exception as e:
+            self.take_screenshot("multi_room_booking_fail")
+            logging.error(f"❌ Failed during mobile room booking flow: {e}")
+            raise
+
 

@@ -606,6 +606,73 @@ class FattalMainPageMobile:
             logging.warning(f"Could not verify promo code input: {e}")
             return False
 
+    def set_five_room_occupants(self):
+        """Sets 5 rooms with specific adult/child/infant combinations for mobile."""
+        try:
+            logging.info("Adding rooms and setting occupants...")
+
+            # Add 4 more rooms (total 5)
+            add_room_button = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "search-engine-build-room-mobile-add-room-button"))
+            )
+            for _ in range(4):
+                self.driver.execute_script("arguments[0].click();", add_room_button)
+                time.sleep(0.3)  # Give DOM a moment to update
+
+            room_configurations = [
+                {"adults": 2, "kids": 1, "infants": 1},  # Room 1
+                {"adults": 2, "kids": 1, "infants": 0},  # Room 2
+                {"adults": 2, "kids": 0, "infants": 0},  # Room 3
+                {"adults": 2, "kids": 0, "infants": 0},  # Room 4
+                {"adults": 2, "kids": 0, "infants": 0},  # Room 5
+            ]
+
+            for i, config in enumerate(room_configurations):
+                self._set_room_mobile_count(room_index=i, group="adults", value=config["adults"])
+                self._set_room_mobile_count(room_index=i, group="children", value=config["kids"])
+                self._set_room_mobile_count(room_index=i, group="infants", value=config["infants"])
+
+            logging.info("All room configurations have been set.")
+
+        except Exception as e:
+            self.take_screenshot("set_five_room_occupants_error")
+            logging.error(f"Failed to set room occupants: {e}")
+            raise
+
+    def _set_room_mobile_count(self, room_index, group, value):
+        """
+        Adjusts occupant count using plus/minus buttons in the mobile modal.
+        `group` must be one of: "adults", "children", "infants"
+        """
+        try:
+            count_id = f"search-engine-build-room-mobile-count-{group}{room_index}"
+            plus_id = f"search-engine-build-room-mobile-wrapper-{group}{room_index}"
+            minus_id = f"search-engine-build-room-mobile-wrapper-{group}-remove{room_index}"
+
+            count_el = self.wait.until(EC.presence_of_element_located((By.ID, count_id)))
+            plus_btn = self.driver.find_element(By.ID, plus_id)
+            minus_btn = self.driver.find_element(By.ID, minus_id)
+
+            current = int(self.driver.execute_script("return arguments[0].textContent.trim();", count_el))
+
+            while current < value:
+                self.driver.execute_script("arguments[0].click();", plus_btn)
+                current += 1
+                time.sleep(0.2)
+
+            while current > value:
+                if minus_btn.get_attribute("disabled"):
+                    logging.warning(f"Cannot reduce {group} below {current}. Button disabled.")
+                    break
+                self.driver.execute_script("arguments[0].click();", minus_btn)
+                current -= 1
+                time.sleep(0.2)
+
+            logging.info(f"Set room {room_index + 1} — {group}: {current}")
+
+        except Exception as e:
+            logging.error(f"Error setting {group} for room {room_index + 1}: {e}")
+            raise
 
 
 
