@@ -721,9 +721,10 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
 
         self.order_page.click_terms_approval_checkbox_js()
-        sleep(10)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
+        sleep(10)
+        self.order_page.click_terms_approval_checkbox_js()
         textarea.send_keys("בדיקת טסט נא לבטל")
 
         # for checkbox in [
