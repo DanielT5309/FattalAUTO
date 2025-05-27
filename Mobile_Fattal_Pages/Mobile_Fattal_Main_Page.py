@@ -57,7 +57,7 @@ class FattalMainPageMobile:
         logging.error(f"Screenshot saved: {path}")
 
     def click_first_suggested_hotel(self):
-        # chen bug
+        #chen bug
         try:
             suggestion_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-input-rendered-hotel-item"))

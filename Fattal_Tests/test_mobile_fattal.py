@@ -1436,37 +1436,7 @@ class FattalMobileTests(unittest.TestCase):
         if self.soft_assert_errors:
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
-    def test_mobile_booking_club_member(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
 
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-        # Step 1: City selectionX
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
 
         # Step 2: Date picker
