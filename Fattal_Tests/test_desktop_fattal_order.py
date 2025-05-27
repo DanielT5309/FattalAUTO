@@ -25,6 +25,29 @@ from openpyxl.utils import get_column_letter
 import sys
 from dotenv import load_dotenv
 from time import sleep
+HOTEL_NAME_TO_ID = {
+    "לאונרדו נגב, באר שבע": "10048",
+    "לאונרדו פלאזה אילת": "10038"
+}
+
+
+def save_order_for_cancellation(master_id, hotel_id, filepath="orders_to_cancel.json"):
+    import json
+    orders = []
+    if os.path.exists(filepath):
+        with open(filepath, "r", encoding="utf-8") as f:
+            try:
+                orders = json.load(f)
+            except json.JSONDecodeError:
+                pass
+
+    orders.append({
+        "masterID": master_id,
+        "hotelID": hotel_id
+    })
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(orders, f, ensure_ascii=False, indent=4)
 class FattalDesktopTests(unittest.TestCase):
     def setUp(self):
         load_dotenv()
@@ -780,6 +803,7 @@ class FattalDesktopTests(unittest.TestCase):
             raise
 
     def test_desktop_anonymous_booking(self):
+        self.save_for_cancellation = True
         self.soft_assert_errors = []
 
         hotel_name = self.default_hotel_name
@@ -802,6 +826,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.confirm_and_assert_order()
 
     def test_desktop_booking_anonymous_join_fattal_and_friends(self):
+        self.save_for_cancellation = True
         self.soft_assert_errors = []
 
         self.test_description = "בידקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
@@ -823,6 +848,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member_eilat_with_flight(self):
+        self.save_for_cancellation = False
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
@@ -881,6 +907,7 @@ class FattalDesktopTests(unittest.TestCase):
 
 
     def test_desktop_booking_anonymous_region_eilat(self):
+        self.save_for_cancellation = False
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
@@ -914,6 +941,7 @@ class FattalDesktopTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
 
     def test_desktop_booking_club_member(self):
+        self.save_for_cancellation = True
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
@@ -964,6 +992,10 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.set_first_name(guest["first_name"])
         self.order_page.set_last_name(guest["last_name"])
 
+        random_id = self.order_page.generate_israeli_id()
+        self.entered_id_number = random_id
+        self.order_page.set_id_number(random_id)
+
         self.entered_email = guest["email"]
         self.entered_first_name = guest["first_name"]
         self.entered_last_name = guest["last_name"]
@@ -973,14 +1005,6 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("בדיקת טסט נא לבטל")
-
-        # for checkbox in [
-        #     self.order_page.get_adjacent_rooms_checkbox(),
-        #     self.order_page.get_high_floor_checkbox(),
-        #     self.order_page.get_low_floor_checkbox()
-        # ]:
-        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-        #     self.driver.execute_script("arguments[0].click();", checkbox)
 
         self.fill_payment_details()
 
@@ -992,41 +1016,53 @@ class FattalDesktopTests(unittest.TestCase):
             self.take_screenshot("submit_click_failure")
             raise
 
-        # ✅ NEW: Only wait for confirmation and extract order info
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
+        self.confirmation_result["id_number"] = self.entered_id_number
+
         assert self.confirmation_result.get("order_number"), "❌ Order number not found — confirmation may have failed."
-
         logging.info("✔️ Club login test finished with confirmed order.")
-
 
     def tearDown(self):
         if self.driver:
             try:
+                # Post-test logging
                 if hasattr(self, "_test_result_for_teardown"):
                     self.post_test_logging(self._test_result_for_teardown)
                 else:
                     logging.warning("Test result object missing. Skipping logging.")
 
-                # Log runtime duration
+                # ⬇️ Try to save order for cancellation if flagged
+                try:
+                    confirmation = getattr(self, "confirmation_result", {})
+                    order_number = confirmation.get("order_number")
+                    hotel_id = HOTEL_NAME_TO_ID.get(self.default_hotel_name)
+                    if getattr(self, "save_for_cancellation", False) and order_number and hotel_id:
+                        save_order_for_cancellation(order_number, hotel_id)
+                        logging.info(f"✅ Saved order {order_number} for cancellation.")
+                    else:
+                        logging.info("Skipping order save (either not flagged or missing data).")
+                except Exception as e:
+                    logging.warning(f"⚠️ Failed to write to cancellation JSON: {e}")
+
+                # Attempt runtime tracking
                 try:
                     duration = self.driver.execute_script("""
                         const [start] = window.performance.getEntriesByName('selenium-start');
                         return Date.now() - start.startTime;
                     """)
-                    logging.info(f" Test runtime: {int(duration)}ms")
+                    logging.info(f"🕒 Test runtime: {int(duration)}ms")
                 except Exception as e:
-                    logging.warning(f" Could not get test runtime: {e}")
+                    logging.warning(f"⚠️ Could not get test runtime: {e}")
 
             except Exception as e:
-                logging.warning(f"Logging failed during tearDown: {e}")
+                logging.warning(f"⚠️ Logging failed during tearDown: {e}")
 
-            logging.info("Waiting 2 seconds before closing browser...")
-
-            logging.info("Closing browser (tearDown).")
+            logging.info("⌛ Waiting 2 seconds before closing browser...")
+            logging.info("🔚 Closing browser (tearDown).")
             try:
                 self.driver.quit()
             except Exception as e:
-                logging.warning(f"Browser quit failed: {e}")
+                logging.warning(f"⚠️ Browser quit failed: {e}")
 
     if __name__ == "__main__":
         import unittest

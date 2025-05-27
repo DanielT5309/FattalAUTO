@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 import sys
 import time
@@ -32,7 +33,54 @@ from openpyxl.utils import get_column_letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
+HOTEL_NAME_TO_ID = {
+    "לאונרדו נגב, באר שבע": "10048",
+    "לאונרדו פלאזה אילת": "1051"
+}
+
 class FattalMobileTests(unittest.TestCase):
+    def save_order_for_cancellation(self, order_number: str):
+        import json
+
+        try:
+            if not order_number:
+                logging.warning("Order number is empty, not saving for cancellation.")
+                return
+
+            hotel_id = HOTEL_NAME_TO_ID.get(self.default_hotel_name, "UNKNOWN")
+
+            order_entry = {
+                "masterID": str(order_number),
+                "hotelID": hotel_id
+            }
+
+            # Ensure path is relative to current test script
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            cancel_file = os.path.join(current_dir, "orders_to_cancel.json")
+
+            if os.path.exists(cancel_file):
+                try:
+                    with open(cancel_file, "r", encoding="utf-8") as f:
+                        existing_orders = json.load(f)
+                        if not isinstance(existing_orders, list):
+                            logging.warning("⚠️ JSON file does not contain a list. Resetting it.")
+                            existing_orders = []
+                except Exception as e:
+                    logging.warning(f"⚠️ JSON file invalid — starting fresh. ({e})")
+                    existing_orders = []
+            else:
+                existing_orders = []
+
+            existing_orders.append(order_entry)
+
+            with open(cancel_file, "w", encoding="utf-8") as f:
+                json.dump(existing_orders, f, indent=2, ensure_ascii=False)
+
+            logging.info(f"✅ Saved order {order_number} for cancellation (JSON included).")
+
+        except Exception as e:
+            logging.warning(f"⚠️ Could not save order for cancellation: {e}")
+
     def setUp(self):
         load_dotenv()
         self.log_stream = io.StringIO()
@@ -772,6 +820,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_user(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
@@ -825,6 +875,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_join_fattal_and_friends(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
@@ -878,6 +930,7 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_eilat_with_flight(self):
+        self.save_for_cancellation = False
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
@@ -950,6 +1003,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_region_eilat(self):
+        self.save_for_cancellation = False  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
@@ -1003,6 +1058,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_fattal_gift3(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
@@ -1059,6 +1116,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_fattal_gift1(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
@@ -1108,6 +1167,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_club_renew_expired(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס פג תוקף"
@@ -1173,6 +1234,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_club_member_club_renew_about_to_expire(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס עומד לפוג"
@@ -1239,6 +1302,7 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_club_renew_expired_form(self):
+
         self.soft_assert_errors = []
 
         self.test_description = "חידוש מועדון דרך טופס"
@@ -1307,6 +1371,8 @@ class FattalMobileTests(unittest.TestCase):
             logging.warning("⚠️ Confirmation result was empty — order number not available.")
 
     def test_mobile_booking_club_member_11night(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"
@@ -1371,6 +1437,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
@@ -1435,6 +1503,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_deals(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
@@ -1479,6 +1549,8 @@ class FattalMobileTests(unittest.TestCase):
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 
     def test_mobile_booking_anonymous_user_promo_code(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (FHVR)"
@@ -1534,6 +1606,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_fattal_employee_promo_code(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (EMP23FA)"
@@ -1602,6 +1676,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_europe(self):
+        self.save_for_cancellation = False  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         hotel_name = self.default_hotel_name_europe
@@ -1655,6 +1731,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_with_club_login_europe(self):
+        self.save_for_cancellation = False  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         hotel_name = self.default_hotel_name_europe
@@ -1722,6 +1800,8 @@ class FattalMobileTests(unittest.TestCase):
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_with_club_login_11night_europe(self):
+        self.save_for_cancellation = False  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         hotel_name = self.default_hotel_name_europe
@@ -1788,6 +1868,8 @@ class FattalMobileTests(unittest.TestCase):
         if self.soft_assert_errors:
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
     def test_mobile_booking_anonymous_user_login_at_checkout(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי וחיבור במסך תשלום"
@@ -1855,6 +1937,8 @@ class FattalMobileTests(unittest.TestCase):
         if self.soft_assert_errors:
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
     def test_mobile_booking_5_rooms_club_member(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
@@ -1936,23 +2020,26 @@ class FattalMobileTests(unittest.TestCase):
         self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
         if self.soft_assert_errors:
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
+
     def tearDown(self):
         if self.driver:
             try:
-                # ⛑️ Check if the test failed
                 has_failed = False
                 outcome = getattr(self, "_outcome", None)
                 if outcome:
                     result = outcome.result if hasattr(outcome, "result") else outcome
-
-                    # Unittest stores errors as tuples: (testcase, traceback string)
                     for method_name, exc_info in (getattr(result, "failures", []) + getattr(result, "errors", [])):
                         if method_name.id().endswith(self._testMethodName):
                             has_failed = True
                             break
 
-                # 📝 Log using our helper, but now explicitly pass failure state
                 self.post_test_logging_mobile(self._test_result_for_teardown)
+
+                # ✅ Save order for cancellation automatically if enabled
+                if getattr(self, "save_for_cancellation", False):
+                    order_number = getattr(self, "confirmation_result", {}).get("order_number")
+                    if order_number:
+                        self.save_order_for_cancellation(order_number)
 
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")

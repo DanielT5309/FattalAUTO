@@ -21,3 +21,5 @@ config.json
 # Ignore screenshots
 *.png
 Fattal_Tests/Screenshots/
+
+Fattal_Tests/orders_to_cancel.json

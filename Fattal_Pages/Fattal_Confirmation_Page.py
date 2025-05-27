@@ -81,6 +81,15 @@ class FattalConfirmPage:
             except NoSuchElementException:
                 confirmed_email = expected_email
 
+            # Try extracting hotel ID (g4)
+            try:
+                hotel_id = self.driver.execute_script(
+                    "return window.dataLayer?.find(x => x.g4)?.g4 || null"
+                )
+            except Exception as e:
+                logging.warning(f"Could not extract hotel ID (g4): {e}")
+                hotel_id = None
+
             # Screenshot on success
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
@@ -89,12 +98,13 @@ class FattalConfirmPage:
             self.driver.save_screenshot(screenshot_path)
 
             logging.info(f"Confirmation screenshot saved at: {screenshot_path}")
-            logging.info(f"Order Number: {order_number}, Email: {confirmed_email}")
+            logging.info(f"Order Number: {order_number}, Email: {confirmed_email}, HotelID: {hotel_id}")
 
             return {
                 "email": confirmed_email,
                 "order_number": order_number,
-                "screenshot_path": screenshot_path
+                "screenshot_path": screenshot_path,
+                "g4": hotel_id
             }
 
         except Exception as e:
@@ -103,7 +113,9 @@ class FattalConfirmPage:
                 "email": expected_email,
                 "order_number": "",
                 "screenshot_path": "",
-                "error": str(e)
+                "error": str(e),
+                "g4": None
             }
+
 
 
