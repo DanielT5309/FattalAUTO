@@ -57,35 +57,17 @@ class FattalMainPageMobile:
         logging.error(f"Screenshot saved: {path}")
 
     def click_first_suggested_hotel(self):
+        # chen bug
         try:
-            logging.info("Waiting for hotel suggestion to become visible...")
-
-            # Wait until visible first (not just clickable)
             suggestion_btn = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.ID, "search-engine-input-rendered-hotel-item"))
-            )
-
-            # Wait until it's clickable
-            WebDriverWait(self.driver, 5).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-input-rendered-hotel-item"))
             )
-
-            # Scroll into view
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", suggestion_btn)
-            time.sleep(0.3)
-
-            # Try native click first
-            try:
-                suggestion_btn.click()
-                logging.info("Clicked first suggested hotel (native click).")
-            except Exception as click_error:
-                logging.warning(f"Native click failed due to: {click_error} — retrying via JS.")
-                self.driver.execute_script("arguments[0].click();", suggestion_btn)
-                logging.info("Clicked first suggested hotel (JS fallback).")
-
+            suggestion_btn.click()
+            logging.info("Clicked first suggested hotel from list.")
         except Exception as e:
+            logging.error(f"Failed to click first suggested hotel: {e}")
             self.take_screenshot("click_suggested_hotel_fail")
-            logging.error(f"❌ Failed to click first suggested hotel: {e}")
             raise
 
     def click_mobile_date_picker(self):
