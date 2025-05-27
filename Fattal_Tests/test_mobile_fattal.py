@@ -999,6 +999,7 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
         #Step 10: Confirmation
+
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
 

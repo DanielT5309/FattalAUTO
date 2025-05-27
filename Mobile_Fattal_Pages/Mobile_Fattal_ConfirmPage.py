@@ -51,11 +51,17 @@ class FattalMobileConfirmPage:
 
     def verify_confirmation_and_extract_order_mobile(self):
         try:
-            logging.info("Verifying mobile confirmation page contents...")
+            logging.info("Waiting for mobile confirmation page to load...")
 
-            # Wait for order number inside span with class
-            order_number_element = self.wait.until(
-                EC.presence_of_element_located((By.CLASS_NAME, "fSBTIq"))
+            # Wait up to 20 seconds for the page to display confirmation container
+            WebDriverWait(self.driver, 20, poll_frequency=0.5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "[id='thank-you-page-top-bar-text'], .fSBTIq"))
+            )
+            logging.info("Confirmation page detected — now waiting for order number element...")
+
+            # Now wait specifically for the order number element
+            order_number_element = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "fSBTIq"))
             )
             order_number = order_number_element.text.strip()
 
@@ -72,7 +78,7 @@ class FattalMobileConfirmPage:
 
         except Exception as e:
             screenshot_path = self._save_screenshot("confirmation_FAIL")
-            logging.error(f"Failed to extract confirmation (mobile): {e}")
+            logging.error(f"❌ Failed to extract confirmation (mobile): {e}")
             return {
                 "order_number": "",
                 "screenshot_path": screenshot_path,
