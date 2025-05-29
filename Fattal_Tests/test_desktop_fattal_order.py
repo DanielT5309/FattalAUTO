@@ -54,6 +54,9 @@ class FattalDesktopTests(unittest.TestCase):
 
         options = webdriver.ChromeOptions()
         options.add_argument("--force-device-scale-factor=0.75")
+        # options.add_argument("--headless")
+        # options.add_argument("--no-sandbox")
+        # options.add_argument("--disable-dev-shm-usage")
 
         self.test_start_time = datetime.now()
         self.log_stream = io.StringIO()
@@ -647,10 +650,11 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info(f"Generated Israeli ID: {random_id}")
 
-        self.entered_email = "chenttedgui@gmail.com"
-        self.entered_phone = "0544531600"
-        self.entered_first_name = "חן"
-        self.entered_last_name = "טסט"
+        guest = self.default_guest
+        self.entered_email = guest["email"]
+        self.entered_first_name = guest["first_name"]
+        self.entered_last_name = guest["last_name"]
+        self.entered_phone = guest["phone"]
 
         self.order_page.set_email(self.entered_email)
         self.order_page.set_phone(self.entered_phone)
@@ -726,15 +730,6 @@ class FattalDesktopTests(unittest.TestCase):
         sleep(10)
         self.order_page.click_terms_approval_checkbox_js()
         textarea.send_keys("בדיקת טסט נא לבטל")
-
-        # for checkbox in [
-        #     self.order_page.get_adjacent_rooms_checkbox(),
-        #     self.order_page.get_high_floor_checkbox(),
-        #     self.order_page.get_low_floor_checkbox()
-        # ]:
-        #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
-        #     self.driver.execute_script("arguments[0].click();", checkbox)
-
         self.fill_payment_details()
 
         try:
@@ -851,6 +846,11 @@ class FattalDesktopTests(unittest.TestCase):
     def test_desktop_booking_club_member_eilat_with_flight(self):
         self.save_for_cancellation = False
         self.soft_assert_errors = []
+        guest = self.default_guest
+        self.entered_email = guest["email"]
+        self.entered_first_name = guest["first_name"]
+        self.entered_last_name = guest["last_name"]
+        self.entered_phone = guest["phone"]
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
         hotel_name = "אילת,ישראל"
@@ -950,10 +950,11 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info(" Starting test: hotel search and booking flow")
 
-        # ✍️ Static test info
-        self.entered_first_name = "דניאל"
-        self.entered_last_name = "טסט"
-        self.entered_email = "test@example.com"
+        guest = self.default_guest
+        self.entered_email = guest["email"]
+        self.entered_first_name = guest["first_name"]
+        self.entered_last_name = guest["last_name"]
+        self.entered_phone = guest["phone"]
 
         self.main_page.deal_popup()
 

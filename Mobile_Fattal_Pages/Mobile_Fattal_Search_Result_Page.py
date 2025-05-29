@@ -55,18 +55,32 @@ class FattalSearchResultPageMobile:
             self.take_screenshot("wait_for_show_prices_fail")
             logging.error(f"❌ לא הצליח להמתין לכפתור 'הצג מחירים': {e}")
             raise
+
     def click_show_prices_button(self):
         logging.info("מחפש ולוחץ על כפתור 'הצג מחירים'...")
 
         try:
-            # Wait for any button that contains this text
-            show_price_button = WebDriverWait(self.driver, 25).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
+            WebDriverWait(self.driver, 25).until(
+                EC.presence_of_element_located((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
             )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", show_price_button)
-            time.sleep(0.5)
-            show_price_button.click()
-            logging.info("כפתור 'הצג מחירים' נלחץ בהצלחה.")
+
+            show_price_buttons = self.driver.find_elements(By.XPATH, "//button[contains(., 'הצג מחירים')]")
+
+            for button in show_price_buttons:
+                if button.is_displayed() and button.is_enabled():
+                    try:
+                        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+                        WebDriverWait(self.driver, 5).until(
+                            EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]")))
+                        time.sleep(0.5)
+                        button.click()
+                        logging.info("כפתור 'הצג מחירים' נלחץ בהצלחה.")
+                        return
+                    except Exception as inner_e:
+                        logging.warning(f"ניסיון לחיצה נכשל על כפתור: {inner_e}")
+                        continue
+
+            raise Exception("No clickable 'הצג מחירים' button was found.")
 
         except Exception as e:
             self.take_screenshot("show_prices_click_fail")
@@ -263,4 +277,22 @@ class FattalSearchResultPageMobile:
             logging.error(f"❌ Failed during mobile room booking flow: {e}")
             raise
 
+    def click_show_then_book_room_with_fallback(self):
+        logging.info("🔁 מנסה קודם ללחוץ על 'הצג מחירים', ואם לא קיים — מנסה 'להזמנת חדר' ישירות...")
 
+        try:
+            # Try clicking 'הצג מחירים' button
+            self.click_show_prices_button()
+            logging.info("✅ הצליח ללחוץ על כפתור 'הצג מחירים'. לוקח צילום מסך...")
+            self.take_screenshot("room_selection")
+        except Exception as e:
+            logging.warning(f"⚠️ כפתור 'הצג מחירים' לא נמצא או לא לחיץ: {e}")
+            logging.info("🡆 מנסה לעבור ישירות ללחיצה על כפתור 'להזמנת חדר'.")
+
+        try:
+            self.click_book_room_button()
+            logging.info("✅ נלחץ כפתור 'להזמנת חדר'.")
+        except Exception as e:
+            logging.error(f"❌ נכשל בלחיצה על כפתור 'להזמנת חדר' לאחר ניסיון ב'מחירים': {e}")
+            self.take_screenshot("book_room_fallback_fail")
+            raise

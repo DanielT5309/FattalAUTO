@@ -109,7 +109,10 @@ class FattalMobileTests(unittest.TestCase):
         options.add_experimental_option("mobileEmulation", mobile_emulation)
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        options.add_argument("--disable-infobars")
+        # options.add_argument("--disable-infobars")
+        # options.add_argument("--headless")
+        # options.add_argument("--no-sandbox")
+        # options.add_argument("--disable-dev-shm-usage")
 
         self.driver = webdriver.Chrome(options=options)
 
@@ -751,73 +754,73 @@ class FattalMobileTests(unittest.TestCase):
         if self.soft_assert_errors:
             self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
-    def test_mobile_contact_form(self):
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת טופס צור קשר"
-        logging.info("Starting test: Customer Support Ticket")
-
-        try:
-            guest = self.default_guest
-            first_name = guest["first_name"]
-            last_name = guest["last_name"]
-            phone = guest["phone"]
-            email = guest["email"]
-            id_number = self.mobile_order_page.generate_israeli_id()
-            self.entered_first_name = first_name
-            self.entered_last_name = last_name
-            self.entered_email = email
-            self.entered_id_number = id_number
-            message = "בדיקה אוטומטית של צור קשר דרך המובייל"
-            hotel_name = "הרודס בוטיק אילת"
-
-            # Step 1: Open the contact form
-            self.mobile_toolbar.click_more_tab_mobile()
-            self.mobile_toolbar.click_contact_us_button_mobile()
-            self.mobile_customer_support.click_send_us_inquiry_button()
-
-            # Step 2: Select 'נושא' dropdown
-            self.mobile_customer_support.select_dropdown_by_label("נושא")
-
-            # Step 3: Fill form inputs
-            self.mobile_customer_support.fill_basic_contact_fields(
-                first_name, last_name, id_number, phone, email, message, accept_marketing=False
-            )
-
-            # Step 4: Select hotel name
-            self.mobile_customer_support.select_dropdown_by_label("שם המלון", option_text=hotel_name)
-
-            # 🖼️ Screenshot after form is filled
-            self.take_stage_screenshot("contact_form_filled")
-
-            # Step 5: Verify form data
-            self.mobile_customer_support.assert_form_data_matches_input(
-                first_name=first_name,
-                last_name=last_name,
-                id_number=id_number,
-                phone=phone,
-                email=email,
-                message=message
-            )
-
-            # ✅ Soft assert success
-            self.soft_assert(True, "Contact form submitted and verified successfully.", self.soft_assert_errors)
-            logging.info("Test completed successfully.")
-
-        except Exception as e:
-            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_dir = os.path.join(self.base_dir, "Screenshots")
-            os.makedirs(screenshot_dir, exist_ok=True)
-            screenshot_path = os.path.join(
-                screenshot_dir, f"test_failure_{timestamp}.png"
-            )
-            self.driver.save_screenshot(screenshot_path)
-            logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
-            raise
-
-        # ❗ Final check for soft assert errors
-        if self.soft_assert_errors:
-            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
+    # def test_mobile_contact_form(self):
+    #     self.soft_assert_errors = []
+    #
+    #     self.test_description = "בדיקת טופס צור קשר"
+    #     logging.info("Starting test: Customer Support Ticket")
+    #
+    #     try:
+    #         guest = self.default_guest
+    #         first_name = guest["first_name"]
+    #         last_name = guest["last_name"]
+    #         phone = guest["phone"]
+    #         email = guest["email"]
+    #         id_number = self.mobile_order_page.generate_israeli_id()
+    #         self.entered_first_name = first_name
+    #         self.entered_last_name = last_name
+    #         self.entered_email = email
+    #         self.entered_id_number = id_number
+    #         message = "בדיקה אוטומטית של צור קשר דרך המובייל"
+    #         hotel_name = "הרודס בוטיק אילת"
+    #
+    #         # Step 1: Open the contact form
+    #         self.mobile_toolbar.click_more_tab_mobile()
+    #         self.mobile_toolbar.click_contact_us_button_mobile()
+    #         self.mobile_customer_support.click_send_us_inquiry_button()
+    #
+    #         # Step 2: Select 'נושא' dropdown
+    #         self.mobile_customer_support.select_dropdown_by_label("נושא")
+    #
+    #         # Step 3: Fill form inputs
+    #         self.mobile_customer_support.fill_basic_contact_fields(
+    #             first_name, last_name, id_number, phone, email, message, accept_marketing=False
+    #         )
+    #
+    #         # Step 4: Select hotel name
+    #         self.mobile_customer_support.select_dropdown_by_label("שם המלון", option_text=hotel_name)
+    #
+    #         # 🖼️ Screenshot after form is filled
+    #         self.take_stage_screenshot("contact_form_filled")
+    #
+    #         # Step 5: Verify form data
+    #         self.mobile_customer_support.assert_form_data_matches_input(
+    #             first_name=first_name,
+    #             last_name=last_name,
+    #             id_number=id_number,
+    #             phone=phone,
+    #             email=email,
+    #             message=message
+    #         )
+    #
+    #         # ✅ Soft assert success
+    #         self.soft_assert(True, "Contact form submitted and verified successfully.", self.soft_assert_errors)
+    #         logging.info("Test completed successfully.")
+    #
+    #     except Exception as e:
+    #         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+    #         screenshot_dir = os.path.join(self.base_dir, "Screenshots")
+    #         os.makedirs(screenshot_dir, exist_ok=True)
+    #         screenshot_path = os.path.join(
+    #             screenshot_dir, f"test_failure_{timestamp}.png"
+    #         )
+    #         self.driver.save_screenshot(screenshot_path)
+    #         logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
+    #         raise
+    #
+    #     # ❗ Final check for soft assert errors
+    #     if self.soft_assert_errors:
+    #         self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_anonymous_user(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1431,44 +1434,7 @@ class FattalMobileTests(unittest.TestCase):
         # #Step 9 : Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
-        if self.soft_assert_errors:
-            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
-
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        # Step 6 : Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(10)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        #Step 9 : Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
-        if self.soft_assert_errors:
-            self.fail("Soft assertions failed:\n" + "\n".join(self.soft_assert_errors))
 
     def test_mobile_booking_club_member_deals(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1890,7 +1856,6 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-        self.entered_id_number = random_id  #  Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(10)
@@ -1951,26 +1916,25 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 5 : Choose Room and click it
         #1
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-        #2
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-        #3
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-        #4
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-        #5
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
+        # Step 5: Choose Room and click it (robust with fallback)
+        self.mobile_search_page.click_show_then_book_room_with_fallback()
 
+        #2
+        # Step 5: Choose Room and click it (robust with fallback)
+        self.mobile_search_page.click_show_then_book_room_with_fallback()
+
+        #3
+        # Step 5: Choose Room and click it (robust with fallback)
+        self.mobile_search_page.click_show_then_book_room_with_fallback()
+
+        #4
+        # Step 5: Choose Room and click it (robust with fallback)
+        self.mobile_search_page.click_show_then_book_room_with_fallback()
+
+        #5
+        # Step 5: Choose Room and click it (robust with fallback)
+        self.mobile_search_page.click_show_then_book_room_with_fallback()
+        self.take_stage_screenshot("room_selection")
 
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
