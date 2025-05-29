@@ -1,0 +1,55 @@
+name: Run Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      ENV_ACTIVE: ${{ secrets.ENV_ACTIVE }}
+      DEFAULT_EMAIL: ${{ secrets.DEFAULT_EMAIL }}
+      DEFAULT_PHONE: ${{ secrets.DEFAULT_PHONE }}
+      DEFAULT_FIRST_NAME: ${{ secrets.DEFAULT_FIRST_NAME }}
+      DEFAULT_LAST_NAME: ${{ secrets.DEFAULT_LAST_NAME }}
+      DEFAULT_HOTEL_NAME: ${{ secrets.DEFAULT_HOTEL_NAME }}
+      PAYMENT_CARD_NUMBER: ${{ secrets.PAYMENT_CARD_NUMBER }}
+      PAYMENT_CVV: ${{ secrets.PAYMENT_CVV }}
+      PAYMENT_ID_NUMBER: ${{ secrets.PAYMENT_ID_NUMBER }}
+      PAYMENT_EXPIRY_MONTH: ${{ secrets.PAYMENT_EXPIRY_MONTH }}
+      PAYMENT_EXPIRY_YEAR: ${{ secrets.PAYMENT_EXPIRY_YEAR }}
+      PAYMENT_CARDHOLDER_NAME: ${{ secrets.PAYMENT_CARDHOLDER_NAME }}
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install python-dotenv
+
+    - name: Install Google Chrome and ChromeDriver
+      run: |
+        sudo apt update
+        sudo apt install -y unzip xvfb libxi6 libgconf-2-4 libappindicator1 libindicator7 fonts-liberation libnss3
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install -y ./google-chrome-stable_current_amd64.deb || true
+        wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        chmod +x chromedriver
+        sudo mv chromedriver /usr/local/bin/chromedriver
+
+    - name: Run Selenium Tests
+      run: |
+        pytest Fattal_Tests --maxfail=3 --disable-warnings -v
