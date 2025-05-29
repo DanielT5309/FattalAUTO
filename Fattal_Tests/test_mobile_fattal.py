@@ -1064,7 +1064,7 @@ class FattalMobileTests(unittest.TestCase):
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
-        hotel_name = "תל אביב, ישראל"
+        hotel_name = self.default_hotel_name
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
