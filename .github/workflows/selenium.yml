@@ -1,0 +1,50 @@
+name: Run Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      ENV_ACTIVE: ${{ secrets.ENV_ACTIVE }}
+      DEFAULT_EMAIL: ${{ secrets.DEFAULT_EMAIL }}
+      DEFAULT_PHONE: ${{ secrets.DEFAULT_PHONE }}
+      DEFAULT_FIRST_NAME: ${{ secrets.DEFAULT_FIRST_NAME }}
+      DEFAULT_LAST_NAME: ${{ secrets.DEFAULT_LAST_NAME }}
+      DEFAULT_HOTEL_NAME: ${{ secrets.DEFAULT_HOTEL_NAME }}
+      PAYMENT_CARD_NUMBER: ${{ secrets.PAYMENT_CARD_NUMBER }}
+      PAYMENT_CVV: ${{ secrets.PAYMENT_CVV }}
+      PAYMENT_ID_NUMBER: ${{ secrets.PAYMENT_ID_NUMBER }}
+      PAYMENT_EXPIRY_MONTH: ${{ secrets.PAYMENT_EXPIRY_MONTH }}
+      PAYMENT_EXPIRY_YEAR: ${{ secrets.PAYMENT_EXPIRY_YEAR }}
+      PAYMENT_CARDHOLDER_NAME: ${{ secrets.PAYMENT_CARDHOLDER_NAME }}
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install python-dotenv
+
+    - name: Install Chrome and ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser chromium-chromedriver
+        sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
+
+    - name: Run Selenium Tests
+      run: |
+        pytest Fattal_Tests --maxfail=3 --disable-warnings -v
