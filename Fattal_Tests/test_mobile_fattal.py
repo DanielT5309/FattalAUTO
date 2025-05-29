@@ -935,8 +935,6 @@ class FattalMobileTests(unittest.TestCase):
 
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
         hotel_name = "אילת, ישראל"
-        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
-        logging.info(f"Generated Israeli ID: {random_id}")
         logging.info("Starting mobile booking test for Eilat including flights...")
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
@@ -992,7 +990,6 @@ class FattalMobileTests(unittest.TestCase):
         # self.fill_guest_details(guest=self.default_guest)
         #
         # self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(10)
         # Step 7: Fill the iframe using config.json

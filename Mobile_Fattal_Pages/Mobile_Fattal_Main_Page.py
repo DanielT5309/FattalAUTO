@@ -24,14 +24,24 @@ class FattalMainPageMobile:
 
     def click_mobile_hotel_search_input(self):
         try:
+            logging.info("Searching for hotel input container (mobile)...")
+
+            # Try to match either of the potential class variants
             search_box = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "div.sc-187e5bb0-1.clSVVm"))
+                EC.element_to_be_clickable((
+                    By.CSS_SELECTOR,
+                    "div.sc-187e5bb0-1.clSVVm, div.sc-187e5bb0-1.fNasNh"
+                ))
             )
+
+            # Scroll into view and click via JS for reliability
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_box)
             self.driver.execute_script("arguments[0].click();", search_box)
-            logging.info("Clicked mobile hotel search input container.")
+
+            logging.info(" Clicked mobile hotel search input container.")
+
         except Exception as e:
-            logging.error(f"Failed to click mobile hotel search input: {e}")
+            logging.error(f" Failed to click mobile hotel search input: {e}")
             self.take_screenshot("click_mobile_hotel_search_input_fail")
             raise
 
