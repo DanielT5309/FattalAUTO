@@ -53,23 +53,23 @@ class FattalMobileConfirmPage:
         try:
             logging.info("Waiting for mobile confirmation page to load...")
 
-            # Wait up to 20 seconds for the page to display confirmation container
-            WebDriverWait(self.driver, 20, poll_frequency=0.5).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "[id='thank-you-page-top-bar-text'], .fSBTIq"))
+            # Wait until the whole confirmation section is ready
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.ID, "thank-you-page-top-bar-root"))
             )
-            logging.info("Confirmation page detected — now waiting for order number element...")
+            logging.info("✅ Confirmation root detected.")
 
-            # Now wait specifically for the order number element
-            order_number_element = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "fSBTIq"))
+            # Wait for the specific order number element to be visible
+            order_number_element = WebDriverWait(self.driver, 15).until(
+                EC.visibility_of_element_located((By.ID, "thank-you-page-top-bar-sub-text"))
             )
             order_number = order_number_element.text.strip()
 
             # Screenshot
             screenshot_path = self._save_screenshot("confirmation_PASS")
 
-            logging.info(f"Confirmation screenshot saved at: {screenshot_path}")
-            logging.info(f"Order Number (mobile): {order_number}")
+            logging.info(f"📸 Confirmation screenshot saved at: {screenshot_path}")
+            logging.info(f"🎉 Order Number (mobile): {order_number}")
 
             return {
                 "order_number": order_number,
