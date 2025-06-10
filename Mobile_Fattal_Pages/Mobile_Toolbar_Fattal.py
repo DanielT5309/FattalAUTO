@@ -61,13 +61,20 @@ class FattalMobileToolBar:
     def close_post_login_popup(self):
         try:
             logging.info("Checking for post-login popup...")
+
+            # Updated CSS class selector — more resilient using partial match
             close_btn = self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, "div.sc-4a11a149-3.dVxqFs"
+                By.CSS_SELECTOR, "div[class^='sc-c18678ea-3']"
             )))
+
             self.driver.execute_script("arguments[0].click();", close_btn)
-            logging.info("Post-login popup closed.")
+            logging.info("✅ Post-login popup closed.")
+
         except TimeoutException:
-            logging.info("No post-login popup appeared.")
+            logging.info("ℹ️ No post-login popup appeared.")
+        except Exception as e:
+            logging.error(f"❌ Failed to close popup: {e}")
+            self.take_screenshot("popup_close_failure")
 
     def handle_membership_renewal_popup(self):
         """Handles the optional 'membership renewal' popup by clicking the renewal button if it appears."""

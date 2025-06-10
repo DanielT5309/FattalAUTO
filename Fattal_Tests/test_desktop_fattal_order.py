@@ -123,8 +123,15 @@ class FattalDesktopTests(unittest.TestCase):
             errors_list.append(str(e))
 
     def confirm_and_assert_order(self):
+        # Ensure confirmation_result is assigned before checking it
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
+        if not self.confirmation_result:
+            logging.error("Failed to extract confirmation details.")
+            self.fail("Booking confirmation details not found.")
+
         self.confirmation_result["id_number"] = self.entered_id_number
+
+        # Soft assertion for order number
         self.soft_assert(
             condition=self.confirmation_result.get("order_number"),
             msg="❌ Booking failed — no order number found.",
@@ -816,11 +823,8 @@ class FattalDesktopTests(unittest.TestCase):
         self.complete_booking_flow(hotel_name, adults, children, infants)
 
         # 👇 Add ID back into confirmation result
-        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        self.confirmation_result["id_number"] = self.entered_id_number  # <- This is the missing piece
-        self.soft_assert_errors = []
         self.confirm_and_assert_order()
-
+        logging.info("✔️ Club login test finished with confirmed order.")
     def test_desktop_booking_anonymous_join_fattal_and_friends(self):
         self.save_for_cancellation = True
         self.soft_assert_errors = []
@@ -839,8 +843,6 @@ class FattalDesktopTests(unittest.TestCase):
         adults, children, infants = 2, 0, 0
 
         self.complete_booking_flow_club_checkbox(hotel_name, adults, children, infants)
-        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        self.soft_assert_errors = []
         self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member_eilat_with_flight(self):
@@ -859,6 +861,19 @@ class FattalDesktopTests(unittest.TestCase):
         try:
             logging.info("Starting test for Eilat zone with flight")
 
+            self.main_page.deal_popup()
+
+            try:
+                self.toolbar.personal_zone()
+                WebDriverWait(self.driver, 5).until(
+                    EC.visibility_of(self.toolbar.user_id_input())
+                ).send_keys("999318330")
+                self.toolbar.user_password_input().send_keys("Aa123456")
+                self.toolbar.login_button()
+                self.main_page.close_post_login_popup()
+                logging.info("Logged in to club account successfully.")
+            except Exception as e:
+                logging.warning(f"Login failed: {e}")
             self.main_page.deal_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
@@ -905,7 +920,8 @@ class FattalDesktopTests(unittest.TestCase):
             except Exception:
                 logging.warning("Could not capture screenshot due to earlier failure.")
             raise
-
+        self.entered_email = self.default_guest["email"]
+        self.confirm_and_assert_order()
 
     def test_desktop_booking_anonymous_region_eilat(self):
         self.save_for_cancellation = False
@@ -938,8 +954,9 @@ class FattalDesktopTests(unittest.TestCase):
 
         self.complete_booking_post_flight()
 
-        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        assert self.confirmation_result.get("order_number"), "Booking failed — no order number found."
+        self.entered_email = self.default_guest["email"]
+        self.entered_id_number = self.confirmation_result.get("id_number", "")
+        self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member(self):
         self.save_for_cancellation = True
@@ -969,7 +986,6 @@ class FattalDesktopTests(unittest.TestCase):
             logging.info("Logged in to club account successfully.")
         except Exception as e:
             logging.warning(f"Login failed: {e}")
-
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -1021,7 +1037,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
         self.confirmation_result["id_number"] = self.entered_id_number
 
-        assert self.confirmation_result.get("order_number"), "❌ Order number not found — confirmation may have failed."
+        self.confirm_and_assert_order()
         logging.info("✔️ Club login test finished with confirmed order.")
 
     def tearDown(self):

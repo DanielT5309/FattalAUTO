@@ -25,13 +25,18 @@ class FattalMainPage:
 
         def deal_popup(self):
             try:
+                # Wait until the div with the full unique class path is clickable
                 close_button = WebDriverWait(self.driver, 3).until(
-                    EC.presence_of_element_located((By.ID, "ex-popup-modal-close-btn"))
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, "#header-user-section-container > div > div > div.sc-4a11a149-3.dVxqFs svg"))
                 )
+
+                # Click the svg directly inside the div
                 self.driver.execute_script("arguments[0].click();", close_button)
                 logging.info("Popup closed.")
-            except:
-                logging.info("Popup not found — continuing without closing.")
+
+            except Exception as e:
+                logging.info(f"Popup not found or failed to click — continuing without closing. Error: {e}")
 
         def click_clear_button_hotel(self):
             try:
@@ -579,17 +584,37 @@ class FattalMainPage:
             self.driver.find_element(By.CSS_SELECTOR, 'button.sc-923ff82e-7.hVHcft').click()
 
         def close_post_login_popup(self):
-            """Closes the popup/modal that appears after login."""
+            """Closes the post-login popup/modal."""
             try:
-                popup_close_btn = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "div.sc-4a11a149-3.dVxqFs"))
-                )
-                self.driver.execute_script("arguments[0].click();", popup_close_btn)
+                # Wait until the svg inside the div is clickable
+                logging.info("Checking for post-login popup...")
+                close_btn = self.wait.until(EC.element_to_be_clickable((
+                    By.CSS_SELECTOR, "div.sc-c18678ea-3.iOzwib"
+                )))
+
+                # Scroll the svg into view before clicking, in case it's off-screen
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", close_btn)
+
+                # Perform the click using JavaScript to ensure it works even if the element is covered
+                self.driver.execute_script("arguments[0].click();", close_btn)
+
                 logging.info("Post-login popup closed.")
+
+            except TimeoutException:
+                logging.info("No post-login popup appeared.")
+            except Exception as e:
+                logging.warning(f"Failed to close post-login popup: {e}")
+
+
+            except TimeoutException:
+                logging.info("No post-login popup appeared.")
+
+
             except TimeoutException:
                 logging.info("No post-login popup appeared — skipping.")
             except Exception as e:
                 logging.warning(f"Failed to close post-login popup: {e}")
+
         # Footer button methods (legal, accessibility, etc.)
         # In FattalMainPage.py
         def take_screenshot(self, name="error_screenshot"):

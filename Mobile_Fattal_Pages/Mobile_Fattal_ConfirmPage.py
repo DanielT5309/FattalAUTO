@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 from datetime import datetime
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -18,7 +19,8 @@ class FattalMobileConfirmPage:
 
             # Switch to iframe (mobile may have dynamic ID or name)
             WebDriverWait(self.driver, 15).until(
-                EC.frame_to_be_available_and_switch_to_it((By.CSS_SELECTOR, "iframe[id*='credit-card'], iframe[name*='paymentIframe']"))
+                EC.frame_to_be_available_and_switch_to_it(
+                    (By.CSS_SELECTOR, "iframe[id*='credit-card'], iframe[name*='paymentIframe']"))
             )
             logging.info("Switched into mobile payment iframe")
 
@@ -31,10 +33,13 @@ class FattalMobileConfirmPage:
             # Back to main content
             self.driver.switch_to.default_content()
 
+            # Allow some time for the confirmation page to load properly
+            time.sleep(3)
+
             # Wait for confirmation element to load
             logging.info("Waiting for confirmation page (מספר ההזמנה)...")
             WebDriverWait(self.driver, 30).until(
-                EC.visibility_of_element_located((By.XPATH, "//p[contains(text(),'מספר ההזמנה')]"))
+                EC.presence_of_element_located((By.XPATH, "//p[contains(text(),'מספר ההזמנה')]"))
             )
 
             return self.verify_confirmation_and_extract_order(expected_email)
@@ -59,15 +64,18 @@ class FattalMobileConfirmPage:
             )
             logging.info("✅ Confirmation root detected.")
 
-            # Wait for the specific order number element to be visible
-            order_number_element = WebDriverWait(self.driver, 15).until(
-                EC.visibility_of_element_located((By.ID, "thank-you-page-top-bar-sub-text"))
+            # Now let's wait for the specific order number element to be visible
+            WebDriverWait(self.driver, 15).until(
+                EC.visibility_of_element_located((By.XPATH, "//span[contains(@id, 'thank-you-page-top-bar-sub-text')]"))
             )
+
+            # Extract the order number
+            order_number_element = self.driver.find_element(By.XPATH,
+                                                            "//span[contains(@id, 'thank-you-page-top-bar-sub-text')]")
             order_number = order_number_element.text.strip()
 
             # Screenshot
             screenshot_path = self._save_screenshot("confirmation_PASS")
-
             logging.info(f"📸 Confirmation screenshot saved at: {screenshot_path}")
             logging.info(f"🎉 Order Number (mobile): {order_number}")
 
@@ -93,5 +101,4 @@ class FattalMobileConfirmPage:
         self.driver.save_screenshot(path)
         logging.info(f"Screenshot saved at: {path}")
         return path
-
 

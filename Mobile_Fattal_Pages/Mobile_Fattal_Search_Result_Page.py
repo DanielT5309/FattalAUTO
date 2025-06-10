@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from selenium import webdriver
 from selenium.common import TimeoutException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -58,34 +59,25 @@ class FattalSearchResultPageMobile:
 
     def click_show_prices_button(self):
         logging.info("מחפש ולוחץ על כפתור 'הצג מחירים'...")
-
         try:
             WebDriverWait(self.driver, 25).until(
-                EC.presence_of_element_located((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
+                EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
             )
-
             show_price_buttons = self.driver.find_elements(By.XPATH, "//button[contains(., 'הצג מחירים')]")
-
             for button in show_price_buttons:
                 if button.is_displayed() and button.is_enabled():
                     try:
                         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
-                        WebDriverWait(self.driver, 5).until(
-                            EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]")))
-                        time.sleep(0.5)
-                        button.click()
+                        actions = ActionChains(self.driver)
+                        actions.move_to_element(button).click().perform()
                         logging.info("כפתור 'הצג מחירים' נלחץ בהצלחה.")
                         return
                     except Exception as inner_e:
                         logging.warning(f"ניסיון לחיצה נכשל על כפתור: {inner_e}")
                         continue
-
             raise Exception("No clickable 'הצג מחירים' button was found.")
-
         except Exception as e:
-            self.take_screenshot("show_prices_click_fail")
-            logging.error(f"Failed to click 'הצג מחירים': {e}")
-            raise
+            logging.error(f"Error clicking 'הצג מחירים': {e}")
 
     def click_first_show_prices_button(self):
         logging.info("מחפש כפתורי 'הצג מחירים' במובייל...")
@@ -124,22 +116,25 @@ class FattalSearchResultPageMobile:
         logging.info("מחפש ולוחץ על כפתור 'להזמנת חדר'...")
 
         try:
-            book_buttons = WebDriverWait(self.driver, 15).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//button[contains(text(), 'להזמנת חדר')]"))
+            # Wait until any 'להזמנת חדר' button becomes visible
+            visible_button = WebDriverWait(self.driver, 20).until(
+                EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'להזמנת חדר')]"))
             )
 
-            visible_button = next((b for b in book_buttons if b.is_displayed()), None)
+            # Scroll into view and click using JS for stubborn cases
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_button)
+            time.sleep(0.4)
+            self.driver.execute_script("arguments[0].click();", visible_button)
 
-            if visible_button:
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_button)
-                time.sleep(0.4)
-                self.driver.execute_script("arguments[0].click();", visible_button)
-                logging.info("נלחץ כפתור 'להזמנת חדר' בהצלחה.")
-            else:
-                raise Exception("No visible 'להזמנת חדר' button found.")
+            logging.info("נלחץ כפתור 'להזמנת חדר' בהצלחה.")
+
+        except TimeoutException as te:
+            logging.error("⏰ Timeout waiting for 'להזמנת חדר' button to become visible.")
+            self.take_screenshot("book_room_button_timeout")
+            raise
 
         except Exception as e:
-            logging.error(f"שגיאה בלחיצה על 'להזמנת חדר': {e}")
+            logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר': {e}")
             self.take_screenshot("book_room_button_error")
             raise
 

@@ -68,20 +68,29 @@ class FattalConfirmPage:
         try:
             logging.info("Verifying confirmation page contents...")
 
-            # Wait and extract the order number directly from span with unique class
-            order_number_element = self.wait.until(
-                EC.presence_of_element_located((By.CLASS_NAME, "fSBTIq"))
-            )
-            order_number = order_number_element.text.strip()
+            # ✅ First, try by ID
+            try:
+                order_number_element = self.wait.until(
+                    EC.presence_of_element_located((By.ID, "thank-you-page-top-bar-sub-text"))
+                )
+                order_number = order_number_element.text.strip()
+                logging.info("Order number found by ID.")
+            except Exception as e:
+                logging.warning(f"Order number not found by ID. Trying fallback via class... ({e})")
+                # ⛔️ If the ID method fails, fallback to class name
+                order_number_element = self.wait.until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "fSBTIq"))
+                )
+                order_number = order_number_element.text.strip()
 
-            # Confirmed email fallback
+            # 📨 Try to extract email (fallback if not found)
             try:
                 email_element = self.driver.find_element(By.XPATH, "//span[contains(@class, 'confirmation_email')]")
                 confirmed_email = email_element.text.strip()
             except NoSuchElementException:
                 confirmed_email = expected_email
 
-            # Try extracting hotel ID (g4)
+            # 🏨 Try extracting hotel ID from dataLayer
             try:
                 hotel_id = self.driver.execute_script(
                     "return window.dataLayer?.find(x => x.g4)?.g4 || null"
@@ -90,7 +99,7 @@ class FattalConfirmPage:
                 logging.warning(f"Could not extract hotel ID (g4): {e}")
                 hotel_id = None
 
-            # Screenshot on success
+            # 📸 Save confirmation screenshot
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             screenshot_dir = os.path.join(os.getcwd(), "Fattal_Tests", "Screenshots")
             os.makedirs(screenshot_dir, exist_ok=True)
@@ -116,6 +125,4 @@ class FattalConfirmPage:
                 "error": str(e),
                 "g4": None
             }
-
-
 
