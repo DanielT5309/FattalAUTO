@@ -105,61 +105,68 @@ class FattalDealsPageMobile:
 
     def click_continue_search_button_mobile(self):
         """
-        Clicks the 'המשך' (Continue) button on mobile search screen.
-        Handles dynamic text like 'המשך - 2 לילות' by using partial match.
+        Clicks the dynamic 'המשך' button on mobile, e.g. 'המשך - 1 לילה'.
+        Ensures only one button is clicked — no duplicate clicks.
         """
-        try:
-            logging.info("מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
+        logging.info("📲 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...")
 
-            button = WebDriverWait(self.driver, 20).until(
-                EC.presence_of_element_located((By.XPATH, "//div[starts-with(text(), 'המשך')]"))
+        try:
+            # ✅ Try by ID first (most accurate)
+            button_by_id = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-next-field"))
             )
 
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
-            WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, "//div[starts-with(text(), 'המשך')]")))
-            time.sleep(0.3)  # Give animations time to settle
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_id)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", button_by_id)
+            logging.info("✅ כפתור 'המשך' נלחץ לפי ID.")
+            return  # Exit after successful click — prevent fallback from running
 
-            self.driver.execute_script("arguments[0].click();", button)
-            logging.info("נלחץ כפתור 'המשך' (main search button במובייל)")
+        except TimeoutException:
+            logging.warning("⚠️ כפתור לפי ID לא נמצא, מנסה לפי טקסט חלקי...")
 
-        except Exception as e:
-            logging.warning("לא נמצא כפתור לפי ID — מנסה לפי class...")
-            try:
-                alt_button = WebDriverWait(self.driver, 10).until(
-                    EC.element_to_be_clickable((By.CLASS_NAME, "sc-f6382f5-0"))
-                )
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", alt_button)
-                time.sleep(0.3)
-                self.driver.execute_script("arguments[0].click();", alt_button)
-                logging.info("נלחץ כפתור 'המשך' לפי class")
-            except Exception as e2:
-                logging.error(f"לא הצליח ללחוץ על כפתור 'המשך': {e2}")
-                raise
+        try:
+            # 🟡 Fallback only if ID click failed — match exact visible button
+            button_by_text = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((
+                    By.XPATH,
+                    "//button[starts-with(normalize-space(text()), 'המשך') and not(contains(@id, 'search-engine-search-button-mobile-button-next-field'))]"
+                ))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_text)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", button_by_text)
+            logging.info("✅ כפתור 'המשך' נלחץ לפי טקסט (fallback).")
+
+        except Exception as fallback_error:
+            logging.error(f"❌ שגיאה בלחיצה על כפתור 'המשך' (fallback): {fallback_error}")
+            self.take_screenshot("continue_button_click_fail")
+            raise
 
     def click_continue_room_button(self):
         """
-        Clicks the continue button on the room selection step.
-        Ignores dynamic room/guest count in the text.
+        Clicks the dynamic 'המשך' button in room selection (e.g. 'המשך - חדר 1, 2 אורחים').
+        Handles text variations by partial match. Ensures element is clickable.
         """
         try:
-            logging.info("Looking for 'המשך' button in room selection...")
+            logging.info("🔍 Looking for 'המשך' button in room selection...")
 
-            # Wait for element containing 'המשך' regardless of dynamic numbers
+            # Wait for a <button> whose text starts with 'המשך'
             continue_btn = WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((
-                    By.XPATH, "//div[contains(text(), 'המשך')]"
+                EC.element_to_be_clickable((
+                    By.XPATH, "//button[starts-with(normalize-space(text()), 'המשך')]"
                 ))
             )
 
-            # Scroll & click with JS (to avoid overlay issues)
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", continue_btn)
-            time.sleep(0.4)
+            time.sleep(0.3)
             self.driver.execute_script("arguments[0].click();", continue_btn)
 
-            logging.info("Clicked 'המשך' button in room selection.")
+            logging.info("✅ Clicked 'המשך' button in room selection.")
+
         except Exception as e:
-            logging.error(f"Failed to click 'המשך' in room selection: {e}")
+            logging.error(f"❌ Failed to click 'המשך' in room selection: {e}")
+            self.take_screenshot("room_continue_button_fail")
             raise
 
     def click_mobile_search_button(self):

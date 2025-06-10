@@ -113,20 +113,40 @@ class FattalSearchResultPageMobile:
             raise
 
     def click_book_room_button(self):
-        logging.info("מחפש ולוחץ על כפתור 'להזמנת חדר'...")
+        logging.info("📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...")
 
         try:
-            # Wait until any 'להזמנת חדר' button becomes visible
-            visible_button = WebDriverWait(self.driver, 20).until(
-                EC.visibility_of_element_located((By.XPATH, "//button[contains(text(), 'להזמנת חדר')]"))
+            # Try clicking the button by its full ID first — most precise
+            button_by_id = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "room-price-button-choose-room_ShClub 10_3"))
             )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_id)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", button_by_id)
+            logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי מזהה ID.")
 
-            # Scroll into view and click using JS for stubborn cases
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", visible_button)
-            time.sleep(0.4)
-            self.driver.execute_script("arguments[0].click();", visible_button)
+        except TimeoutException:
+            logging.warning("⚠️ כפתור לפי ID לא נמצא, מנסה לפי טקסט...")
 
-            logging.info("נלחץ כפתור 'להזמנת חדר' בהצלחה.")
+            try:
+                button_by_text = WebDriverWait(self.driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='להזמנת חדר']"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_text)
+                time.sleep(0.3)
+                self.driver.execute_script("arguments[0].click();", button_by_text)
+                logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי טקסט.")
+
+            except Exception as fallback_error:
+                logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר' לפי טקסט: {fallback_error}")
+                self.take_screenshot("book_room_button_error_text")
+                raise
+
+        except Exception as e:
+            logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר' לפי ID: {e}")
+            self.take_screenshot("book_room_button_error_id")
+            raise
+
 
         except TimeoutException as te:
             logging.error("⏰ Timeout waiting for 'להזמנת חדר' button to become visible.")
