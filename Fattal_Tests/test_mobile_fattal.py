@@ -179,7 +179,6 @@ class FattalMobileTests(unittest.TestCase):
         test_method = self._testMethodName
         has_failed = False
         error_msg = ""
-        screenshot = ""
         log_file = ""
         duration = (datetime.now() - self.test_start_time).total_seconds()
 
@@ -213,6 +212,11 @@ class FattalMobileTests(unittest.TestCase):
         order_no = conf.get("order_number", "")
         email = conf.get("email", "") or getattr(self, "entered_email", "")
 
+        # ── Screenshots ───────────────────────────────────
+        # This picks up your screenshot paths if they were set
+        confirmation_screenshot = getattr(self, "screenshot_confirmation", "")
+        error_screenshot = getattr(self, "screenshot_error", "")
+
         # ── Final Struct & Save ────────────────────────────
         status = "FAILED" if has_failed else "PASSED"
         info = {
@@ -227,8 +231,8 @@ class FattalMobileTests(unittest.TestCase):
             "email": email,
             "order_number": order_no,
             "id_number": getattr(self, "entered_id_number", ""),
-            "confirmation_screenshot": screenshot,  # Update if needed
-            "error_screenshot": screenshot,  # Update if needed
+            "confirmation_screenshot": confirmation_screenshot,
+            "error_screenshot": error_screenshot,
             "log": log_file,
             "error": error_msg if has_failed else ""
         }
@@ -858,11 +862,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_anonymous_join_fattal_and_friends(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -913,11 +922,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_club_member_eilat_with_flight(self):
         self.save_for_cancellation = False
@@ -984,11 +998,16 @@ class FattalMobileTests(unittest.TestCase):
         sleep(15)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
-        self.mobile_order_page.click_payment_submit_button()
-        #Step 10: Confirmation
-
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_anonymous_region_eilat(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
@@ -1039,11 +1058,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_fattal_gift3(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1098,10 +1122,16 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
 
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_fattal_gift1(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1149,10 +1179,16 @@ class FattalMobileTests(unittest.TestCase):
         self.fill_payment_details_from_config()
         self.mobile_order_page.click_payment_submit_button()
 
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_club_member_club_renew_expired(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1217,9 +1253,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
-        # # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_club_member_club_renew_about_to_expire(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1285,9 +1328,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
-        # # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_club_renew_expired_form(self):
 
@@ -1418,11 +1468,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
-        # #Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
 
-
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
     def test_mobile_booking_club_member_deals(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -1465,10 +1520,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        assert self.confirmation_result.get("order_number"), "❌ Booking failed — no order number found."
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
 
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
     def test_mobile_booking_anonymous_user_promo_code(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -1520,11 +1581,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_anonymous_fattal_employee_promo_code(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
@@ -1589,12 +1655,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Submit
         self.mobile_order_page.click_payment_submit_button()
-
-        # Step 10: Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_anonymous_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
@@ -1647,9 +1717,14 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_with_club_login_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
@@ -1716,9 +1791,14 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
     def test_mobile_booking_with_club_login_11night_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
@@ -1782,12 +1862,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Click submit inside iframe (already inside from step 7)
         self.mobile_order_page.click_payment_submit_button()
-
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
     def test_mobile_booking_anonymous_user_login_at_checkout(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -1851,11 +1935,16 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-        # Step 9 : Confirm and Assert
+        # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
     # def test_mobile_booking_5_rooms_club_member(self):
     #     self.save_for_cancellation = True  # Enable save-for-cancel feature
     #
