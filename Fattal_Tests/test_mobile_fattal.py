@@ -33,6 +33,9 @@ from openpyxl.utils import get_column_letter
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 HOTEL_NAME_TO_ID = {
     "לאונרדו נגב, באר שבע": "10048",
     "לאונרדו פלאזה אילת": "1051"
@@ -536,6 +539,25 @@ class FattalMobileTests(unittest.TestCase):
     </body>
     </html>
     """)
+
+    def handle_no_results_and_click_suggestion(self, timeout=10):
+        from selenium.common.exceptions import TimeoutException
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+
+        try:
+            no_results_locator = (
+            By.XPATH, "//div[contains(@class, 'sc-32916819-1') and contains(text(), 'לא נמצאו תוצאות')]")
+            WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(no_results_locator))
+            print("🟡 לא נמצאו תוצאות — נבחר את ההצעה הראשונה")
+
+            suggestion_button_locator = (By.CSS_SELECTOR, ".sc-149a1683-21.pxeiD")
+            WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(suggestion_button_locator)).click()
+            print("✅ ההצעה הראשונה נלחצה בהצלחה")
+
+        except TimeoutException:
+            print("✅ נמצאו תוצאות — לא נדרש לחפש הצעה חלופית")
 
     def fill_guest_details(self, guest=None, email=None, phone=None, first_name=None, last_name=None):
         """
@@ -1844,7 +1866,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-
+        self.handle_no_results_and_click_suggestion()
         # Step 5: Choose Room and click it
         self.mobile_search_page.click_show_prices_regional()
         self.take_stage_screenshot("room_selection")

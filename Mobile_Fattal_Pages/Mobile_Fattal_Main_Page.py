@@ -101,10 +101,10 @@ class FattalMainPageMobile:
             logging.info("Scrolling and selecting date range (real clicks)...")
 
             months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-            if len(months) < 3:
+            if len(months) < 5:
                 raise Exception("Less than 3 months available in calendar")
 
-            target_month = months[2]
+            target_month = months[4]
             self.driver.execute_script(
                 "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", target_month)
             time.sleep(2)
