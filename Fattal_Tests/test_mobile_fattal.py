@@ -1020,6 +1020,7 @@ class FattalMobileTests(unittest.TestCase):
         sleep(15)
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
+        self.mobile_order_page.click_payment_submit_button()
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
@@ -1052,12 +1053,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
         # Step 3: Search Vacation
         self.mobile_main_page.click_room_continue_button(),
-
-
-
-
-
-        
         self.mobile_main_page.click_mobile_search_button()
 
         # Step 5: Handle results
@@ -1097,7 +1092,7 @@ class FattalMobileTests(unittest.TestCase):
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
-        hotel_name = self.default_hotel_name
+        hotel_name = "תל אביב, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
 
