@@ -1117,7 +1117,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
+        sleep(5)
 
         # Apply all 3 gift codes
         raw_gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
@@ -1127,7 +1127,7 @@ class FattalMobileTests(unittest.TestCase):
         for code in gifts:
             logging.info(f"Applying gift coupon: '{code}'")
             self.mobile_order_page.apply_checkout_coupon(code)
-            sleep(15)
+            sleep(3)
             if not self.mobile_order_page.is_coupon_applied_successfully(code):
                 logging.error(f"Gift code '{code}' was not applied successfully!")
                 failed_gifts.append(code)
