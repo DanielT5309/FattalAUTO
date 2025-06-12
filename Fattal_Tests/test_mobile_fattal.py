@@ -345,8 +345,8 @@ class FattalMobileTests(unittest.TestCase):
 
         def image_tag(path):
             if path and os.path.exists(path):
-                normalized = path.replace(os.sep, '/')
-                return f'<img src="file:///{normalized}" onclick="openModal(this.src)" style="max-height:120px; border:1px solid #ccc; margin:5px; cursor: pointer;" />'
+                rel_path = os.path.relpath(path, start=html_dir).replace(os.sep, '/')
+                return f'<img src="{rel_path}" onclick="openModal(this.src)" style="max-height:120px; border:1px solid #ccc; margin:5px; cursor: pointer;" />'
             return "<em>No screenshot</em>"
 
         room_img = image_tag(getattr(self, 'screenshot_room_selection', ''))
@@ -356,6 +356,11 @@ class FattalMobileTests(unittest.TestCase):
 
         test_type_class = info.get("test_type", "desktop").lower()
 
+        # 💾 Convert log file to relative path
+        log_file_rel = ""
+        if info.get("log") and os.path.exists(info["log"]):
+            log_file_rel = os.path.relpath(info["log"], start=html_dir).replace(os.sep, '/')
+
         html_entry = f"""
         <div class="test-block {test_type_class}">
             <h2>{info.get('name')} — <span class="{'fail' if info.get('status') == 'FAILED' else 'pass'}">{info.get('status')}</span></h2>
@@ -364,7 +369,7 @@ class FattalMobileTests(unittest.TestCase):
             <p><strong>Browser:</strong> {info.get('browser')} | <strong>OS:</strong> {info.get('os')}</p>
             <p><strong>Guest:</strong> {info.get('full_name')} | <strong>Email:</strong> {info.get('email')}</p>
             <p><strong>Order #:</strong> {info.get('order_number')} | <strong>ID:</strong> {info.get('id_number')}</p>
-            <p><strong>Log File:</strong> <a href="file:///{info.get('log', '').replace(os.sep, '/')}">View Log</a></p>
+            <p><strong>Log File:</strong> <a href="{log_file_rel}" target="_blank">View Log</a></p>
             {'<p style="color:red;"><strong>Error:</strong> ' + info['error'] + '</p>' if info.get('error') else ''}
             <div class="grid">
                 <div><h4>Room</h4>{room_img}</div>
@@ -376,45 +381,45 @@ class FattalMobileTests(unittest.TestCase):
         """
 
         if not os.path.exists(dashboard_path):
-            html_start = f"""<!DOCTYPE html>
+            html_start = """<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Fattal Selenium Test Dashboard</title>
         <style>
-            body {{ font-family: Arial, sans-serif; margin: 40px; }}
-            .pass {{ color: green; font-weight: bold; }}
-            .fail {{ color: red; font-weight: bold; }}
-            .grid {{ display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap; }}
-            .grid div {{ flex: 1; min-width: 250px; }}
-            .test-block {{ margin-bottom: 40px; }}
-            hr {{ border: 1px dashed #ccc; }}
-            img {{ display: block; max-width: 100%; }}
-            img:hover {{
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            .pass { color: green; font-weight: bold; }
+            .fail { color: red; font-weight: bold; }
+            .grid { display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap; }
+            .grid div { flex: 1; min-width: 250px; }
+            .test-block { margin-bottom: 40px; }
+            hr { border: 1px dashed #ccc; }
+            img { display: block; max-width: 100%; }
+            img:hover {
                 transform: scale(1.05);
                 transition: transform 0.2s ease-in-out;
                 box-shadow: 0 0 10px rgba(0,0,0,0.4);
-            }}
-            .summary-bar {{
+            }
+            .summary-bar {
                 background-color: #f5f5f5;
                 border: 1px solid #ccc;
                 padding: 10px;
                 margin-bottom: 20px;
-            }}
-            .filters {{
+            }
+            .filters {
                 margin-bottom: 20px;
-            }}
-            .filters label {{
+            }
+            .filters label {
                 margin-right: 15px;
                 cursor: pointer;
                 font-weight: normal;
-            }}
-            .filters input[type="checkbox"] {{
+            }
+            .filters input[type="checkbox"] {
                 margin-right: 5px;
                 transform: scale(1.1);
                 vertical-align: middle;
-            }}
-            .modal {{
+            }
+            .modal {
                 display: none;
                 position: fixed;
                 z-index: 999;
@@ -423,23 +428,23 @@ class FattalMobileTests(unittest.TestCase):
                 width: 100%; height: 100%;
                 overflow: auto;
                 background-color: rgba(0,0,0,0.85);
-            }}
-            .modal-content {{
+            }
+            .modal-content {
                 margin: auto;
                 display: block;
-                ax-width: 90vw;
+                max-width: 90vw;
                 max-height: 80vh;
                 object-fit: contain;
                 border-radius: 8px;
-            }}
-            .modal-content, .close {{
+            }
+            .modal-content, .close {
                 animation-name: zoom;
                 animation-duration: 0.3s;
-            }}
-            @keyframes zoom {{
-                from {{transform: scale(0)}} to {{transform: scale(1)}}
-            }}
-            .close {{
+            }
+            @keyframes zoom {
+                from {transform: scale(0)} to {transform: scale(1)}
+            }
+            .close {
                 position: absolute;
                 top: 15px;
                 right: 35px;
@@ -447,63 +452,63 @@ class FattalMobileTests(unittest.TestCase):
                 font-size: 40px;
                 font-weight: bold;
                 cursor: pointer;
-            }}
-            @media (max-width: 768px) {{
-                .modal-content {{
+            }
+            @media (max-width: 768px) {
+                .modal-content {
                     max-width: 95%;
                     transform: none !important;
-                }}
-                img:hover {{
+                }
+                img:hover {
                     transform: none;
-                }}
-            }}
+                }
+            }
         </style>
         <script>
-            function updateSummary() {{
+            function updateSummary() {
                 let total = document.querySelectorAll('.test-block').length;
                 let passed = document.querySelectorAll('.test-block .pass').length;
                 let failed = document.querySelectorAll('.test-block .fail').length;
                 document.getElementById('summary-total').textContent = total;
                 document.getElementById('summary-passed').textContent = passed;
                 document.getElementById('summary-failed').textContent = failed;
-            }}
+            }
 
-            function applyFilters() {{
+            function applyFilters() {
                 const showPassed = document.getElementById('filter-pass').checked;
                 const showFailed = document.getElementById('filter-fail').checked;
                 const showMobile = document.getElementById('filter-mobile').checked;
                 const showDesktop = document.getElementById('filter-desktop').checked;
 
-                document.querySelectorAll('.test-block').forEach(block => {{
+                document.querySelectorAll('.test-block').forEach(block => {
                     const isPass = block.querySelector('span').classList.contains('pass');
                     const isFail = block.querySelector('span').classList.contains('fail');
                     const isMobile = block.classList.contains('mobile');
                     const isDesktop = block.classList.contains('desktop');
 
                     let visible = false;
-                    if ((showPassed && isPass) || (showFailed && isFail)) {{
-                        if ((showMobile && isMobile) || (showDesktop && isDesktop)) {{
+                    if ((showPassed && isPass) || (showFailed && isFail)) {
+                        if ((showMobile && isMobile) || (showDesktop && isDesktop)) {
                             visible = true;
-                        }}
-                    }}
+                        }
+                    }
 
                     block.style.display = visible ? 'block' : 'none';
-                }});
-            }}
+                });
+            }
 
-            function openModal(imgSrc) {{
+            function openModal(imgSrc) {
                 const modal = document.getElementById("screenshotModal");
                 const modalImg = document.getElementById("modalImage");
                 modal.style.display = "block";
                 modalImg.src = imgSrc;
-            }}
-            function closeModal() {{
+            }
+            function closeModal() {
                 document.getElementById("screenshotModal").style.display = "none";
-            }}
-            window.onload = function() {{
+            }
+            window.onload = function() {
                 updateSummary();
                 applyFilters();
-            }};
+            };
         </script>
     </head>
     <body>
