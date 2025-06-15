@@ -1126,7 +1126,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    @retry_on_no_results(max_attempts=3)
+    #@retry_on_no_results(max_attempts=3)
     def test_mobile_booking_anonymous_region_eilat(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
