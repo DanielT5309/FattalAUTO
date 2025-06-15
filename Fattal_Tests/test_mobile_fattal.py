@@ -997,7 +997,8 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_date_picker()
         #self.mobile_main_page.select_date_range_two_months_ahead()
         # Step 2: Select exact date range instead of the dynamic one
-        self.mobile_main_page.select_date_range_two_months_ahead_eilat()
+        self.mobile_main_page.select_date_range_two_months_ahead_eilat(stay_length=5)
+
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
@@ -1057,7 +1058,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_first_suggested_region()
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead_eilat()
+        self.mobile_main_page.select_date_range_two_months_ahead_eilat(stay_length=5)
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
@@ -1580,7 +1581,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
+        self.mobile_main_page.select_date_range_months_ahead(months_ahead=3, stay_length=3)
 
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
