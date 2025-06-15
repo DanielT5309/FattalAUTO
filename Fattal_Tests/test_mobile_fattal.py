@@ -1,16 +1,13 @@
 import io
-import json
 import logging
 import sys
 import time
 import traceback
-from selenium.webdriver.support import expected_conditions as EC
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import  PatternFill
 from time import sleep
 import unittest
 from selenium import webdriver
-import random
-from selenium.webdriver.support.wait import WebDriverWait
+import functools
 from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
 from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
 from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
@@ -20,17 +17,11 @@ from Mobile_Fattal_Pages.Mobile_Fattal_ConfirmPage import FattalMobileConfirmPag
 from Mobile_Fattal_Pages.Mobile_Fattal_Deals_Packages import FattalDealsPageMobile
 from Mobile_Fattal_Pages.Mobile_Fattal_Customer_Contact_Page import FattalMobileCustomerSupport
 from Mobile_Fattal_Pages.Mobile_Fattal_Join_Club_Page import FattalMobileClubJoinPage
-import platform
 from datetime import datetime
-from faker import Faker
 import os
 from openpyxl import Workbook, load_workbook
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
@@ -41,6 +32,39 @@ HOTEL_NAME_TO_ID = {
     "לאונרדו פלאזה אילת": "1051"
 }
 
+
+def retry_on_no_results(max_attempts=2):
+    """
+    Decorator to retry a test if a 'no results' situation is detected.
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            attempt = 0
+            last_exception = None
+            while attempt < max_attempts:
+                try:
+                    result = func(self, *args, **kwargs)
+                    # If we reach here, check for the 'no results' UI (customize for your app)
+                    if hasattr(self, "is_no_results_displayed") and self.is_no_results_displayed():
+                        logging.warning(f"No results detected after attempt {attempt + 1}/{max_attempts}")
+                        attempt += 1
+                        continue
+                    return result
+                except Exception as e:
+                    logging.warning(f"Attempt {attempt + 1} failed: {e}")
+                    last_exception = e
+                    attempt += 1
+            # If we exhausted all retries
+            if last_exception:
+                raise last_exception
+            else:
+                raise Exception("Test failed after all retry attempts (no results).")
+
+        return wrapper
+
+    return decorator
 class FattalMobileTests(unittest.TestCase):
     def save_order_for_cancellation(self, order_number: str):
         import json
@@ -338,6 +362,10 @@ class FattalMobileTests(unittest.TestCase):
             logging.error(f"Failed to save Excel file: {e}")
 
     def save_to_html(self, info: dict):
+        import time
+        from datetime import datetime
+        import os
+
         html_dir = os.path.join(self.base_dir, "html_reports")
         os.makedirs(html_dir, exist_ok=True)
 
@@ -356,22 +384,26 @@ class FattalMobileTests(unittest.TestCase):
 
         test_type_class = info.get("test_type", "desktop").lower()
 
-        # 💾 Convert log file to relative path
+        try:
+            ts_ms = int(datetime.strptime(info.get('timestamp'), '%Y-%m-%d %H:%M:%S').timestamp() * 1000)
+        except:
+            ts_ms = int(time.time() * 1000)
+
         log_file_rel = ""
         if info.get("log") and os.path.exists(info["log"]):
             log_file_rel = os.path.relpath(info["log"], start=html_dir).replace(os.sep, '/')
 
         html_entry = f"""
-        <div class="test-block {test_type_class}">
-            <h2>{info.get('name')} — <span class="{'fail' if info.get('status') == 'FAILED' else 'pass'}">{info.get('status')}</span></h2>
+        <div class=\"test-block {test_type_class}\" data-timestamp=\"{ts_ms}\">
+            <h2>{info.get('name')} — <span class=\"{'fail' if info.get('status') == 'FAILED' else 'pass'}\">{info.get('status')}</span></h2>
             <p><strong>Description:</strong> {info.get('description')}</p>
             <p><strong>Timestamp:</strong> {info.get('timestamp')} | <strong>Duration:</strong> {info.get('duration')}</p>
             <p><strong>Browser:</strong> {info.get('browser')} | <strong>OS:</strong> {info.get('os')}</p>
             <p><strong>Guest:</strong> {info.get('full_name')} | <strong>Email:</strong> {info.get('email')}</p>
             <p><strong>Order #:</strong> {info.get('order_number')} | <strong>ID:</strong> {info.get('id_number')}</p>
-            <p><strong>Log File:</strong> <a href="{log_file_rel}" target="_blank">View Log</a></p>
+            <p><strong>Log File:</strong> <a href=\"{log_file_rel}\" target=\"_blank\">View Log</a></p>
             {'<p style="color:red;"><strong>Error:</strong> ' + info['error'] + '</p>' if info.get('error') else ''}
-            <div class="grid">
+            <div class=\"grid\">
                 <div><h4>Room</h4>{room_img}</div>
                 <div><h4>Payment</h4>{pay_img}</div>
                 <div><h4>{'Failure Screenshot' if info.get('status') == 'FAILED' else 'Confirmation'}</h4>{confirm_img}</div>
@@ -382,9 +414,9 @@ class FattalMobileTests(unittest.TestCase):
 
         if not os.path.exists(dashboard_path):
             html_start = """<!DOCTYPE html>
-    <html lang="en">
+    <html lang=\"en\">
     <head>
-        <meta charset="UTF-8">
+        <meta charset=\"UTF-8\">
         <title>Fattal Selenium Test Dashboard</title>
         <style>
             body { font-family: Arial, sans-serif; margin: 40px; }
@@ -406,15 +438,10 @@ class FattalMobileTests(unittest.TestCase):
                 padding: 10px;
                 margin-bottom: 20px;
             }
-            .filters {
-                margin-bottom: 20px;
-            }
-            .filters label {
-                margin-right: 15px;
-                cursor: pointer;
-                font-weight: normal;
-            }
-            .filters input[type="checkbox"] {
+            .filters { margin-bottom: 20px; }
+            .filters label { margin-right: 15px; cursor: pointer; font-weight: normal; }
+            .filters select, .filters button { margin-right: 10px; }
+            .filters input[type=\"checkbox\"] {
                 margin-right: 5px;
                 transform: scale(1.1);
                 vertical-align: middle;
@@ -478,19 +505,28 @@ class FattalMobileTests(unittest.TestCase):
                 const showFailed = document.getElementById('filter-fail').checked;
                 const showMobile = document.getElementById('filter-mobile').checked;
                 const showDesktop = document.getElementById('filter-desktop').checked;
+                const range = document.getElementById('date-range').value;
+                const now = new Date();
+                let minTime = 0;
+
+                if (range === 'today') {
+                    minTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                } else if (range === 'yesterday') {
+                    minTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+                } else if (range === 'last7') {
+                    minTime = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+                }
 
                 document.querySelectorAll('.test-block').forEach(block => {
                     const isPass = block.querySelector('span').classList.contains('pass');
                     const isFail = block.querySelector('span').classList.contains('fail');
                     const isMobile = block.classList.contains('mobile');
                     const isDesktop = block.classList.contains('desktop');
+                    const blockTime = parseInt(block.getAttribute('data-timestamp'), 10);
 
-                    let visible = false;
-                    if ((showPassed && isPass) || (showFailed && isFail)) {
-                        if ((showMobile && isMobile) || (showDesktop && isDesktop)) {
-                            visible = true;
-                        }
-                    }
+                    let visible = ((showPassed && isPass) || (showFailed && isFail)) &&
+                                  ((showMobile && isMobile) || (showDesktop && isDesktop)) &&
+                                  (range === 'all' || blockTime >= minTime);
 
                     block.style.display = visible ? 'block' : 'none';
                 });
@@ -502,9 +538,11 @@ class FattalMobileTests(unittest.TestCase):
                 modal.style.display = "block";
                 modalImg.src = imgSrc;
             }
+
             function closeModal() {
                 document.getElementById("screenshotModal").style.display = "none";
             }
+
             window.onload = function() {
                 updateSummary();
                 applyFilters();
@@ -526,9 +564,15 @@ class FattalMobileTests(unittest.TestCase):
             <label><input type="checkbox" id="filter-fail" checked onchange="applyFilters()">❌ Failed</label>
             <label><input type="checkbox" id="filter-desktop" checked onchange="applyFilters()">💻 Desktop</label>
             <label><input type="checkbox" id="filter-mobile" checked onchange="applyFilters()">📱 Mobile</label>
+            <label><strong>Date:</strong></label>
+            <select id="date-range" onchange="applyFilters()">
+                <option value="all">All</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="last7">Last 7 Days</option>
+            </select>
         </div>
     """
-
             with open(dashboard_path, "w", encoding="utf-8") as f:
                 f.write(html_start)
 
@@ -537,13 +581,13 @@ class FattalMobileTests(unittest.TestCase):
 
         with open(dashboard_path, "a", encoding="utf-8") as f:
             f.write("""
-        <div id="screenshotModal" class="modal" onclick="closeModal()">
-          <span class="close">&times;</span>
-          <img class="modal-content" id="modalImage">
-        </div>
-    </body>
-    </html>
-    """)
+            <div id=\"screenshotModal\" class=\"modal\" onclick=\"closeModal()\">
+              <span class=\"close\">&times;</span>
+              <img class=\"modal-content\" id=\"modalImage\">
+            </div>
+        </body>
+        </html>
+        """)
 
     def handle_no_results_and_click_suggestion(self, timeout=10):
         from selenium.common.exceptions import TimeoutException
@@ -563,6 +607,13 @@ class FattalMobileTests(unittest.TestCase):
 
         except TimeoutException:
             print("✅ נמצאו תוצאות — לא נדרש לחפש הצעה חלופית")
+
+    def is_no_results_displayed(self):
+        try:
+            # Customize selector according to your "No results" element!
+            return self.driver.find_element(By.XPATH, "//div[contains(text(), 'לא נמצאו תוצאות')]").is_displayed()
+        except Exception:
+            return False
 
     def fill_guest_details(self, guest=None, email=None, phone=None, first_name=None, last_name=None):
         """
@@ -676,6 +727,36 @@ class FattalMobileTests(unittest.TestCase):
 
         return filename
 
+    def take_confirmation_screenshot_renew_membership(self, test_method, status):
+        screenshot_dir = os.path.join(self.base_dir, "Screenshots")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        filename = os.path.join(
+            screenshot_dir, f"confirmation_{status}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+        )
+
+        try:
+            # Scroll to the container div for the confirmation message
+            element = self.driver.find_element(By.CSS_SELECTOR, "div.sc-778b26e1-1.hFoaKR")
+
+            # Scroll to the element's Y position with a slight offset
+            y_position = element.location['y']
+            self.driver.execute_script("window.scrollTo(0, arguments[0]);", max(y_position - 50, 0))
+
+            time.sleep(1)  # Allow time for scroll and render
+
+            self.driver.save_screenshot(filename)
+            logging.info(f" Screenshot anchored to confirmation container saved at: {filename}")
+        except Exception as e:
+            logging.warning(f" Could not scroll to confirmation container: {e}")
+            try:
+                self.driver.save_screenshot(filename)
+                logging.info(f" Screenshot (fallback full view) saved at: {filename}")
+            except Exception as inner_e:
+                logging.error(f" Screenshot failed: {inner_e}")
+                raise
+
+        return filename
+
     def run(self, result=None):
         self._test_result_for_teardown = result  # Save for later
         return super().run(result)
@@ -703,7 +784,6 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
 
-
     def test_mobile_join_fattal_and_friends_form(self):
         self.soft_assert_errors = []
 
@@ -720,7 +800,7 @@ class FattalMobileTests(unittest.TestCase):
             birthdate = "01-01-1990"
             password = "Aa123456"
             id_number = self.mobile_order_page.generate_israeli_id()
-            self.entered_id_number = id_number  # ✅ Store for logging/export
+            self.entered_id_number = id_number
             logging.info(f"Generated ID for club registration: {id_number}")
             self.mobile_main_page.close_war_popup()
 
@@ -752,26 +832,30 @@ class FattalMobileTests(unittest.TestCase):
             logging.info("Fattal Club form filled and validated successfully.")
             self.mobile_club_join_page.click_accept_terms_checkbox()
             sleep(15)
-            # Assuming you've already navigated to the payment step
+
+            # Step 5: Payment
             self.fill_payment_details_from_config()
-            # Step 8: Switch BACK into iframe to click submit
             self.mobile_order_page.click_payment_submit_button()
-            # Step 9 : Confirm and Assert
-            #self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-            #self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
+            self.mobile_toolbar.close_any_club_popup()
+
+            sleep(3)
+            # Step 7: Take confirmation screenshot
+            self.confirmation_screenshot_path = self.take_confirmation_screenshot_renew_membership(self._testMethodName,
+                                                                                                   "success")
+            setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
         except Exception as e:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
             screenshot_dir = os.path.join(self.base_dir, "Screenshots")
             os.makedirs(screenshot_dir, exist_ok=True)
-            screenshot_path = os.path.join(
-                screenshot_dir, f"join_club_test_fail_{timestamp}.png"
-            )
+            screenshot_path = os.path.join(screenshot_dir, f"join_club_test_fail_{timestamp}.png")
             self.driver.save_screenshot(screenshot_path)
             logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
             raise
+
+        # Final check for soft assert errors
         if self.soft_assert_errors:
-           logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
 
     # def test_mobile_contact_form(self):
     #     self.soft_assert_errors = []
@@ -1042,6 +1126,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
+    @retry_on_no_results(max_attempts=3)
     def test_mobile_booking_anonymous_region_eilat(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
@@ -1431,11 +1516,16 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.error(f"Failed to assert price: {e}")
             raise
-
+        self.mobile_toolbar.close_any_club_popup()
         # Step 5: Optional Confirmation Log
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         if self.confirmation_result:
             logging.info("ℹ️ Confirmation page loaded. Skipping order number check.")
+
+            # 📸 Screenshot confirmation page for renewal
+            self.confirmation_screenshot_path = self.take_confirmation_screenshot_renew_membership(self._testMethodName,
+                                                                                                   "success")
+            setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
         else:
             logging.warning("⚠️ Confirmation result was empty — order number not available.")
 

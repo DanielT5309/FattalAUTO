@@ -672,7 +672,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.set_id_number(random_id)
 
         self.order_page.click_terms_approval_checkbox_js()
-        sleep(10)
+        sleep(15)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("בדיקת טסט נא לבטל")

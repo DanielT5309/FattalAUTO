@@ -74,7 +74,6 @@ class FattalMobileToolBar:
             logging.info("ℹ️ No post-login popup appeared.")
         except Exception as e:
             logging.error(f"❌ Failed to close popup: {e}")
-            self.take_screenshot("popup_close_failure")
 
     def handle_membership_renewal_popup(self):
         """Handles the optional 'membership renewal' popup by clicking the renewal button if it appears."""
@@ -211,3 +210,30 @@ class FattalMobileToolBar:
         except Exception as e:
             logging.error(f"❌ Failed to click renew link: {e}")
             raise
+
+    def close_any_club_popup(self):
+        """
+        Attempts to close any club-related popup: either specific post-renewal or general one.
+        """
+        selectors = [
+            # Try the specific confirmation popup first
+            "div.sc-c18678ea-3.iOzwib",
+            # Then try the more generic popup
+            "div[class^='sc-c18678ea-3']"
+        ]
+
+        for selector in selectors:
+            try:
+                logging.info(f"Trying to close popup with selector: {selector}")
+                close_btn = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+                self.driver.execute_script("arguments[0].click();", close_btn)
+                logging.info(f"✅ Popup closed using selector: {selector}")
+                return  # Exit after the first successful close
+            except TimeoutException:
+                logging.debug(f"ℹ️ Popup not found with selector: {selector}")
+            except Exception as e:
+                logging.warning(f"⚠️ Attempt with selector '{selector}' failed: {e}")
+
+        logging.info("ℹ️ No club-related popup appeared.")
+        self.take_screenshot("popup_club_close_attempts_failed")
+
