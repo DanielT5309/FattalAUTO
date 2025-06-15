@@ -684,7 +684,18 @@ class FattalMainPageMobile:
             logging.error(f"Error setting {group} for room {room_index + 1}: {e}")
             raise
 
-
+    def close_war_popup(self):
+        """
+        Closes the 'WAR' popup modal on mobile using its unique button ID.
+        """
+        try:
+            close_button = WebDriverWait(self.driver, 3).until(
+                EC.element_to_be_clickable((By.ID, "ex-popup-modal-close-btn"))
+            )
+            self.driver.execute_script("arguments[0].click();", close_button)
+            logging.info("WAR popup (mobile) closed.")
+        except Exception as e:
+            logging.info(f"WAR popup (mobile) not found or failed to click — continuing. Error: {e}")
 
 
 

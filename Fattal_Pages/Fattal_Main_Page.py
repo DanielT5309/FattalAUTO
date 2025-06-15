@@ -714,6 +714,24 @@ class FattalMainPage:
                 logging.error(f"Failed selecting date range: {e}")
                 raise
 
+        def close_war_popup(self):
+            """
+            Attempts to close the popup with id='ex-popup-modal-close-btn'.
+            """
+            try:
+                # Wait until the close button is clickable
+                close_button = WebDriverWait(self.driver, 3).until(
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, "#ex-popup-modal-close-btn")
+                    )
+                )
+
+                # Click using JS for reliability (covers overlays/obscured elements)
+                self.driver.execute_script("arguments[0].click();", close_button)
+                logging.info("WAR popup closed.")
+            except Exception as e:
+                logging.info(f"WAR popup not found or failed to click — continuing without closing. Error: {e}")
+
         def accessibility_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(1)').click()
         def customer_support_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(2)').click()
         def terms_of_use_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(3)').click()
