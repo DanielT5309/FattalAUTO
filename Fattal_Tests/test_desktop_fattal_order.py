@@ -815,7 +815,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.test_description = "בדיקת השלמת הזמנה מתשמש אנונימי"
         logging.info(" Starting test: hotel search and booking flow")
 
-        self.main_page.close_war_popup()
+        self.main_page.self.main_page.close_war_popup()()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -836,7 +836,7 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info(" Starting test: hotel search and booking flow")
 
-        close_war_popup
+        self.main_page.self.main_page.close_war_popup()()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -863,7 +863,7 @@ class FattalDesktopTests(unittest.TestCase):
         try:
             logging.info("Starting test for Eilat zone with flight")
 
-            close_war_popup
+            self.main_page.close_war_popup()
 
             try:
                 self.toolbar.personal_zone()
@@ -876,7 +876,7 @@ class FattalDesktopTests(unittest.TestCase):
                 logging.info("Logged in to club account successfully.")
             except Exception as e:
                 logging.warning(f"Login failed: {e}")
-            close_war_popup
+            self.main_page.close_war_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
             self.main_page.select_next_month_date_range_eilat()
@@ -934,7 +934,7 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info("Starting test: hotel search and booking flow")
 
-        close_war_popup
+        self.main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range_eilat()
@@ -975,7 +975,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
         self.entered_phone = guest["phone"]
 
-        close_war_popup
+        self.main_page.close_war_popup()
 
         try:
             self.toolbar.personal_zone()
