@@ -939,8 +939,6 @@ class FattalDesktopTests(unittest.TestCase):
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range_eilat()
 
-        #self.main_page.select_random_date_range_two_months_ahead()
-
         adults, children, infants = 2, 1, 0
 
         self.main_page.set_room_occupants(adults, children, infants)
@@ -954,10 +952,17 @@ class FattalDesktopTests(unittest.TestCase):
 
         self.search_result.click_first_book_room()
 
+        # 🟢 Complete booking and fill forms, payment, etc.
         self.complete_booking_post_flight()
 
+        # 🟢 Set entered_email for logging/export (if not set earlier)
         self.entered_email = self.default_guest["email"]
-        self.entered_id_number = self.confirmation_result.get("id_number", "")
+
+        # 🟢 Extract confirmation result *after* booking is done!
+        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
+        self.confirmation_result["id_number"] = getattr(self, "entered_id_number", "")
+
+        # 🟢 Now safe to assert and log
         self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member(self):
