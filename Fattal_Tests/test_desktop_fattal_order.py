@@ -815,7 +815,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.test_description = "בדיקת השלמת הזמנה מתשמש אנונימי"
         logging.info(" Starting test: hotel search and booking flow")
 
-        self.main_page.self.main_page.close_war_popup()()
+        self.main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -836,7 +836,7 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info(" Starting test: hotel search and booking flow")
 
-        self.main_page.self.main_page.close_war_popup()()
+        self.main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
