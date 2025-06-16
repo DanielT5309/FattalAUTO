@@ -237,3 +237,26 @@ class FattalMobileToolBar:
         logging.info("ℹ️ No club-related popup appeared.")
         self.take_screenshot("popup_club_close_attempts_failed")
 
+    def click_login_with_email_button(self):
+        """
+        Clicks the footer login button: 'כניסה באמצעות ת.ז וסיסמה'
+        """
+        try:
+            logging.info("Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...")
+
+            button = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "login-footer-button-type"))
+            )
+
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", button)
+
+            logging.info("✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.")
+        except Exception as e:
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+            screenshot_path = os.path.join("Fattal_Tests", "Screenshots", f"click_footer_login_fail_{timestamp}.png")
+            self.driver.save_screenshot(screenshot_path)
+            logging.error(f"❌ Failed to click footer login button: {e}")
+            logging.error(f"📸 Screenshot saved: {screenshot_path}")
+            raise

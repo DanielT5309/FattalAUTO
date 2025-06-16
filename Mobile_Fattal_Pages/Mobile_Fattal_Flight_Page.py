@@ -226,11 +226,17 @@ class FattalFlightPageMobile:
                 # First Name
                 first_name_input = container.find_element(
                     By.CSS_SELECTOR, "input[id^='checkout-form-field-input_adult_']")
+
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", first_name_input)
+                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(first_name_input))
                 self.type_into_react_field(first_name_input, first_names[i], label=f"First Name {i + 1}")
 
                 # Last Name
                 last_name_input = container.find_elements(
                     By.CSS_SELECTOR, "input[id^='checkout-form-field-input_adult_']")[1]
+
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", last_name_input)
+                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(last_name_input))
                 self.type_into_react_field(last_name_input, last_name, label=f"Last Name {i + 1}")
 
             logging.info("[Mobile] Adult passenger form fields filled.")
@@ -242,48 +248,59 @@ class FattalFlightPageMobile:
 
     def type_into_react_field(self, element, text, label="field"):
         try:
+            logging.info(f"🎯 Typing into '{label}' → '{text}'")
+
+            # Scroll into view and wait until it's visible & enabled
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+            WebDriverWait(self.driver, 10).until(EC.visibility_of(element))
+            WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(element))
+
+            # Focus + optional short wait
             self.driver.execute_script("arguments[0].focus();", element)
             time.sleep(0.2)
 
-            element.click()
-            element.clear()
+            # Try clicking — fallback to JS if intercepted
+            try:
+                element.click()
+            except ElementClickInterceptedException as intercept_err:
+                logging.warning(f"⚠️ Native click intercepted for '{label}', using JS click. {intercept_err}")
+                self.driver.execute_script("arguments[0].click();", element)
 
+            # Clear input via BACKSPACE x20
             for _ in range(20):
                 element.send_keys("\ue003")
                 time.sleep(0.01)
 
-            # Attempt typing normally
+            # Type value
             element.send_keys(text)
-            logging.info(f"Typed normally into '{label}'")
+            logging.info(f"✅ Typed into '{label}' normally.")
 
         except ElementNotInteractableException:
-            logging.warning(f"Element not interactable: '{label}'. Using JS React fallback.")
+            logging.warning(f"⚠️ Element not interactable: '{label}'. Using JS React fallback.")
 
             try:
                 set_value_script = """
-                var el = arguments[0];
-                var value = arguments[1];
-                var lastValue = el.value;
-                el.value = value;
-                var event = new Event('input', { bubbles: true });
-                event.simulated = true;
-                var tracker = el._valueTracker;
-                if (tracker) {
-                    tracker.setValue(lastValue);
-                }
-                el.dispatchEvent(event);
-                el.dispatchEvent(new Event('change', { bubbles: true }));
+                    var el = arguments[0];
+                    var value = arguments[1];
+                    var lastValue = el.value;
+                    el.value = value;
+                    var event = new Event('input', { bubbles: true });
+                    event.simulated = true;
+                    var tracker = el._valueTracker;
+                    if (tracker) tracker.setValue(lastValue);
+                    el.dispatchEvent(event);
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
                 """
                 self.driver.execute_script(set_value_script, element, text)
-                logging.info(f"JS React fallback succeeded for '{label}'")
+                logging.info(f"✅ JS fallback succeeded for '{label}'.")
 
             except Exception as js_error:
-                logging.error(f"JS fallback failed for '{label}': {js_error}")
+                logging.error(f"❌ JS fallback failed for '{label}': {js_error}")
                 raise
 
         except Exception as e:
-            logging.error(f"Unexpected error in '{label}': {e}")
+            logging.error(f"❌ Unexpected error in '{label}': {e}")
+            self.driver.save_screenshot(f"error_typing_{label.replace(' ', '_')}.png")
             raise
 
     def select_time_tab(self, label):

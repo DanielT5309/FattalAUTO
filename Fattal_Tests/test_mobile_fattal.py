@@ -8,6 +8,9 @@ from time import sleep
 import unittest
 from selenium import webdriver
 import functools
+
+from selenium.common import TimeoutException
+
 from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
 from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
 from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
@@ -589,31 +592,14 @@ class FattalMobileTests(unittest.TestCase):
         </html>
         """)
 
-    def handle_no_results_and_click_suggestion(self, timeout=10):
-        from selenium.common.exceptions import TimeoutException
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-
-        try:
-            no_results_locator = (
-            By.XPATH, "//div[contains(@class, 'sc-32916819-1') and contains(text(), 'לא נמצאו תוצאות')]")
-            WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(no_results_locator))
-            print("🟡 לא נמצאו תוצאות — נבחר את ההצעה הראשונה")
-
-            suggestion_button_locator = (By.CSS_SELECTOR, ".sc-149a1683-21.pxeiD")
-            WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(suggestion_button_locator)).click()
-            print("✅ ההצעה הראשונה נלחצה בהצלחה")
-
-        except TimeoutException:
-            print("✅ נמצאו תוצאות — לא נדרש לחפש הצעה חלופית")
-
     def is_no_results_displayed(self):
         try:
             # Customize selector according to your "No results" element!
             return self.driver.find_element(By.XPATH, "//div[contains(text(), 'לא נמצאו תוצאות')]").is_displayed()
         except Exception:
             return False
+
+
 
     def fill_guest_details(self, guest=None, email=None, phone=None, first_name=None, last_name=None):
         """
@@ -633,6 +619,24 @@ class FattalMobileTests(unittest.TestCase):
         first_name = first_name or "חן"
         last_name = last_name or "טסט"
 
+        try:
+            # Find email field and scroll into view
+            email_input = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "checkout-form-field-input_email"))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", email_input)
+            time.sleep(0.5)  # Short pause after scroll
+
+            # Wait until clickable
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "checkout-form-field-input_email"))
+            )
+            logging.info("✅ Email field is ready for input.")
+        except TimeoutException:
+            self.take_screenshot("email_not_clickable_timeout")
+            raise Exception("❌ Email input not clickable after timeout.")
+
+        # Fill the fields
         self.mobile_order_page.set_email(email)
         self.mobile_order_page.set_phone(phone)
         self.mobile_order_page.set_first_name(first_name)
@@ -1060,6 +1064,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1090,15 +1095,14 @@ class FattalMobileTests(unittest.TestCase):
         # Step 4: Enable flight option (🆕 use the mobile version of the method!)
         self.mobile_main_page.select_flight_option_all_airports()
         self.mobile_main_page.click_mobile_search_button()
-        # Step 5: Handle results
-        self.mobile_search_page.click_book_room_button()
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
+        # 🔁 Handle "no results" and fallback if needed
+        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
+        # Step 5: Handle results and fallback suggestions if needed
+        self.mobile_search_page.handle_search_flow_with_fallback(self)
 
         # Step 7: Select flight or continue
-        self.mobile_flight_page.try_flight_options_by_time_of_day()
-
+        #self.mobile_flight_page.try_flight_options_by_time_of_day()
+        sleep(5)
         # Step 8: Passenger form
         self.mobile_flight_page.fill_adult_passenger_details()
         self.mobile_flight_page.click_continue_button()
@@ -1106,10 +1110,6 @@ class FattalMobileTests(unittest.TestCase):
         # Step 9: Payment form
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        # Order Details
-        # self.fill_guest_details(guest=self.default_guest)
-        #
-        # self.mobile_order_page.set_id_number(random_id)
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
         # Step 7: Fill the iframe using config.json
@@ -1150,18 +1150,16 @@ class FattalMobileTests(unittest.TestCase):
         # Step 3: Search Vacation
         self.mobile_main_page.click_room_continue_button(),
         self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5: Handle results
-        self.mobile_search_page.click_book_room_button()
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
+        # 🔁 Handle "no results" and fallback if needed
+        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
+        # Step 5: Handle results and fallback suggestions if needed
+        self.mobile_search_page.handle_search_flow_with_fallback(self)
         # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
         # Order Details
+        sleep(5)
         self.fill_guest_details(guest=self.default_guest)
-
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
         self.mobile_order_page.click_user_agreement_checkbox()
