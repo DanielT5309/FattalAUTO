@@ -941,6 +941,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1390,6 +1391,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1465,6 +1467,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1541,6 +1544,7 @@ class FattalMobileTests(unittest.TestCase):
 
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1616,6 +1620,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1682,6 +1687,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1936,6 +1942,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -2011,6 +2018,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -2114,6 +2122,7 @@ class FattalMobileTests(unittest.TestCase):
         }
         try:
             self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()

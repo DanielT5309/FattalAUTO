@@ -155,6 +155,69 @@ class FattalSearchResultPage:
                     logging.error(f"Timeout or stale element on last attempt: {e}")
                     raise
 
+    def handle_no_search_results_and_choose_alternative(self):
+        try:
+            logging.info("🔎 Checking if search returned no results...")
 
+            # Check for the generic "no results" container (you can customize the selector if needed)
+            self.wait.until(EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.sc-32916819-1")
+            ))
+            logging.info("⚠️ No results message detected. Looking for alternative options...")
+
+            suggestions = self.driver.find_elements(By.CSS_SELECTOR, "a.sc-8316109f-1[href*='/chooseRoom/']")
+            if suggestions:
+                logging.info(f"✅ Found {len(suggestions)} alternative suggestions.")
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", suggestions[0])
+                self.driver.execute_script("arguments[0].click();", suggestions[0])
+                logging.info("🛏️ Clicked alternative room suggestion.")
+            else:
+                logging.warning("❌ No alternative suggestion links found.")
+                # Optional: capture screenshot if your base test class includes this method
+                if hasattr(self, "take_screenshot"):
+                    self.take_screenshot("no_results_no_alternatives")
+
+        except TimeoutException:
+            logging.info("✅ Search results exist — no 'no results' message.")
+        except Exception as e:
+            logging.error(f"🚨 Failed during fallback booking attempt: {e}")
+            if hasattr(self, "take_screenshot"):
+                self.take_screenshot("no_results_handler_error")
+
+    def handle_search_flow_with_fallback(self, test):
+        try:
+            # Check if "no results" fallback UI appears
+            no_results = self.driver.find_elements(By.CSS_SELECTOR, "div.sc-32916819-1.chtiXu")
+            if no_results:
+                logging.info("⚠️ No direct hotel results found — fallback path triggered.")
+
+                fallback_links = self.driver.find_elements(By.CSS_SELECTOR,
+                                                           "a[href*='/chooseRoom/'][class*='sc-8316109f-1']")
+
+                if fallback_links:
+                    self.driver.execute_script("arguments[0].scrollIntoView(true);", fallback_links[0])
+                    self.driver.execute_script("arguments[0].click();", fallback_links[0])
+                    logging.info("✅ Clicked fallback 'בחר חדר' link.")
+
+                    # Continue booking flow
+                    self.wait_for_prices_to_load()
+                    self.click_first_show_prices()
+                    test.take_stage_screenshot("room_selection")
+                    self.click_first_book_room()
+                else:
+                    raise Exception("Fallback links not found.")
+            else:
+                logging.info("✅ Hotel results found — executing standard booking flow.")
+                self.click_book_room_button()
+                self.wait_for_prices_to_load()
+                self.click_first_show_prices()
+                test.take_stage_screenshot("room_selection")
+                self.click_first_book_room()
+
+        except Exception as e:
+            logging.error(f"❌ Error during hotel search flow: {e}")
+            if hasattr(self, "take_screenshot"):
+                self.take_screenshot("fallback_error")
+            raise
 
 

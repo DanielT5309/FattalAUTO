@@ -812,8 +812,6 @@ class FattalMobileTests(unittest.TestCase):
 
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        self.fill_guest_details(guest=self.default_guest)
-        self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
