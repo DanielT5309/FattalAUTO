@@ -759,6 +759,50 @@ class FattalMainPageMobile:
             self.take_screenshot("calendar_selection_fail")
             raise
 
+    def set_mobile_room_adults(self, adults=2):
+        """Adjust the number of adults in the room. Assumes the modal is already open. Does NOT open modal or click 'המשך'."""
+        try:
+            logging.info("Adjusting number of adults...")
+
+            # Wait until the modal structure is present
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.ID, "search-engine-build-room-mobile-room-container0"))
+            )
+            logging.info("Room modal confirmed present.")
+
+            count_id = "search-engine-build-room-mobile-count-adults0"
+            plus_id = "search-engine-build-room-mobile-wrapper-adults0"
+            minus_id = "search-engine-build-room-mobile-wrapper-adults-remove0"
+
+            count_el = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.ID, count_id))
+            )
+            plus_btn = self.driver.find_element(By.ID, plus_id)
+            minus_btn = self.driver.find_element(By.ID, minus_id)
+
+            current = int(self.driver.execute_script("return arguments[0].textContent.trim();", count_el))
+
+            while current < adults:
+                self.driver.execute_script("arguments[0].click();", plus_btn)
+                current += 1
+                time.sleep(0.25)
+
+            while current > adults:
+                if minus_btn.get_attribute("disabled"):
+                    logging.warning(f"Cannot reduce adults below {current}. Button disabled.")
+                    break
+                self.driver.execute_script("arguments[0].click();", minus_btn)
+                current -= 1
+                time.sleep(0.25)
+
+            logging.info(f"Adults set to: {current}")
+            logging.info("Adult occupant adjustment completed.")
+
+        except Exception as e:
+            logging.error(f"Failed during adult occupant setting: {e}")
+            self.take_screenshot("adult_occupants_adjustment_fail")
+            raise
+
 
 
 
