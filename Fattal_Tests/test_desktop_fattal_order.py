@@ -672,7 +672,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.order_page.set_id_number(random_id)
 
         self.order_page.click_terms_approval_checkbox_js()
-        sleep(15)
+        sleep(10)
         self.order_page.expand_special_requests_section()
         textarea = self.order_page.get_special_request_textarea()
         textarea.send_keys("בדיקת טסט נא לבטל")
@@ -864,7 +864,7 @@ class FattalDesktopTests(unittest.TestCase):
             logging.info("Starting test for Eilat zone with flight")
 
             self.main_page.close_war_popup()
-
+            self.toolbar.click_footer_login_with_id_and_password()
             try:
                 self.toolbar.personal_zone()
                 WebDriverWait(self.driver, 5).until(
@@ -939,6 +939,8 @@ class FattalDesktopTests(unittest.TestCase):
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range_eilat()
 
+        #self.main_page.select_random_date_range_two_months_ahead()
+
         adults, children, infants = 2, 1, 0
 
         self.main_page.set_room_occupants(adults, children, infants)
@@ -952,17 +954,10 @@ class FattalDesktopTests(unittest.TestCase):
 
         self.search_result.click_first_book_room()
 
-        # 🟢 Complete booking and fill forms, payment, etc.
         self.complete_booking_post_flight()
 
-        # 🟢 Set entered_email for logging/export (if not set earlier)
         self.entered_email = self.default_guest["email"]
-
-        # 🟢 Extract confirmation result *after* booking is done!
-        self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
-        self.confirmation_result["id_number"] = getattr(self, "entered_id_number", "")
-
-        # 🟢 Now safe to assert and log
+        self.entered_id_number = self.confirmation_result.get("id_number", "")
         self.confirm_and_assert_order()
 
     def test_desktop_booking_club_member(self):
@@ -981,7 +976,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_phone = guest["phone"]
 
         self.main_page.close_war_popup()
-
+        self.toolbar.click_footer_login_with_id_and_password()
         try:
             self.toolbar.personal_zone()
             WebDriverWait(self.driver, 5).until(

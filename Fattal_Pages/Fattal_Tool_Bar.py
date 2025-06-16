@@ -216,6 +216,21 @@ class FattalToolBar:
             logging.error(f"🚨 Failed to click login button: {e}")
             raise
 
+    def click_footer_login_with_id_and_password(self):
+        try:
+            btn = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "login-footer-button-type"))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", btn)
+            self.driver.execute_script("arguments[0].click();", btn)
+            logging.info("✅ Clicked footer login button 'כניסה באמצעות ת.ז וסיסמה'")
+        except TimeoutException:
+            logging.error("❌ Footer login button not clickable within timeout.")
+            raise
+        except Exception as e:
+            logging.error(f"🚨 Failed to click footer login button: {e}")
+            raise
+
     def single_use_code(self):
         self.driver.find_element(By.CSS_SELECTOR, 'button.sc-997dfd98-1.gNOVTs').click()
 
