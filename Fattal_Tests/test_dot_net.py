@@ -801,7 +801,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.select_date_range_two_months_ahead()
 
         self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
+        self.mobile_main_page.set_mobile_room_adults(adults=2)
         self.mobile_main_page.click_room_continue_button()
 
         self.mobile_main_page.click_mobile_search_button()
