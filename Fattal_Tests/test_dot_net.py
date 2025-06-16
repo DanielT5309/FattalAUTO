@@ -3,7 +3,7 @@ import logging
 import sys
 import time
 import traceback
-from openpyxl.styles import  PatternFill
+from openpyxl.styles import PatternFill
 from time import sleep
 import unittest
 from selenium import webdriver
@@ -30,6 +30,7 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 HOTEL_NAME_TO_ID = {
     "לאונרדו נגב, באר שבע": "10048",
     "לאונרדו פלאזה אילת": "1051"
@@ -68,6 +69,8 @@ def retry_on_no_results(max_attempts=2):
         return wrapper
 
     return decorator
+
+
 class FattalMobileTests(unittest.TestCase):
     def save_order_for_cancellation(self, order_number: str):
         import json
@@ -656,9 +659,9 @@ class FattalMobileTests(unittest.TestCase):
             expiry_year = self.payment_card["expiry_year"]
             cvv = self.payment_card["cvv"]
             id_number = self.payment_card["id_number"]
-            
+
             logging.info("Using credit card details from config.json")
-            
+
             # Find and switch to the iframe
             iframe = self.driver.find_element(By.ID, "paymentIframe")
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
@@ -675,23 +678,23 @@ class FattalMobileTests(unittest.TestCase):
             # Select Expiry Month
             month_select = Select(self.driver.find_element(By.ID, "date_month_input"))
             month_select.select_by_visible_text(expiry_month)
-            
+
             # Select Expiry Year
             year_select = Select(self.driver.find_element(By.ID, "date_year_input"))
             year_select.select_by_visible_text(expiry_year)
-            
+
             # Fill CVV
             cvv_input = self.driver.find_element(By.ID, "cvv_input")
             cvv_input.clear()
             cvv_input.send_keys(cvv)
-            
+
             # Fill ID Number
             id_input = self.driver.find_element(By.ID, "id_number_input")
             id_input.clear()
             id_input.send_keys(id_number)
-            
+
             logging.info("Credit card details from config applied successfully")
-            
+
         except Exception as e:
             logging.error(f"Failed to apply credit card details from config: {e}")
             raise
@@ -759,6 +762,74 @@ class FattalMobileTests(unittest.TestCase):
 
         return filename
 
+    def perform_club_login(self):
+        user = {
+            "id": os.getenv("CLUB_REGULAR_ID"),
+            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+        }
+        try:
+            self.mobile_toolbar.open_login_menu()
+            self.mobile_toolbar.user_id_input().send_keys(user["id"])
+            self.mobile_toolbar.user_password_input().send_keys(user["password"])
+            self.mobile_toolbar.click_login_button()
+            self.mobile_toolbar.close_post_login_popup()
+            logging.info("Logged in successfully.")
+        except Exception as e:
+            logging.warning(f"Login failed or already logged in: {e}")
+
+        self.entered_id_number = user["id"]
+        self.entered_first_name = "Club"
+        self.entered_last_name = "User"
+
+    def test_mobile_booking_user_TEMPLATE(self, hotel_name):
+        self.save_for_cancellation = True
+        self.soft_assert_errors = []
+
+        self.perform_club_login()  # Inserted Club login at the start
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש מועדון"
+        logging.info(f"Starting test: hotel search and booking flow for {hotel_name}")
+        random_id = self.mobile_order_page.generate_israeli_id()
+        logging.info(f"Generated Israeli ID: {random_id}")
+
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+
+        self.mobile_main_page.click_mobile_search_button()
+
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+
+        self.fill_payment_details_from_config()
+        self.mobile_order_page.click_payment_submit_button()
+
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
     def run(self, result=None):
         self._test_result_for_teardown = result  # Save for later
         return super().run(result)
@@ -786,228 +857,13 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"❌ Could not take screenshot for '{label}': {e}")
 
-    def test_mobile_join_fattal_and_friends_form(self):
-        self.soft_assert_errors = []
-
-        self.test_description = "הצטפרות למועדון דרך טופס"
-        logging.info("Starting test: Join Fattal Club")
-
-        try:
-            # Step 1: Prepare data
-            guest = self.default_guest
-            first_name = guest["first_name"]
-            last_name = guest["last_name"]
-            email = guest["email"]
-            phone = guest["phone"]
-            birthdate = "01-01-1990"
-            password = "Aa123456"
-            id_number = self.mobile_order_page.generate_israeli_id()
-            self.entered_id_number = id_number
-            logging.info(f"Generated ID for club registration: {id_number}")
-            self.mobile_main_page.close_war_popup()
-
-            # Step 2: Navigate to club join screen
-            self.mobile_toolbar.click_more_tab_mobile()
-            self.mobile_toolbar.click_fattal_friends_club_tab()
-            self.mobile_club_join_page.click_join_fattal_friends_button()
-
-            # Step 3: Fill form
-            self.mobile_club_join_page.fill_join_fattal_club_form(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                phone=phone,
-                id_number=id_number,
-                birthdate=birthdate,
-                password=password
-            )
-
-            # Step 4: Assert values
-            self.mobile_club_join_page.assert_input_value("שם פרטי", first_name)
-            self.mobile_club_join_page.assert_input_value("שם משפחה", last_name)
-            self.mobile_club_join_page.assert_input_value("כתובת דוא״ל", email)
-            self.mobile_club_join_page.assert_input_value("מספר טלפון נייד", phone)
-            self.mobile_club_join_page.assert_input_value("תאריך לידה", birthdate)
-            self.mobile_club_join_page.assert_input_value("מספר תעודת זהות", id_number)
-            self.mobile_club_join_page.assert_input_value("בחרו סיסמא", password)
-
-            logging.info("Fattal Club form filled and validated successfully.")
-            self.mobile_club_join_page.click_accept_terms_checkbox()
-            sleep(15)
-
-            # Step 5: Payment
-            self.fill_payment_details_from_config()
-            self.mobile_order_page.click_payment_submit_button()
-            self.mobile_toolbar.close_any_club_popup()
-
-            sleep(3)
-            # Step 7: Take confirmation screenshot
-            self.confirmation_screenshot_path = self.take_confirmation_screenshot_renew_membership(self._testMethodName,
-                                                                                                   "success")
-            setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-        except Exception as e:
-            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-            screenshot_dir = os.path.join(self.base_dir, "Screenshots")
-            os.makedirs(screenshot_dir, exist_ok=True)
-            screenshot_path = os.path.join(screenshot_dir, f"join_club_test_fail_{timestamp}.png")
-            self.driver.save_screenshot(screenshot_path)
-            logging.exception(f"Join Fattal Club test failed. Screenshot saved: {screenshot_path}")
-            raise
-
-        # Final check for soft assert errors
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-    # def test_mobile_contact_form(self):
-    #     self.soft_assert_errors = []
-    #
-    #     self.test_description = "בדיקת טופס צור קשר"
-    #     logging.info("Starting test: Customer Support Ticket")
-    #
-    #     try:
-    #         guest = self.default_guest
-    #         first_name = guest["first_name"]
-    #         last_name = guest["last_name"]
-    #         phone = guest["phone"]
-    #         email = guest["email"]
-    #         id_number = self.mobile_order_page.generate_israeli_id()
-    #         self.entered_first_name = first_name
-    #         self.entered_last_name = last_name
-    #         self.entered_email = email
-    #         self.entered_id_number = id_number
-    #         message = "בדיקה אוטומטית של צור קשר דרך המובייל"
-    #         hotel_name = "הרודס בוטיק אילת"
-    #
-    #         # Step 1: Open the contact form
-    #         self.mobile_toolbar.click_more_tab_mobile()
-    #         self.mobile_toolbar.click_contact_us_button_mobile()
-    #         self.mobile_customer_support.click_send_us_inquiry_button()
-    #
-    #         # Step 2: Select 'נושא' dropdown
-    #         self.mobile_customer_support.select_dropdown_by_label("נושא")
-    #
-    #         # Step 3: Fill form inputs
-    #         self.mobile_customer_support.fill_basic_contact_fields(
-    #             first_name, last_name, id_number, phone, email, message, accept_marketing=False
-    #         )
-    #
-    #         # Step 4: Select hotel name
-    #         self.mobile_customer_support.select_dropdown_by_label("שם המלון", option_text=hotel_name)
-    #
-    #         # 🖼️ Screenshot after form is filled
-    #         self.take_stage_screenshot("contact_form_filled")
-    #
-    #         # Step 5: Verify form data
-    #         self.mobile_customer_support.assert_form_data_matches_input(
-    #             first_name=first_name,
-    #             last_name=last_name,
-    #             id_number=id_number,
-    #             phone=phone,
-    #             email=email,
-    #             message=message
-    #         )
-    #
-    #         # ✅ Soft assert success
-    #         self.soft_assert(True, "Contact form submitted and verified successfully.", self.soft_assert_errors)
-    #         logging.info("Test completed successfully.")
-    #
-    #     except Exception as e:
-    #         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-    #         screenshot_dir = os.path.join(self.base_dir, "Screenshots")
-    #         os.makedirs(screenshot_dir, exist_ok=True)
-    #         screenshot_path = os.path.join(
-    #             screenshot_dir, f"test_failure_{timestamp}.png"
-    #         )
-    #         self.driver.save_screenshot(screenshot_path)
-    #         logging.exception(f"Test failed. Screenshot saved: {screenshot_path}")
-    #         raise
-    #
-    #     # ❗ Final check for soft assert errors
-    #     if self.soft_assert_errors:
-    #        logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-    def test_mobile_booking_with_club_login(self):
-        self.save_for_cancellation = False  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        hotel_name = self.default_hotel_name
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5: Choose Room and click it
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        # Step 6: Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.set_first_name("Chen")
-        self.mobile_order_page.set_last_name("Test")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_anonymous_user(self):
+    def test_mobile_booking_anonymous_user_The_JAFFA(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
-        hotel_name = self.default_hotel_name
+        hotel_name = "The Jaffa, תל אביב, ישראל"
         logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -1025,70 +881,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
         self.mobile_main_page.click_room_continue_button()
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        #Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        #Step 6 : Order Page
-        #self.mobile_order_page.click_room_selection_summary()
-
-        self.mobile_order_page.wait_until_personal_form_ready()
-
-        #Order Details
-        self.take_stage_screenshot("payment_stage")
-        self.fill_guest_details(guest=self.default_guest)
-        self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  #  Save for logging/export
-
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Switch BACK into iframe to click submit
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_anonymous_join_fattal_and_friends(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + הצטפרות למועדון"
-
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting test: hotel search and booking flow")
-        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
-        logging.info(f"Generated Israeli ID: {random_id}")
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
@@ -1096,15 +888,18 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
+
         # Step 6 : Order Page
-        self.mobile_order_page.click_join_club_checkbox()
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        # Order Details
-        self.fill_guest_details(guest=self.default_guest)
+        # self.mobile_order_page.click_room_selection_summary()
 
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
+
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
         # Step 7: Fill the iframe using config.json
@@ -1123,117 +918,49 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_club_member_eilat_with_flight(self):
-        self.save_for_cancellation = False
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות"
-        hotel_name = "אילת, ישראל"
-        logging.info("Starting mobile booking test for Eilat including flights...")
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_region()
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        #self.mobile_main_page.select_date_range_two_months_ahead()
-        # Step 2: Select exact date range instead of the dynamic one
-        self.mobile_main_page.select_date_range_two_months_ahead_eilat(stay_length=5)
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-        # Step 4: Enable flight option (🆕 use the mobile version of the method!)
-        self.mobile_main_page.select_flight_option_all_airports()
-        self.mobile_main_page.click_mobile_search_button()
-        # 🔁 Handle "no results" and fallback if needed
-        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
-        # Step 5: Handle results and fallback suggestions if needed
-        self.mobile_search_page.handle_search_flow_with_fallback(self)
-
-        # Step 7: Select flight or continue
-        #self.mobile_flight_page.try_flight_options_by_time_of_day()
-        sleep(5)
-        # Step 8: Passenger form
-        self.mobile_flight_page.fill_adult_passenger_details()
-        self.mobile_flight_page.click_continue_button()
-
-        # Step 9: Payment form
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    #@retry_on_no_results(max_attempts=3)
-    def test_mobile_booking_anonymous_region_eilat(self):
-        self.save_for_cancellation = False  # Enable save-for-cancel feature
+    def test_mobile_booking_anonymous_user_Bazaar(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
 
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת"
-        hotel_name = "אילת, ישראל"
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "בזאר - Bazaar, תל אביב, ישראל"
+        logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_region()
+        self.mobile_main_page.click_first_suggested_hotel()
+
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead_eilat(stay_length=5)
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        # Step 3: Search Vacation
-        self.mobile_main_page.click_room_continue_button(),
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-        # 🔁 Handle "no results" and fallback if needed
-        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
-        # Step 5: Handle results and fallback suggestions if needed
-        self.mobile_search_page.handle_search_flow_with_fallback(self)
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
         # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
         self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
+
         # Order Details
-        sleep(5)
+        self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
+
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
         # Step 7: Fill the iframe using config.json
@@ -1252,484 +979,13 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_fattal_gift3(self):
+    def test_mobile_booking_anonymous_user_NYX_TEL_Aviv(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
 
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
-        hotel_name = "תל אביב, ישראל"
-        random_id = self.mobile_order_page.generate_israeli_id()
-        logging.info(f"Generated Israeli ID: {random_id}")
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_region()
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead(stay_length=5)
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-        self.mobile_main_page.click_mobile_search_button()
-
-        self.mobile_search_page.click_book_room_button()
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.fill_guest_details(guest=self.default_guest)
-        self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  # Save for logging/export
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(5)
-
-        # Apply all 3 gift codes
-        raw_gifts = [os.getenv("GIFT1"), os.getenv("GIFT2"), os.getenv("GIFT3")]
-        gifts = [code.strip() for code in raw_gifts if code and code.strip().isdigit()]
-        failed_gifts = []
-
-        for code in gifts:
-            logging.info(f"Applying gift coupon: '{code}'")
-            self.mobile_order_page.apply_checkout_coupon(code)
-            sleep(3)
-            if not self.mobile_order_page.is_coupon_applied_successfully(code):
-                logging.error(f"Gift code '{code}' was not applied successfully!")
-                failed_gifts.append(code)
-            else:
-                logging.info(f"Gift code '{code}' applied successfully.")
-
-        assert not failed_gifts, f"The following gift codes failed to apply: {', '.join(failed_gifts)}"
-
-        self.fill_payment_details_from_config()
-        self.mobile_order_page.click_payment_submit_button()
-
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_fattal_gift1(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
-        hotel_name = "תל אביב, ישראל"
-        random_id = self.mobile_order_page.generate_israeli_id()
-        logging.info(f"Generated Israeli ID: {random_id}")
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_region()
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead(stay_length=5)
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-        self.mobile_main_page.click_mobile_search_button()
-
-        self.mobile_search_page.click_book_room_button()
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.fill_guest_details(guest=self.default_guest)
-        self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  # Save for logging/export
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-
-        gift_code = os.getenv("GIFT4", "").strip()
-        assert gift_code and gift_code.isdigit(), "GIFT4 is missing or invalid in environment config"
-
-        logging.info(f"Applying single gift coupon: '{gift_code}'")
-        self.mobile_order_page.apply_checkout_coupon(gift_code)
-        sleep(15)
-
-        applied_successfully = self.mobile_order_page.is_coupon_applied_successfully(gift_code)
-        assert applied_successfully, f"Gift coupon '{gift_code}' failed to apply."
-
-        self.fill_payment_details_from_config()
-        self.mobile_order_page.click_payment_submit_button()
-
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_club_member_club_renew_expired(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס פג תוקף"
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_RENEW_ID"),
-            "password": os.getenv("CLUB_RENEW_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")# For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        # Step 6 : Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_join_club_checkbox()
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_club_member_club_renew_about_to_expire(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר מועדון בסטטוס עומד לפוג"
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
-            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-        self.mobile_toolbar.handle_membership_renewal_popup()
-        # Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        # Step 6 : Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_join_club_checkbox()
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_club_renew_expired_form(self):
-
-        self.soft_assert_errors = []
-
-        self.test_description = "חידוש מועדון דרך טופס"
-        hotel_name = self.default_hotel_name
-        logging.info("Starting test: Club renew expired form (mobile)")
-        self.mobile_main_page.close_war_popup()
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_ABOUT_EXPIRE_ID_FORM"),
-            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD_FORM")
-        }
-
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-
-        # 📊 For reporting
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        self.mobile_toolbar.click_more_tab_mobile()
-        self.mobile_toolbar.click_fattal_friends_club_tab()
-        self.mobile_club_join_page.click_join_fattal_friends_button()
-
-        # Step 1: Navigate to renewal page
-
-        # Step 2: Agreement & Payment
-        self.mobile_order_page.click_user_agreement_checkbox_by_label_id()
-        sleep(15)
-        self.take_stage_screenshot("payment_stage")
-        self.fill_payment_details_from_config()
-
-        # Step 3: Submit payment
-        self.mobile_order_page.click_payment_submit_button()
-
-        # Step 4: Verify price
-        try:
-            logging.info("Waiting for confirmation price element...")
-            price_element = WebDriverWait(self.driver, 10).until(
-                EC.visibility_of_element_located((By.ID, "club-checkout-order-details-price"))
-            )
-            price_text = price_element.text.strip().replace('\u200f', '').replace('\xa0', ' ')
-            logging.info(f"Found price text: '{price_text}'")
-
-            expected_prices = ["150 ₪", "99 ₪"]
-            assert any(expected in price_text for expected in expected_prices), \
-                f"Price mismatch! Expected one of {expected_prices}, got '{price_text}'"
-
-            logging.info("Final price matches one of the expected values.")
-        except Exception as e:
-            logging.error(f"Failed to assert price: {e}")
-            raise
-        self.mobile_toolbar.close_any_club_popup()
-        # Step 5: Optional Confirmation Log
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        if self.confirmation_result:
-            logging.info("ℹ️ Confirmation page loaded. Skipping order number check.")
-
-            # 📸 Screenshot confirmation page for renewal
-            self.confirmation_screenshot_path = self.take_confirmation_screenshot_renew_membership(self._testMethodName,
-                                                                                                   "success")
-            setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-        else:
-            logging.warning("⚠️ Confirmation result was empty — order number not available.")
-
-    def test_mobile_booking_club_member_11night(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה"
-        hotel_name = self.default_hotel_name
-
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_11NIGHT_ID"),
-            "password": os.getenv("CLUB_11NIGHT_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-
-        # Step 6 : Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-    def test_mobile_booking_club_member_deals(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-        # ✅ For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        self.mobile_toolbar.click_deals_and_packages_tab()
-        self.mobile_deals_page.click_view_all_deals_link()
-        self.mobile_deals_page.click_view_more_deal_button()
-        self.mobile_deals_page.click_book_now_button()
-        self.mobile_deals_page.click_continue_search_button_mobile()
-        self.mobile_deals_page.click_continue_room_button()
-        self.mobile_deals_page.click_mobile_search_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_deals_page.click_mobile_show_prices_button()
-        # Step 6 : Order Page (for club, skip email + id)
-        self.mobile_order_page.click_user_agreement_checkbox()
-        self.take_stage_screenshot("payment_stage")
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-    def test_mobile_booking_anonymous_user_promo_code(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (FHVR)"
-        hotel_name = self.default_hotel_name
-
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "NYX ניקס תל אביב, תל אביב, ישראל"
         logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -1741,175 +997,38 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_months_ahead(months_ahead=3, stay_length=3)
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-        self.mobile_main_page.open_promo_code_input()
-        self.mobile_main_page.enter_promo_code("FHVR")
-        assert self.mobile_main_page.is_promo_code_applied("FHVR"), "Promo code was not correctly applied!"
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        #Step 5 : Choose Room and click it
-        self.mobile_search_page.click_show_prices_button()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_button()
-        #Step 6 : Order Page
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        #Order Details
-        self.fill_guest_details(guest=self.default_guest)
-
-
-        self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  # Save for logging/export
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Switch BACK into iframe to click submit
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_anonymous_fattal_employee_promo_code(self):
-        self.save_for_cancellation = True  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי ושימוש בפרומו קוד חבר (EMP23FA)"
-        hotel_name = self.default_hotel_name
-        user = {
-            "id": os.getenv("EMPLOYEE_COUPON_ID"),
-            "email": os.getenv("DEFAULT_EMAIL"),
-            "phone": os.getenv("DEFAULT_PHONE"),
-        }
-        logging.info("Starting test: hotel search and booking flow")
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
         self.mobile_main_page.select_date_range_two_months_ahead()
 
         # Step 3: Room selection
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
         self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Promo code input
-        self.mobile_main_page.open_promo_code_input()
-        self.mobile_main_page.enter_promo_code("EMP23FA")
-        assert self.mobile_main_page.is_promo_code_applied("EMP23FA"), "Promo code was not correctly applied!"
-
-        # Step 5: Perform the search
+        # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-        self.mobile_main_page.enter_id(user["id"])
-        self.mobile_main_page.click_validation_button()
 
-        # Step 6: Choose Room
+        # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
-        # Step 7: Order Page
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
         self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
 
-        # ✅ Fill in guest details
-        self.mobile_order_page.set_email(user["email"])
-        self.mobile_order_page.set_phone(user["phone"])
-        self.entered_id_number = user["id"]
-
-        # ✅ Save for export/logging
-        self.entered_email = user["email"]
-
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-
-        # Step 8: Fill payment iframe
-        self.fill_payment_details_from_config()
-
-        # Step 9: Submit
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_anonymous_europe(self):
-        self.save_for_cancellation = False  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        hotel_name = self.default_hotel_name_europe
-        logging.info("Starting test: hotel search and booking flow")
-        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
-        logging.info(f"Generated Israeli ID: {random_id}")
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5: Choose Room and click it
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        # Step 6: Order Page
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
         # Order Details
-        self.fill_guest_details(guest=self.default_guest_europe)
-
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
+
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
-
         # Step 7: Fill the iframe using config.json
         self.fill_payment_details_from_config()
 
         # Step 8: Switch BACK into iframe to click submit
         self.mobile_order_page.click_payment_submit_button()
-
         # Step 9: Confirm and Assert
         self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
         self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
@@ -1921,161 +1040,13 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_with_club_login_europe(self):
-        self.save_for_cancellation = False  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        hotel_name = self.default_hotel_name_europe
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-
-        # Step 5: Choose Room and click it
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        # Step 6: Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.set_first_name("Chen")
-        self.mobile_order_page.set_last_name("Test")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-
-    def test_mobile_booking_with_club_login_11night_europe(self):
-        self.save_for_cancellation = False  # Enable save-for-cancel feature
-
-        self.soft_assert_errors = []
-
-        hotel_name = self.default_hotel_name_europe
-        logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
-        # Step 0: Club Login
-        user = {
-            "id": os.getenv("CLUB_11NIGHT_ID_EUROPE"),
-            "password": os.getenv("CLUB_11NIGHT_PASSWORD_EUROPE")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
-
-        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
-        self.mobile_main_page.click_mobile_hotel_search_input()
-        self.mobile_main_page.set_city_mobile(hotel_name)
-        self.mobile_main_page.click_first_suggested_hotel()
-
-        # Step 2: Date picker
-        self.mobile_main_page.click_mobile_date_picker()
-        self.mobile_main_page.select_date_range_two_months_ahead()
-
-        # Step 3: Room selection
-        self.mobile_main_page.click_mobile_room_selection()
-        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=0, infants=0)
-        self.mobile_main_page.click_room_continue_button()
-
-        # Step 4: Perform the search
-        self.mobile_main_page.click_mobile_search_button()
-        self.handle_no_results_and_click_suggestion()
-        # Step 5: Choose Room and click it
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
-
-        # Step 6: Order Page (for club, skip email + id)
-        self.mobile_order_page.wait_until_personal_form_ready()
-        self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.set_first_name("Chen")
-        self.mobile_order_page.set_last_name("Test")
-        self.mobile_order_page.click_user_agreement_checkbox()
-        sleep(15)
-        # Step 7: Fill the iframe using config.json
-        self.fill_payment_details_from_config()
-
-        # Step 8: Click submit inside iframe (already inside from step 7)
-        self.mobile_order_page.click_payment_submit_button()
-        # Step 9: Confirm and Assert
-        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
-                         self.soft_assert_errors)
-        if self.soft_assert_errors:
-            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
-        # Step 10: Always take a screenshot of the confirmation screen
-        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
-        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-    def test_mobile_booking_anonymous_user_login_at_checkout(self):
+    def test_mobile_booking_anonymous_user_Rothschild(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
 
-        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי וחיבור במסך תשלום"
-        hotel_name = self.default_hotel_name
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "רוטשילד 22 תל אביב"
         logging.info("Starting test: hotel search and booking flow")
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
@@ -2096,35 +1067,21 @@ class FattalMobileTests(unittest.TestCase):
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
-        #Step 5 : Choose Room and click it
+        # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
-        #Step 6 : Order Page
-        #self.mobile_order_page.click_room_selection_summary()
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
 
         self.mobile_order_page.wait_until_personal_form_ready()
 
-        #Order Details
+        # Order Details
         self.take_stage_screenshot("payment_stage")
-        user = {
-            "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
-        }
-        try:
-            self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.user_id_input().send_keys(user["id"])
-            self.mobile_toolbar.user_password_input().send_keys(user["password"])
-            self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
-            logging.info("Logged in successfully.")
-        except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")
-        # For report logging only — because form fields are autofilled
-        self.entered_id_number = user["id"]
-        self.entered_first_name = "Club"
-        self.entered_last_name = "User"
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
@@ -2143,89 +1100,348 @@ class FattalMobileTests(unittest.TestCase):
         # Step 10: Always take a screenshot of the confirmation screen
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
-    # def test_mobile_booking_5_rooms_club_member(self):
-    #     self.save_for_cancellation = True  # Enable save-for-cancel feature
-    #
-    #     self.soft_assert_errors = []
-    #
-    #     self.test_description = "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל"
-    #     hotel_name = self.default_hotel_name
-    #
-    #     logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-    #
-    #     # Step 0: Club Login
-    #     user = {
-    #         "id": os.getenv("CLUB_REGULAR_ID"),
-    #         "password": os.getenv("CLUB_REGULAR_PASSWORD")
-    #     }
-    #     try:
-    #         self.mobile_toolbar.open_login_menu()
-    #         self.mobile_toolbar.user_id_input().send_keys(user["id"])
-    #         self.mobile_toolbar.user_password_input().send_keys(user["password"])
-    #         self.mobile_toolbar.click_login_button()
-    #         self.mobile_toolbar.close_post_login_popup()
-    #         logging.info("Logged in successfully.")
-    #     except Exception as e:
-    #         logging.warning(f"Login failed or already logged in: {e}")
-    #     # For report logging only — because form fields are autofilled
-    #     self.entered_id_number = user["id"]
-    #     self.entered_first_name = "Club"
-    #     self.entered_last_name = "User"
-    #     # Step 1: City selectionX
-    #     self.mobile_main_page.click_mobile_hotel_search_input()
-    #     self.mobile_main_page.set_city_mobile(hotel_name)
-    #     self.mobile_main_page.click_first_suggested_hotel()
-    #
-    #     # Step 2: Date picker
-    #     self.mobile_main_page.click_mobile_date_picker()
-    #     self.mobile_main_page.select_date_range_two_months_ahead()
-    #
-    #     # Step 3: Room selection
-    #     self.mobile_main_page.click_mobile_room_selection()
-    #     self.mobile_main_page.set_five_room_occupants()
-    #     self.mobile_main_page.click_room_continue_button()
-    #
-    #     # Step 4: Perform the search
-    #     self.mobile_main_page.click_mobile_search_button()
-    #
-    #     # Step 5 : Choose Room and click it
-    #     #1
-    #     # Step 5: Choose Room and click it (robust with fallback)
-    #     self.mobile_search_page.click_show_then_book_room_with_fallback()
-    #
-    #     #2
-    #     # Step 5: Choose Room and click it (robust with fallback)
-    #     self.mobile_search_page.click_show_then_book_room_with_fallback()
-    #
-    #     #3
-    #     # Step 5: Choose Room and click it (robust with fallback)
-    #     self.mobile_search_page.click_show_then_book_room_with_fallback()
-    #
-    #     #4
-    #     # Step 5: Choose Room and click it (robust with fallback)
-    #     self.mobile_search_page.click_show_then_book_room_with_fallback()
-    #
-    #     #5
-    #     # Step 5: Choose Room and click it (robust with fallback)
-    #     self.mobile_search_page.click_show_then_book_room_with_fallback()
-    #     self.take_stage_screenshot("room_selection")
-    #
-    #     # Step 6 : Order Page (for club, skip email + id)
-    #     self.mobile_order_page.wait_until_personal_form_ready()
-    #     self.take_stage_screenshot("payment_stage")
-    #     self.mobile_order_page.click_user_agreement_checkbox()
-    #     sleep(15)
-    #     #test
-    #     # Step 7: Fill the iframe using config.json
-    #     self.fill_payment_details_from_config()
-    #
-    #     # Step 8: Click submit inside iframe (already inside from step 7)
-    #     self.mobile_order_page.click_payment_submit_button()
-    #     #Step 9 : Confirm and Assert
-    #     self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
-    #     self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
-    #     if self.soft_assert_errors:
-    #        logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+    def test_mobile_booking_anonymous_user_Bachar_House(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "מלון בית בכר, תל אביב, ישראל"
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
+    def test_mobile_booking_anonymous_user_Leonardo_Gordon_Beach_TLV(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = " לאונרדו גורדון ביץ', תל אביב, ישראל"
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
+    def test_mobile_booking_anonymous_user_Leonardo_Boutique_Tel_Aviv(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "לאונרדו בוטיק תל אביב"
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"),
+                         "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
+    def test_mobile_booking_anonymous_user_Leonardo_City_Tower_Tel_Aviv(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "לאונרדו סיטי טאואר תל אביב"
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"),
+                         "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName,
+                                                                              "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
+    def test_mobile_booking_anonymous_user_Sam_and_Blondie(self):
+        self.save_for_cancellation = True  # Enable save-for-cancel feature
+
+        self.soft_assert_errors = []
+
+        self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי"
+        hotel_name = "סאם ובלונדי, תל אביב, ישראל"
+        logging.info("Starting test: hotel search and booking flow")
+        random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
+        logging.info(f"Generated Israeli ID: {random_id}")
+        # Step 1: City selection
+        self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.click_mobile_hotel_search_input()
+        self.mobile_main_page.set_city_mobile(hotel_name)
+        self.mobile_main_page.click_first_suggested_hotel()
+
+        # Step 2: Date picker
+        self.mobile_main_page.click_mobile_date_picker()
+        self.mobile_main_page.select_date_range_two_months_ahead()
+
+        # Step 3: Room selection
+        self.mobile_main_page.click_mobile_room_selection()
+        self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
+        self.mobile_main_page.click_room_continue_button()
+        # Step 4: Perform the search
+        self.mobile_main_page.click_mobile_search_button()
+
+        # Step 5 : Choose Room and click it
+        self.mobile_search_page.click_show_prices_button()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_button()
+
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
+
+        self.mobile_order_page.wait_until_personal_form_ready()
+
+        # Order Details
+        self.take_stage_screenshot("payment_stage")
+        self.fill_guest_details(guest=self.default_guest)
+        self.mobile_order_page.set_id_number(random_id)
+        self.entered_id_number = random_id  # Save for logging/export
+
+        self.mobile_order_page.click_user_agreement_checkbox()
+        sleep(15)
+        # Step 7: Fill the iframe using config.json
+        self.fill_payment_details_from_config()
+
+        # Step 8: Switch BACK into iframe to click submit
+        self.mobile_order_page.click_payment_submit_button()
+        # Step 9: Confirm and Assert
+        self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
+        self.soft_assert(self.confirmation_result.get("order_number"),
+                         "Booking failed — no order number found.",
+                         self.soft_assert_errors)
+        if self.soft_assert_errors:
+            logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
+
+        # Step 10: Always take a screenshot of the confirmation screen
+        self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName,
+                                                                              "success")
+        setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
+    # Examples of calling it
+
+    def test_mobile_booking_user_Herods_Tel_Aviv(self):
+        self.test_mobile_booking_user_TEMPLATE("הרודס תל אביב")
+
+    def test_mobile_booking_user_The_JAFFA(self):
+        self.test_mobile_booking_user_TEMPLATE("The Jaffa, תל אביב, ישראל")
+
+    def test_mobile_booking_user_Bazaar(self):
+        self.test_mobile_booking_user_TEMPLATE("בזאר - Bazaar, תל אביב, ישראל")
+
+    def test_mobile_booking_user_NYX_TEL_Aviv(self):
+        self.test_mobile_booking_user_TEMPLATE("NYX ניקס תל אביב, תל אביב, ישראל")
+
+    def test_mobile_booking_user_Rothschild(self):
+        self.test_mobile_booking_user_TEMPLATE("רוטשילד 22 תל אביב")
+
+    def test_mobile_booking_user_Bachar_House(self):
+        self.test_mobile_booking_user_TEMPLATE("מלון בית בכר, תל אביב, ישראל")
+
+    def test_mobile_booking_user_Leonardo_Gordon_Beach_TLV(self):
+        self.test_mobile_booking_user_TEMPLATE("לאונרדו גורדון ביץ', תל אביב, ישראל")
+
+    def test_mobile_booking_user_Leonardo_Boutique_Tel_Aviv(self):
+        self.test_mobile_booking_user_TEMPLATE("לאונרדו בוטיק תל אביב")
+
+    def test_mobile_booking_user_Leonardo_City_Tower_Tel_Aviv(self):
+        self.test_mobile_booking_user_TEMPLATE("לאונרדו סיטי טאואר תל אביב")
+
+    def test_mobile_booking_user_Sam_and_Blondie(self):
+        self.test_mobile_booking_user_TEMPLATE("סאם ובלונדי, תל אביב, ישראל")
 
     def tearDown(self):
         if self.driver:
@@ -2260,13 +1476,3 @@ class FattalMobileTests(unittest.TestCase):
     if __name__ == "__main__":
         import unittest
         unittest.main()
-
-
-
-
-
-
-
-
-
-
