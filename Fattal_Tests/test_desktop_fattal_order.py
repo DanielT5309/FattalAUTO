@@ -1,7 +1,7 @@
+import json
 import traceback
 import unittest
 from selenium import webdriver
-import random
 from openpyxl.styles import  PatternFill
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -16,7 +16,6 @@ from Fattal_Pages.Fattal_Confirmation_Page import FattalConfirmPage
 import logging
 import platform
 from datetime import datetime
-from faker import Faker
 import os
 from openpyxl import Workbook, load_workbook
 import io
@@ -49,7 +48,11 @@ def save_order_for_cancellation(master_id, hotel_id, filepath="orders_to_cancel.
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(orders, f, ensure_ascii=False, indent=4)
 class FattalDesktopTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.run_folder, cls.run_id = cls.get_static_run_folder()
     def setUp(self):
+        self.run_folder = self.__class__.run_folder
         load_dotenv()
 
         options = webdriver.ChromeOptions()
@@ -115,13 +118,229 @@ class FattalDesktopTests(unittest.TestCase):
 
         # Start performance marker
         self.driver.execute_script("window.performance.mark('selenium-start')")
+    def save_test_result_to_run_json(self, info: dict, run_folder: str):
+        # 🔐 Ensure the folder exists
+        os.makedirs(run_folder, exist_ok=True)
 
+        json_path = os.path.join(run_folder, "run_data.json")
+
+        if os.path.exists(json_path):
+            with open(json_path, "r", encoding="utf-8") as f:  # type: TextIO
+                data = json.load(f)
+        else:
+            data = []
+
+        data.append(info)
+
+        with open(json_path, "w", encoding="utf-8") as f:  # type: TextIO
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        logging.info(f"📄 Saved test result to: {json_path}")
     def soft_assert(self, condition, msg, errors_list):
         try:
             assert condition, msg
         except AssertionError as e:
             errors_list.append(str(e))
 
+    @classmethod
+    def get_static_run_folder(cls):
+        base_path = os.path.join(os.path.dirname(__file__), 'html_reports', 'runs')
+        os.makedirs(base_path, exist_ok=True)
+        now = datetime.now().strftime("run_%Y-%m-%d_%H-%M-%S")
+        run_folder = os.path.join(base_path, now)
+        os.makedirs(run_folder, exist_ok=True)
+        return run_folder, now
+
+    @staticmethod
+    def get_current_run_folder(cls=None):
+        base_path = os.path.join(os.path.dirname(__file__), 'html_reports', 'runs')
+        os.makedirs(base_path, exist_ok=True)
+        now = datetime.now().strftime("run_%Y-%m-%d_%H-%M-%S")
+        run_folder = os.path.join(base_path, now)
+        os.makedirs(run_folder, exist_ok=True)
+        return run_folder, now
+
+    @staticmethod
+    def generate_dashboard_html(runs_base_dir: str):
+        import os
+        import json
+
+        dashboard_path = os.path.join(runs_base_dir, "..", "dashboard.html")
+        run_dirs = sorted(
+            [d for d in os.listdir(runs_base_dir) if d.startswith("run_")],
+            reverse=True
+        )
+
+        run_data_js_entries = []
+        select_html_entries = []
+
+        for i, run_dir in enumerate(run_dirs):
+            json_path = os.path.join(runs_base_dir, run_dir, "run_data.json")
+            if not os.path.exists(json_path):
+                continue
+
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                run_data_js_entries.append(f'"{run_dir}": {json.dumps(data, ensure_ascii=False)}')
+
+                total = len(data)
+                failed = sum(1 for t in data if t.get("status") == "FAILED")
+                mobile = sum(1 for t in data if t.get("test_type") == "mobile")
+                desktop = sum(1 for t in data if t.get("test_type") == "desktop")
+                time_part = run_dir.replace("run_", "").split("_")[1]
+
+                label_parts = [f"🕒 {time_part}", f"{total} tests"]
+                label_parts.append("❌ " + str(failed) if failed else "✅ All passed")
+                if mobile:
+                    label_parts.append(f"📱 {mobile}")
+                if desktop:
+                    label_parts.append(f"💻 {desktop}")
+
+                label = " | ".join(label_parts)
+                selected = "selected" if i == 0 else ""
+                select_html_entries.append(f'<option value="{run_dir}" {selected}>{label}</option>')
+
+        run_data_js = "{\n" + ",\n".join(run_data_js_entries) + "\n}"
+        select_html = "\n".join(select_html_entries)
+
+        script = f"""
+           <script>
+           const runData = {run_data_js};
+
+           function populateRun(runId) {{
+               const container = document.getElementById("results");
+               container.innerHTML = "";
+               const data = runData[runId] || [];
+               data.forEach(test => {{
+                   const div = document.createElement("div");
+                   div.classList.add("test-entry");
+                   const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
+                     .map(label => {{
+                         const path = test[label] || "";
+                         if (!path) return "";
+                         const short = path.split(/[/\\\\]/).pop();
+                         return `<div><strong>${{label}}:</strong><br><img src="../Screenshots/${{short}}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
+                     }}).join("");
+
+                   div.innerHTML = `
+                     <h3>${{test.name}} — <span style="color:${{test.status === 'PASSED' ? 'green' : 'red'}}">${{test.status}}</span></h3>
+                     <p><strong>Description:</strong> ${{test.description || "—"}}</p>
+                     <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
+                     <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
+                     <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
+                     <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
+                     ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
+                     <div class="screenshot-grid">${{screenshots}}</div>
+                     <hr>`;
+                   container.appendChild(div);
+               }});
+           }}
+
+           function openModal(src) {{
+               const modal = document.getElementById("screenshotModal");
+               const modalImg = document.getElementById("modalImage");
+               modal.style.display = "block";
+               modalImg.src = src;
+           }}
+
+           function closeModal() {{
+               document.getElementById("screenshotModal").style.display = "none";
+           }}
+           </script>
+           """
+
+        html = f"""<!DOCTYPE html>
+       <html>
+       <head>
+         <meta charset="UTF-8">
+         <title>🧪 Fattal Run Selector Dashboard</title>
+         <style>
+           body {{
+             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             background-color: #f9f9f9;
+             margin: 20px;
+             color: #333;
+           }}
+           h1 {{
+             display: flex;
+             align-items: center;
+             font-size: 1.8em;
+           }}
+           h1::before {{
+             content: '🧪';
+             margin-right: 10px;
+           }}
+           select {{
+             font-size: 14px;
+             padding: 5px;
+             margin-left: 10px;
+           }}
+           .test-entry {{
+             background: #fff;
+             border-radius: 6px;
+             padding: 15px;
+             margin-bottom: 20px;
+             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+             transition: background 0.3s ease;
+           }}
+           .test-entry:hover {{
+             background: #f0f8ff;
+           }}
+           .screenshot-grid {{
+             display: flex;
+             gap: 12px;
+             margin-top: 10px;
+             flex-wrap: wrap;
+           }}
+           .screenshot-grid img {{
+             border-radius: 4px;
+             border: 1px solid #ccc;
+           }}
+           .modal {{
+             display: none;
+             position: fixed;
+             z-index: 999;
+             left: 0; top: 0; width: 100%; height: 100%;
+             background-color: rgba(0,0,0,0.85);
+           }}
+           .modal-content {{
+             margin: 5% auto;
+             display: block;
+             max-width: 90vw;
+             max-height: 80vh;
+           }}
+           .close {{
+             position: absolute;
+             top: 15px;
+             right: 35px;
+             color: #fff;
+             font-size: 40px;
+             font-weight: bold;
+             cursor: pointer;
+           }}
+         </style>
+         {script}
+       </head>
+       <body onload="populateRun(document.getElementById('runSelect').value)">
+         <h1>Fattal Run Selector Dashboard</h1>
+         <label>Choose Run:
+           <select id="runSelect" onchange="populateRun(this.value)">
+             {select_html}
+           </select>
+         </label>
+         <div id="results" style="margin-top: 20px;"></div>
+         <div id="screenshotModal" class="modal" onclick="closeModal()">
+           <span class="close">&times;</span>
+           <img class="modal-content" id="modalImage">
+         </div>
+       </body>
+       </html>"""
+
+        os.makedirs(os.path.dirname(dashboard_path), exist_ok=True)
+        with open(dashboard_path, "w", encoding="utf-8") as f:
+            f.write(html)
+
+        logging.info(f"✅ Dashboard generated at: {dashboard_path}")
     def confirm_and_assert_order(self):
         # Ensure confirmation_result is assigned before checking it
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)
@@ -220,9 +439,9 @@ class FattalDesktopTests(unittest.TestCase):
             logging.warning(f"Failed to analyze test outcome: {e}")
 
         # ── Confirmation Data ──
-        confirmation = getattr(self, "confirmation_result", {})
+        confirmation = getattr(self, "confirmation_result", {}) or {}
         order_number = confirmation.get("order_number", "")
-        confirmed_email = confirmation.get("email", "")
+        confirmed_email = confirmation.get("email", "") or getattr(self, 'entered_email', "")
 
         # ── Screenshots ──
         try:
@@ -253,19 +472,27 @@ class FattalDesktopTests(unittest.TestCase):
             "browser": browser,
             "os": os_name,
             "full_name": f"{getattr(self, 'entered_first_name', '')} {getattr(self, 'entered_last_name', '')}".strip(),
-            "email": confirmed_email or getattr(self, 'entered_email', ''),
+            "email": confirmed_email,
             "order_number": order_number,
             "id_number": getattr(self, "entered_id_number", ""),
             "confirmation_screenshot": confirmation_screenshot_path,
             "error_screenshot": error_screenshot_path,
+            "room_selection": getattr(self, "screenshot_room_selection", ""),
+            "payment_stage": getattr(self, "screenshot_payment_stage", ""),
             "log": log_file_path,
             "error": error_msg,
             "test_type": test_type
         }
 
-        # ── Persist Results ──
+        # Log soft assertion errors if they exist
+        if self.soft_assert_errors:
+            logging.info(f"Soft Assertion Errors found: {len(self.soft_assert_errors)}")
+            for error in self.soft_assert_errors:
+                logging.info(f"Soft Assertion Failure: {error}")
+
+        # ── Save Results ──
         self.save_to_excel(test_info)
-        self.save_to_html(test_info)
+        self.save_test_result_to_run_json(test_info, self.run_folder)
 
     def take_stage_screenshot(self, label: str):
         screenshot_dir = os.path.join(self.base_dir, "Screenshots")
@@ -864,7 +1091,7 @@ class FattalDesktopTests(unittest.TestCase):
             logging.info("Starting test for Eilat zone with flight")
 
             self.main_page.close_war_popup()
-            self.toolbar.click_footer_login_with_id_and_password()
+            #self.toolbar.click_footer_login_with_id_and_password()
             try:
                 self.toolbar.personal_zone()
                 WebDriverWait(self.driver, 5).until(
@@ -976,7 +1203,7 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_phone = guest["phone"]
 
         self.main_page.close_war_popup()
-        self.toolbar.click_footer_login_with_id_and_password()
+        #self.toolbar.click_footer_login_with_id_and_password()
         try:
             self.toolbar.personal_zone()
             WebDriverWait(self.driver, 5).until(
@@ -1042,6 +1269,14 @@ class FattalDesktopTests(unittest.TestCase):
         self.confirm_and_assert_order()
         logging.info("✔️ Club login test finished with confirmed order.")
 
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            runs_base_dir = os.path.join(os.path.dirname(__file__), "html_reports", "runs")
+            cls.generate_dashboard_html(runs_base_dir)
+            logging.info("✅ Dashboard generated once at the end of test suite.")
+        except Exception as e:
+            logging.warning(f"⚠️ Failed to generate dashboard in tearDownClass: {e}")
     def tearDown(self):
         if self.driver:
             try:
@@ -1083,6 +1318,12 @@ class FattalDesktopTests(unittest.TestCase):
                 self.driver.quit()
             except Exception as e:
                 logging.warning(f"⚠️ Browser quit failed: {e}")
+
+        # 🧾 Generate the HTML dashboard
+        try:
+            runs_base_dir = os.path.join(self.base_dir, "html_reports", "runs")
+        except Exception as e:
+            logging.warning(f"⚠️ Failed to generate dashboard: {e}")
 
     if __name__ == "__main__":
         import unittest

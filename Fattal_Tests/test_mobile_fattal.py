@@ -1,16 +1,15 @@
 import io
+import json
 import logging
 import sys
 import time
 import traceback
-from openpyxl.styles import  PatternFill
+from openpyxl.styles import PatternFill
 from time import sleep
 import unittest
 from selenium import webdriver
 import functools
-
 from selenium.common import TimeoutException
-
 from Mobile_Fattal_Pages.Mobile_Fattal_Flight_Page import FattalFlightPageMobile
 from Mobile_Fattal_Pages.Mobile_Toolbar_Fattal import FattalMobileToolBar
 from Mobile_Fattal_Pages.Mobile_Fattal_Main_Page import FattalMainPageMobile
@@ -30,6 +29,7 @@ from dotenv import load_dotenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from typing import TextIO
 HOTEL_NAME_TO_ID = {
     "לאונרדו נגב, באר שבע": "10048",
     "לאונרדו פלאזה אילת": "1051"
@@ -70,8 +70,6 @@ def retry_on_no_results(max_attempts=2):
     return decorator
 class FattalMobileTests(unittest.TestCase):
     def save_order_for_cancellation(self, order_number: str):
-        import json
-
         try:
             if not order_number:
                 logging.warning("Order number is empty, not saving for cancellation.")
@@ -84,7 +82,6 @@ class FattalMobileTests(unittest.TestCase):
                 "hotelID": hotel_id
             }
 
-            # Ensure path is relative to current test script
             current_dir = os.path.dirname(os.path.abspath(__file__))
             cancel_file = os.path.join(current_dir, "orders_to_cancel.json")
 
@@ -111,9 +108,33 @@ class FattalMobileTests(unittest.TestCase):
         except Exception as e:
             logging.warning(f"⚠️ Could not save order for cancellation: {e}")
 
+    def save_test_result_to_run_json(self, info: dict, run_folder: str):
+        # 🔐 Ensure the folder exists
+        os.makedirs(run_folder, exist_ok=True)
+
+        json_path = os.path.join(run_folder, "run_data.json")
+
+        if os.path.exists(json_path):
+            with open(json_path, "r", encoding="utf-8") as f:  # type: TextIO
+                data = json.load(f)
+        else:
+            data = []
+
+        data.append(info)
+
+        with open(json_path, "w", encoding="utf-8") as f:  # type: TextIO
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        logging.info(f"📄 Saved test result to: {json_path}")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.run_folder, cls.run_id = cls.get_static_run_folder()
     def setUp(self):
+        self.run_folder = self.__class__.run_folder
         load_dotenv()
         self.log_stream = io.StringIO()
+        self.run_folder = self.__class__.run_folder
         # Reset logging configuration
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -196,6 +217,197 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
 
+
+    @classmethod
+    def get_static_run_folder(cls):
+        base_path = os.path.join(os.path.dirname(__file__), 'html_reports', 'runs')
+        os.makedirs(base_path, exist_ok=True)
+        now = datetime.now().strftime("run_%Y-%m-%d_%H-%M-%S")
+        run_folder = os.path.join(base_path, now)
+        os.makedirs(run_folder, exist_ok=True)
+        return run_folder, now
+    @staticmethod
+    def generate_dashboard_html(runs_base_dir: str):
+        import os
+        import json
+
+        dashboard_path = os.path.join(runs_base_dir, "..", "dashboard.html")
+        run_dirs = sorted(
+            [d for d in os.listdir(runs_base_dir) if d.startswith("run_")],
+            reverse=True
+        )
+
+        run_data_js_entries = []
+        select_html_entries = []
+
+        for i, run_dir in enumerate(run_dirs):
+            json_path = os.path.join(runs_base_dir, run_dir, "run_data.json")
+            if not os.path.exists(json_path):
+                continue
+
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                run_data_js_entries.append(f'"{run_dir}": {json.dumps(data, ensure_ascii=False)}')
+
+                total = len(data)
+                failed = sum(1 for t in data if t.get("status") == "FAILED")
+                mobile = sum(1 for t in data if t.get("test_type") == "mobile")
+                desktop = sum(1 for t in data if t.get("test_type") == "desktop")
+                time_part = run_dir.replace("run_", "").split("_")[1]
+
+                label_parts = [f"🕒 {time_part}", f"{total} tests"]
+                label_parts.append("❌ " + str(failed) if failed else "✅ All passed")
+                if mobile:
+                    label_parts.append(f"📱 {mobile}")
+                if desktop:
+                    label_parts.append(f"💻 {desktop}")
+
+                label = " | ".join(label_parts)
+                selected = "selected" if i == 0 else ""
+                select_html_entries.append(f'<option value="{run_dir}" {selected}>{label}</option>')
+
+        run_data_js = "{\n" + ",\n".join(run_data_js_entries) + "\n}"
+        select_html = "\n".join(select_html_entries)
+
+        script = f"""
+        <script>
+        const runData = {run_data_js};
+
+        function populateRun(runId) {{
+            const container = document.getElementById("results");
+            container.innerHTML = "";
+            const data = runData[runId] || [];
+            data.forEach(test => {{
+                const div = document.createElement("div");
+                div.classList.add("test-entry");
+                const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
+                  .map(label => {{
+                      const path = test[label] || "";
+                      if (!path) return "";
+                      const short = path.split(/[/\\\\]/).pop();
+                      return `<div><strong>${{label}}:</strong><br><img src="../Screenshots/${{short}}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
+                  }}).join("");
+
+                div.innerHTML = `
+                  <h3>${{test.name}} — <span style="color:${{test.status === 'PASSED' ? 'green' : 'red'}}">${{test.status}}</span></h3>
+                  <p><strong>Description:</strong> ${{test.description || "—"}}</p>
+                  <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
+                  <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
+                  <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
+                  <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
+                  ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
+                  <div class="screenshot-grid">${{screenshots}}</div>
+                  <hr>`;
+                container.appendChild(div);
+            }});
+        }}
+
+        function openModal(src) {{
+            const modal = document.getElementById("screenshotModal");
+            const modalImg = document.getElementById("modalImage");
+            modal.style.display = "block";
+            modalImg.src = src;
+        }}
+
+        function closeModal() {{
+            document.getElementById("screenshotModal").style.display = "none";
+        }}
+        </script>
+        """
+
+        html = f"""<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>🧪 Fattal Run Selector Dashboard</title>
+      <style>
+        body {{
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f9f9f9;
+          margin: 20px;
+          color: #333;
+        }}
+        h1 {{
+          display: flex;
+          align-items: center;
+          font-size: 1.8em;
+        }}
+        h1::before {{
+          content: '🧪';
+          margin-right: 10px;
+        }}
+        select {{
+          font-size: 14px;
+          padding: 5px;
+          margin-left: 10px;
+        }}
+        .test-entry {{
+          background: #fff;
+          border-radius: 6px;
+          padding: 15px;
+          margin-bottom: 20px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+          transition: background 0.3s ease;
+        }}
+        .test-entry:hover {{
+          background: #f0f8ff;
+        }}
+        .screenshot-grid {{
+          display: flex;
+          gap: 12px;
+          margin-top: 10px;
+          flex-wrap: wrap;
+        }}
+        .screenshot-grid img {{
+          border-radius: 4px;
+          border: 1px solid #ccc;
+        }}
+        .modal {{
+          display: none;
+          position: fixed;
+          z-index: 999;
+          left: 0; top: 0; width: 100%; height: 100%;
+          background-color: rgba(0,0,0,0.85);
+        }}
+        .modal-content {{
+          margin: 5% auto;
+          display: block;
+          max-width: 90vw;
+          max-height: 80vh;
+        }}
+        .close {{
+          position: absolute;
+          top: 15px;
+          right: 35px;
+          color: #fff;
+          font-size: 40px;
+          font-weight: bold;
+          cursor: pointer;
+        }}
+      </style>
+      {script}
+    </head>
+    <body onload="populateRun(document.getElementById('runSelect').value)">
+      <h1>Fattal Run Selector Dashboard</h1>
+      <label>Choose Run:
+        <select id="runSelect" onchange="populateRun(this.value)">
+          {select_html}
+        </select>
+      </label>
+      <div id="results" style="margin-top: 20px;"></div>
+      <div id="screenshotModal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+      </div>
+    </body>
+    </html>"""
+
+        os.makedirs(os.path.dirname(dashboard_path), exist_ok=True)
+        with open(dashboard_path, "w", encoding="utf-8") as f:
+            f.write(html)
+
+        logging.info(f"✅ Dashboard generated at: {dashboard_path}")
+
     def soft_assert(self, condition, msg, errors_list):
         """
         A soft assert will check the condition. If it fails, it will log the error and add it to a list.
@@ -255,16 +467,19 @@ class FattalMobileTests(unittest.TestCase):
             "status": status,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "duration": f"{duration:.2f}s",
-            "browser": "unknown",  # Update if needed
-            "os": "unknown",  # Update if needed
+            "browser": "Chrome",  # Could fetch from capabilities if needed
+            "os": "windows",
             "full_name": f"{getattr(self, 'entered_first_name', '')} {getattr(self, 'entered_last_name', '')}".strip(),
             "email": email,
             "order_number": order_no,
             "id_number": getattr(self, "entered_id_number", ""),
             "confirmation_screenshot": confirmation_screenshot,
             "error_screenshot": error_screenshot,
+            "room_selection": getattr(self, "screenshot_room_selection", ""),
+            "payment_stage": getattr(self, "screenshot_payment_stage", ""),
             "log": log_file,
-            "error": error_msg if has_failed else ""
+            "error": error_msg if has_failed else "",
+            "test_type": "mobile"  # 🆕 used in the CSS filter if needed
         }
 
         # Log soft assertion errors if they exist
@@ -275,7 +490,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Optional: Save to Excel/HTML if needed
         self.save_to_excel(info)
-        self.save_to_html(info)
+        self.save_test_result_to_run_json(info, self.run_folder)
 
     def save_to_excel(self, info: dict):
         SCREENSHOT_LABEL = "📷 Screenshot"
@@ -656,9 +871,9 @@ class FattalMobileTests(unittest.TestCase):
             expiry_year = self.payment_card["expiry_year"]
             cvv = self.payment_card["cvv"]
             id_number = self.payment_card["id_number"]
-            
+
             logging.info("Using credit card details from config.json")
-            
+
             # Find and switch to the iframe
             iframe = self.driver.find_element(By.ID, "paymentIframe")
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", iframe)
@@ -675,23 +890,23 @@ class FattalMobileTests(unittest.TestCase):
             # Select Expiry Month
             month_select = Select(self.driver.find_element(By.ID, "date_month_input"))
             month_select.select_by_visible_text(expiry_month)
-            
+
             # Select Expiry Year
             year_select = Select(self.driver.find_element(By.ID, "date_year_input"))
             year_select.select_by_visible_text(expiry_year)
-            
+
             # Fill CVV
             cvv_input = self.driver.find_element(By.ID, "cvv_input")
             cvv_input.clear()
             cvv_input.send_keys(cvv)
-            
+
             # Fill ID Number
             id_input = self.driver.find_element(By.ID, "id_number_input")
             id_input.clear()
             id_input.send_keys(id_number)
-            
+
             logging.info("Credit card details from config applied successfully")
-            
+
         except Exception as e:
             logging.error(f"Failed to apply credit card details from config: {e}")
             raise
@@ -928,7 +1143,7 @@ class FattalMobileTests(unittest.TestCase):
     #        logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
     def test_mobile_booking_with_club_login(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
-
+        self.test_description = "בדיקת השלמת הזמנה משתמש מועדון"
         self.soft_assert_errors = []
 
         hotel_name = self.default_hotel_name
@@ -937,11 +1152,12 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            "password": os.getenv("CLUB_REGULAR_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -954,7 +1170,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-
+        self.entered_email = user["email"]
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -981,8 +1197,6 @@ class FattalMobileTests(unittest.TestCase):
         # Step 6: Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.set_first_name("Chen")
-        self.mobile_order_page.set_last_name("Test")
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
         # Step 7: Fill the iframe using config.json
@@ -1029,21 +1243,21 @@ class FattalMobileTests(unittest.TestCase):
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
-        #Step 5 : Choose Room and click it
+        # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
-        #Step 6 : Order Page
-        #self.mobile_order_page.click_room_selection_summary()
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
 
         self.mobile_order_page.wait_until_personal_form_ready()
 
-        #Order Details
+        # Order Details
         self.take_stage_screenshot("payment_stage")
         self.fill_guest_details(guest=self.default_guest)
         self.mobile_order_page.set_id_number(random_id)
-        self.entered_id_number = random_id  #  Save for logging/export
+        self.entered_id_number = random_id  # Save for logging/export
 
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
@@ -1133,11 +1347,12 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting mobile booking test for Eilat including flights...")
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            "password": os.getenv("CLUB_REGULAR_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1150,6 +1365,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -1157,7 +1373,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_first_suggested_region()
         # Step 2: Date picker
         self.mobile_main_page.click_mobile_date_picker()
-        #self.mobile_main_page.select_date_range_two_months_ahead()
+        # self.mobile_main_page.select_date_range_two_months_ahead()
         # Step 2: Select exact date range instead of the dynamic one
         self.mobile_main_page.select_date_range_two_months_ahead_eilat(stay_length=5)
 
@@ -1174,7 +1390,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_search_page.handle_search_flow_with_fallback(self)
 
         # Step 7: Select flight or continue
-        #self.mobile_flight_page.try_flight_options_by_time_of_day()
+        # self.mobile_flight_page.try_flight_options_by_time_of_day()
         sleep(5)
         # Step 8: Passenger form
         self.mobile_flight_page.fill_adult_passenger_details()
@@ -1199,7 +1415,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    #@retry_on_no_results(max_attempts=3)
+    # @retry_on_no_results(max_attempts=3)
     def test_mobile_booking_anonymous_region_eilat(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
@@ -1387,24 +1603,24 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_RENEW_ID"),
-            "password": os.getenv("CLUB_RENEW_PASSWORD")
+            "password": os.getenv("CLUB_RENEW_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
             self.mobile_toolbar.close_post_login_popup()
             logging.info("Logged in successfully.")
         except Exception as e:
-            logging.warning(f"Login failed or already logged in: {e}")# For report logging only — because form fields are autofilled
+            logging.warning(
+                f"Login failed or already logged in: {e}")  # For report logging only — because form fields are autofilled
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-
-
-        # Step 1: City selection
+        self.entered_email = user["email"]        # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
@@ -1463,11 +1679,12 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
-            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD")
+            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1480,8 +1697,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-
-        # Step 1: City selection
+        self.entered_email = user["email"]        # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
@@ -1539,12 +1755,13 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_ABOUT_EXPIRE_ID_FORM"),
-            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD_FORM")
+            "password": os.getenv("CLUB_ABOUT_EXPIRE_PASSWORD_FORM"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
 
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1557,7 +1774,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
-
+        self.entered_email = user["email"]
         self.mobile_toolbar.click_more_tab_mobile()
         self.mobile_toolbar.click_fattal_friends_club_tab()
         self.mobile_club_join_page.click_join_fattal_friends_button()
@@ -1616,11 +1833,12 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_11NIGHT_ID"),
-            "password": os.getenv("CLUB_11NIGHT_PASSWORD")
+            "password": os.getenv("CLUB_11NIGHT_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1632,6 +1850,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
@@ -1675,6 +1894,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 10: Always take a screenshot of the confirmation screen
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
     def test_mobile_booking_club_member_deals(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -1683,11 +1903,12 @@ class FattalMobileTests(unittest.TestCase):
         self.test_description = "בדיקת השלמת הזמנה משתמש מחובר עמוד דילים"
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            "password": os.getenv("CLUB_REGULAR_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1699,6 +1920,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
 
         self.mobile_toolbar.click_deals_and_packages_tab()
         self.mobile_deals_page.click_view_all_deals_link()
@@ -1728,6 +1950,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 10: Always take a screenshot of the confirmation screen
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
     def test_mobile_booking_anonymous_user_promo_code(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -1760,16 +1983,15 @@ class FattalMobileTests(unittest.TestCase):
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
-        #Step 5 : Choose Room and click it
+        # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
-        #Step 6 : Order Page
+        # Step 6 : Order Page
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        #Order Details
+        # Order Details
         self.fill_guest_details(guest=self.default_guest)
-
 
         self.mobile_order_page.set_id_number(random_id)
         self.entered_id_number = random_id  # Save for logging/export
@@ -1843,7 +2065,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_order_page.set_email(user["email"])
         self.mobile_order_page.set_phone(user["phone"])
         self.entered_id_number = user["id"]
-
         # ✅ Save for export/logging
         self.entered_email = user["email"]
 
@@ -1938,11 +2159,12 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            "password": os.getenv("CLUB_REGULAR_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -1955,6 +2177,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
 
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
@@ -2014,11 +2237,12 @@ class FattalMobileTests(unittest.TestCase):
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_11NIGHT_ID_EUROPE"),
-            "password": os.getenv("CLUB_11NIGHT_PASSWORD_EUROPE")
+            "password": os.getenv("CLUB_11NIGHT_PASSWORD_EUROPE"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -2031,6 +2255,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
 
         # Step 1: City selection
         self.mobile_main_page.close_war_popup()
@@ -2049,11 +2274,9 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-        self.handle_no_results_and_click_suggestion()
+        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
+        self.mobile_search_page.handle_search_flow_with_fallback(self)
         # Step 5: Choose Room and click it
-        self.mobile_search_page.click_show_prices_regional()
-        self.take_stage_screenshot("room_selection")
-        self.mobile_search_page.click_book_room_regional()
 
         # Step 6: Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
@@ -2077,6 +2300,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 10: Always take a screenshot of the confirmation screen
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
     def test_mobile_booking_anonymous_user_login_at_checkout(self):
         self.save_for_cancellation = True  # Enable save-for-cancel feature
 
@@ -2104,25 +2328,26 @@ class FattalMobileTests(unittest.TestCase):
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
 
-        #Step 5 : Choose Room and click it
+        # Step 5 : Choose Room and click it
         self.mobile_search_page.click_show_prices_button()
         self.take_stage_screenshot("room_selection")
         self.mobile_search_page.click_book_room_button()
 
-        #Step 6 : Order Page
-        #self.mobile_order_page.click_room_selection_summary()
+        # Step 6 : Order Page
+        # self.mobile_order_page.click_room_selection_summary()
 
         self.mobile_order_page.wait_until_personal_form_ready()
 
-        #Order Details
+        # Order Details
         self.take_stage_screenshot("payment_stage")
         user = {
             "id": os.getenv("CLUB_REGULAR_ID"),
-            "password": os.getenv("CLUB_REGULAR_PASSWORD")
+            "password": os.getenv("CLUB_REGULAR_PASSWORD"),
+            "email": os.getenv("DEFAULT_EMAIL")
         }
         try:
             self.mobile_toolbar.open_login_menu()
-            self.mobile_toolbar.click_login_with_email_button()
+            ##self.mobile_toolbar.click_login_with_email_button()
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
@@ -2134,6 +2359,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_id_number = user["id"]
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
+        self.entered_email = user["email"]
 
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
@@ -2152,6 +2378,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 10: Always take a screenshot of the confirmation screen
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+
     # def test_mobile_booking_5_rooms_club_member(self):
     #     self.save_for_cancellation = True  # Enable save-for-cancel feature
     #
@@ -2165,7 +2392,7 @@ class FattalMobileTests(unittest.TestCase):
     #     # Step 0: Club Login
     #     user = {
     #         "id": os.getenv("CLUB_REGULAR_ID"),
-    #         "password": os.getenv("CLUB_REGULAR_PASSWORD")
+    #         "password": os.getenv("CLUB_REGULAR_PASSWORD"),
     #     }
     #     try:
     #         self.mobile_toolbar.open_login_menu()
@@ -2235,7 +2462,14 @@ class FattalMobileTests(unittest.TestCase):
     #     self.soft_assert(self.confirmation_result.get("order_number"), "Booking failed — no order number found.", self.soft_assert_errors)
     #     if self.soft_assert_errors:
     #        logging.error("Soft assertions encountered:\n" + "\n".join(self.soft_assert_errors))
-
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            runs_base_dir = os.path.join(os.path.dirname(__file__), "html_reports", "runs")
+            cls.generate_dashboard_html(runs_base_dir)
+            logging.info("✅ Mobile dashboard generated at the end of test suite.")
+        except Exception as e:
+            logging.warning(f"⚠️ Failed to generate mobile dashboard: {e}")
     def tearDown(self):
         if self.driver:
             try:
@@ -2256,6 +2490,9 @@ class FattalMobileTests(unittest.TestCase):
                     if order_number:
                         self.save_order_for_cancellation(order_number)
 
+                # ✅ NEW: Generate HTML dashboard
+                self.generate_dashboard_html(os.path.join(self.base_dir, "html_reports", "runs"))
+
             except Exception as e:
                 logging.warning(f"Logging failed during tearDown: {e}")
             finally:
@@ -2269,13 +2506,3 @@ class FattalMobileTests(unittest.TestCase):
     if __name__ == "__main__":
         import unittest
         unittest.main()
-
-
-
-
-
-
-
-
-
-
