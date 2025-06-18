@@ -211,7 +211,7 @@ class FattalMainPageMobile:
         buttons = self.driver.find_elements(By.CSS_SELECTOR, ".react-calendar__month-view__days button")
         return [
             btn for btn in buttons
-            if btn.is_enabled() and "neighboringMonth" not in btn.get_attribute("class")
+            if btn.is_enabled() and "neighboringMonth" not in btn.get_attribute("class")#fix
         ]
 
     def human_click(self, element):
