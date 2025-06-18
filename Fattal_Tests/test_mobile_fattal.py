@@ -230,6 +230,8 @@ class FattalMobileTests(unittest.TestCase):
     def generate_dashboard_html(runs_base_dir: str):
         import os
         import json
+        from datetime import datetime
+        import logging
 
         dashboard_path = os.path.join(runs_base_dir, "..", "dashboard.html")
         run_dirs = sorted(
@@ -251,18 +253,22 @@ class FattalMobileTests(unittest.TestCase):
 
                 total = len(data)
                 failed = sum(1 for t in data if t.get("status") == "FAILED")
+                passed = total - failed
                 mobile = sum(1 for t in data if t.get("test_type") == "mobile")
                 desktop = sum(1 for t in data if t.get("test_type") == "desktop")
-                time_part = run_dir.replace("run_", "").split("_")[1]
 
-                label_parts = [f"🕒 {time_part}", f"{total} tests"]
-                label_parts.append("❌ " + str(failed) if failed else "✅ All passed")
+                # New: Format day and full datetime
+                run_timestamp_str = run_dir.replace("run_", "")  # e.g., '2025-06-17_14-33-12'
+                run_datetime = datetime.strptime(run_timestamp_str, "%Y-%m-%d_%H-%M-%S")
+                day_label = run_datetime.strftime("%A")  # e.g., 'Tuesday'
+                datetime_label = run_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+                label = f"{day_label} {datetime_label} | {total} tests | ✅ {passed} | ❌ {failed}"
                 if mobile:
-                    label_parts.append(f"📱 {mobile}")
+                    label += f" | 📱 {mobile}"
                 if desktop:
-                    label_parts.append(f"💻 {desktop}")
+                    label += f" | 💻 {desktop}"
 
-                label = " | ".join(label_parts)
                 selected = "selected" if i == 0 else ""
                 select_html_entries.append(f'<option value="{run_dir}" {selected}>{label}</option>')
 
@@ -276,8 +282,12 @@ class FattalMobileTests(unittest.TestCase):
         function populateRun(runId) {{
             const container = document.getElementById("results");
             container.innerHTML = "";
+            const showPassed = document.getElementById("filterPassed").checked;
+            const showFailed = document.getElementById("filterFailed").checked;
             const data = runData[runId] || [];
             data.forEach(test => {{
+                if ((test.status === "PASSED" && !showPassed) || (test.status === "FAILED" && !showFailed)) return;
+
                 const div = document.createElement("div");
                 div.classList.add("test-entry");
                 const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
@@ -394,6 +404,10 @@ class FattalMobileTests(unittest.TestCase):
           {select_html}
         </select>
       </label>
+      <div style="margin-top: 10px;">
+        <label><input type="checkbox" id="filterPassed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Passed</label>
+        <label><input type="checkbox" id="filterFailed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Failed</label>
+      </div>
       <div id="results" style="margin-top: 20px;"></div>
       <div id="screenshotModal" class="modal" onclick="closeModal()">
         <span class="close">&times;</span>

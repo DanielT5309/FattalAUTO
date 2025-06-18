@@ -235,7 +235,6 @@ class FattalMobileToolBar:
                 logging.warning(f"⚠️ Attempt with selector '{selector}' failed: {e}")
 
         logging.info("ℹ️ No club-related popup appeared.")
-        self.take_screenshot("popup_club_close_attempts_failed")
 
     def click_login_with_email_button(self):
         """

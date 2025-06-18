@@ -164,6 +164,8 @@ class FattalDesktopTests(unittest.TestCase):
     def generate_dashboard_html(runs_base_dir: str):
         import os
         import json
+        from datetime import datetime
+        import logging
 
         dashboard_path = os.path.join(runs_base_dir, "..", "dashboard.html")
         run_dirs = sorted(
@@ -185,18 +187,22 @@ class FattalDesktopTests(unittest.TestCase):
 
                 total = len(data)
                 failed = sum(1 for t in data if t.get("status") == "FAILED")
+                passed = total - failed
                 mobile = sum(1 for t in data if t.get("test_type") == "mobile")
                 desktop = sum(1 for t in data if t.get("test_type") == "desktop")
-                time_part = run_dir.replace("run_", "").split("_")[1]
 
-                label_parts = [f"🕒 {time_part}", f"{total} tests"]
-                label_parts.append("❌ " + str(failed) if failed else "✅ All passed")
+                # New: Format day and full datetime
+                run_timestamp_str = run_dir.replace("run_", "")  # e.g., '2025-06-17_14-33-12'
+                run_datetime = datetime.strptime(run_timestamp_str, "%Y-%m-%d_%H-%M-%S")
+                day_label = run_datetime.strftime("%A")  # e.g., 'Tuesday'
+                datetime_label = run_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+                label = f"{day_label} {datetime_label} | {total} tests | ✅ {passed} | ❌ {failed}"
                 if mobile:
-                    label_parts.append(f"📱 {mobile}")
+                    label += f" | 📱 {mobile}"
                 if desktop:
-                    label_parts.append(f"💻 {desktop}")
+                    label += f" | 💻 {desktop}"
 
-                label = " | ".join(label_parts)
                 selected = "selected" if i == 0 else ""
                 select_html_entries.append(f'<option value="{run_dir}" {selected}>{label}</option>')
 
@@ -204,137 +210,145 @@ class FattalDesktopTests(unittest.TestCase):
         select_html = "\n".join(select_html_entries)
 
         script = f"""
-           <script>
-           const runData = {run_data_js};
+            <script>
+            const runData = {run_data_js};
 
-           function populateRun(runId) {{
-               const container = document.getElementById("results");
-               container.innerHTML = "";
-               const data = runData[runId] || [];
-               data.forEach(test => {{
-                   const div = document.createElement("div");
-                   div.classList.add("test-entry");
-                   const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
-                     .map(label => {{
-                         const path = test[label] || "";
-                         if (!path) return "";
-                         const short = path.split(/[/\\\\]/).pop();
-                         return `<div><strong>${{label}}:</strong><br><img src="../Screenshots/${{short}}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
-                     }}).join("");
+            function populateRun(runId) {{
+                const container = document.getElementById("results");
+                container.innerHTML = "";
+                const showPassed = document.getElementById("filterPassed").checked;
+                const showFailed = document.getElementById("filterFailed").checked;
+                const data = runData[runId] || [];
+                data.forEach(test => {{
+                    if ((test.status === "PASSED" && !showPassed) || (test.status === "FAILED" && !showFailed)) return;
 
-                   div.innerHTML = `
-                     <h3>${{test.name}} — <span style="color:${{test.status === 'PASSED' ? 'green' : 'red'}}">${{test.status}}</span></h3>
-                     <p><strong>Description:</strong> ${{test.description || "—"}}</p>
-                     <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
-                     <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
-                     <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
-                     <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
-                     ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
-                     <div class="screenshot-grid">${{screenshots}}</div>
-                     <hr>`;
-                   container.appendChild(div);
-               }});
-           }}
+                    const div = document.createElement("div");
+                    div.classList.add("test-entry");
+                    const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
+                      .map(label => {{
+                          const path = test[label] || "";
+                          if (!path) return "";
+                          const short = path.split(/[/\\\\]/).pop();
+                          return `<div><strong>${{label}}:</strong><br><img src="../Screenshots/${{short}}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
+                      }}).join("");
 
-           function openModal(src) {{
-               const modal = document.getElementById("screenshotModal");
-               const modalImg = document.getElementById("modalImage");
-               modal.style.display = "block";
-               modalImg.src = src;
-           }}
+                    div.innerHTML = `
+                      <h3>${{test.name}} — <span style="color:${{test.status === 'PASSED' ? 'green' : 'red'}}">${{test.status}}</span></h3>
+                      <p><strong>Description:</strong> ${{test.description || "—"}}</p>
+                      <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
+                      <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
+                      <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
+                      <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
+                      ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
+                      <div class="screenshot-grid">${{screenshots}}</div>
+                      <hr>`;
+                    container.appendChild(div);
+                }});
+            }}
 
-           function closeModal() {{
-               document.getElementById("screenshotModal").style.display = "none";
-           }}
-           </script>
-           """
+            function openModal(src) {{
+                const modal = document.getElementById("screenshotModal");
+                const modalImg = document.getElementById("modalImage");
+                modal.style.display = "block";
+                modalImg.src = src;
+            }}
+
+            function closeModal() {{
+                document.getElementById("screenshotModal").style.display = "none";
+            }}
+            </script>
+            """
 
         html = f"""<!DOCTYPE html>
-       <html>
-       <head>
-         <meta charset="UTF-8">
-         <title>🧪 Fattal Run Selector Dashboard</title>
-         <style>
-           body {{
-             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-             background-color: #f9f9f9;
-             margin: 20px;
-             color: #333;
-           }}
-           h1 {{
-             display: flex;
-             align-items: center;
-             font-size: 1.8em;
-           }}
-           h1::before {{
-             content: '🧪';
-             margin-right: 10px;
-           }}
-           select {{
-             font-size: 14px;
-             padding: 5px;
-             margin-left: 10px;
-           }}
-           .test-entry {{
-             background: #fff;
-             border-radius: 6px;
-             padding: 15px;
-             margin-bottom: 20px;
-             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-             transition: background 0.3s ease;
-           }}
-           .test-entry:hover {{
-             background: #f0f8ff;
-           }}
-           .screenshot-grid {{
-             display: flex;
-             gap: 12px;
-             margin-top: 10px;
-             flex-wrap: wrap;
-           }}
-           .screenshot-grid img {{
-             border-radius: 4px;
-             border: 1px solid #ccc;
-           }}
-           .modal {{
-             display: none;
-             position: fixed;
-             z-index: 999;
-             left: 0; top: 0; width: 100%; height: 100%;
-             background-color: rgba(0,0,0,0.85);
-           }}
-           .modal-content {{
-             margin: 5% auto;
-             display: block;
-             max-width: 90vw;
-             max-height: 80vh;
-           }}
-           .close {{
-             position: absolute;
-             top: 15px;
-             right: 35px;
-             color: #fff;
-             font-size: 40px;
-             font-weight: bold;
-             cursor: pointer;
-           }}
-         </style>
-         {script}
-       </head>
-       <body onload="populateRun(document.getElementById('runSelect').value)">
-         <h1>Fattal Run Selector Dashboard</h1>
-         <label>Choose Run:
-           <select id="runSelect" onchange="populateRun(this.value)">
-             {select_html}
-           </select>
-         </label>
-         <div id="results" style="margin-top: 20px;"></div>
-         <div id="screenshotModal" class="modal" onclick="closeModal()">
-           <span class="close">&times;</span>
-           <img class="modal-content" id="modalImage">
-         </div>
-       </body>
-       </html>"""
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>🧪 Fattal Run Selector Dashboard</title>
+          <style>
+            body {{
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f9f9f9;
+              margin: 20px;
+              color: #333;
+            }}
+            h1 {{
+              display: flex;
+              align-items: center;
+              font-size: 1.8em;
+            }}
+            h1::before {{
+              content: '🧪';
+              margin-right: 10px;
+            }}
+            select {{
+              font-size: 14px;
+              padding: 5px;
+              margin-left: 10px;
+            }}
+            .test-entry {{
+              background: #fff;
+              border-radius: 6px;
+              padding: 15px;
+              margin-bottom: 20px;
+              box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+              transition: background 0.3s ease;
+            }}
+            .test-entry:hover {{
+              background: #f0f8ff;
+            }}
+            .screenshot-grid {{
+              display: flex;
+              gap: 12px;
+              margin-top: 10px;
+              flex-wrap: wrap;
+            }}
+            .screenshot-grid img {{
+              border-radius: 4px;
+              border: 1px solid #ccc;
+            }}
+            .modal {{
+              display: none;
+              position: fixed;
+              z-index: 999;
+              left: 0; top: 0; width: 100%; height: 100%;
+              background-color: rgba(0,0,0,0.85);
+            }}
+            .modal-content {{
+              margin: 5% auto;
+              display: block;
+              max-width: 90vw;
+              max-height: 80vh;
+            }}
+            .close {{
+              position: absolute;
+              top: 15px;
+              right: 35px;
+              color: #fff;
+              font-size: 40px;
+              font-weight: bold;
+              cursor: pointer;
+            }}
+          </style>
+          {script}
+        </head>
+        <body onload="populateRun(document.getElementById('runSelect').value)">
+          <h1>Fattal Run Selector Dashboard</h1>
+          <label>Choose Run:
+            <select id="runSelect" onchange="populateRun(this.value)">
+              {select_html}
+            </select>
+          </label>
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="filterPassed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Passed</label>
+            <label><input type="checkbox" id="filterFailed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Failed</label>
+          </div>
+          <div id="results" style="margin-top: 20px;"></div>
+          <div id="screenshotModal" class="modal" onclick="closeModal()">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modalImage">
+          </div>
+        </body>
+        </html>"""
 
         os.makedirs(os.path.dirname(dashboard_path), exist_ok=True)
         with open(dashboard_path, "w", encoding="utf-8") as f:
@@ -1091,9 +1105,9 @@ class FattalDesktopTests(unittest.TestCase):
             logging.info("Starting test for Eilat zone with flight")
 
             self.main_page.close_war_popup()
-            #self.toolbar.click_footer_login_with_id_and_password()
             try:
                 self.toolbar.personal_zone()
+                self.toolbar.click_footer_login_with_id_and_password()
                 WebDriverWait(self.driver, 5).until(
                     EC.visibility_of(self.toolbar.user_id_input())
                 ).send_keys("999318330")
@@ -1203,9 +1217,9 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_phone = guest["phone"]
 
         self.main_page.close_war_popup()
-        #self.toolbar.click_footer_login_with_id_and_password()
         try:
             self.toolbar.personal_zone()
+            self.toolbar.click_footer_login_with_id_and_password()
             WebDriverWait(self.driver, 5).until(
                 EC.visibility_of(self.toolbar.user_id_input())
             ).send_keys("999318330")
