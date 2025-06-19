@@ -2290,6 +2290,7 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_search_button()
         self.mobile_search_page.handle_no_search_results_and_choose_alternative()
         self.mobile_search_page.handle_search_flow_with_fallback(self)
+        #fix
         # Step 5: Choose Room and click it
 
         # Step 6: Order Page (for club, skip email + id)
