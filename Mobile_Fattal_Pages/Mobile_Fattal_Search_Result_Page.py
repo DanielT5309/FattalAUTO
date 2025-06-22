@@ -3,7 +3,7 @@ import os
 import time
 from datetime import datetime
 from selenium import webdriver
-from selenium.common import TimeoutException
+from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -58,26 +58,38 @@ class FattalSearchResultPageMobile:
             raise
 
     def click_show_prices_button(self):
-        logging.info("מחפש ולוחץ על כפתור 'הצג מחירים'...")
+        logging.info("📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...")
+
         try:
-            WebDriverWait(self.driver, 25).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'הצג מחירים')]"))
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_all_elements_located((
+                    By.XPATH,
+                    "//button[starts-with(@id, 'room-price-button') and contains(., 'הצג מחירים')]"
+                ))
             )
-            show_price_buttons = self.driver.find_elements(By.XPATH, "//button[contains(., 'הצג מחירים')]")
-            for button in show_price_buttons:
+
+            buttons = self.driver.find_elements(
+                By.XPATH, "//button[starts-with(@id, 'room-price-button') and contains(., 'הצג מחירים')]"
+            )
+
+            for button in buttons:
                 if button.is_displayed() and button.is_enabled():
                     try:
                         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
-                        actions = ActionChains(self.driver)
-                        actions.move_to_element(button).click().perform()
-                        logging.info("כפתור 'הצג מחירים' נלחץ בהצלחה.")
+                        time.sleep(0.3)
+                        self.driver.execute_script("arguments[0].click();", button)
+                        logging.info("✅ נלחץ כפתור 'הצג מחירים' עם ID דינאמי.")
                         return
-                    except Exception as inner_e:
-                        logging.warning(f"ניסיון לחיצה נכשל על כפתור: {inner_e}")
+                    except Exception as click_error:
+                        logging.warning(f"⚠️ שגיאה בניסיון לחיצה: {click_error}")
                         continue
-            raise Exception("No clickable 'הצג מחירים' button was found.")
+
+            raise Exception("❌ לא נמצא כפתור 'הצג מחירים' שניתן ללחוץ עליו.")
+
         except Exception as e:
-            logging.error(f"Error clicking 'הצג מחירים': {e}")
+            logging.error(f"❌ שגיאה בלחיצה על כפתור 'הצג מחירים': {e}")
+            self.take_screenshot("show_prices_button_not_clicked")
+            raise
 
     def click_first_show_prices_button(self):
         logging.info("מחפש כפתורי 'הצג מחירים' במובייל...")
@@ -116,46 +128,48 @@ class FattalSearchResultPageMobile:
         logging.info("📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...")
 
         try:
-            # Try clicking the button by its full ID first — most precise
-            button_by_id = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "room-price-button-choose-room_ShClub 10_3"))
+            # Try finding buttons with dynamic ID pattern
+            buttons = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_all_elements_located(
+                    (By.XPATH, "//button[starts-with(@id, 'room-price-button-choose-room_')]"))
             )
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_id)
-            time.sleep(0.3)
-            self.driver.execute_script("arguments[0].click();", button_by_id)
-            logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי מזהה ID.")
+
+            for button in buttons:
+                if button.is_displayed() and "להזמנת חדר" in button.text:
+                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
+                    time.sleep(0.3)
+                    self.driver.execute_script("arguments[0].click();", button)
+                    logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי תבנית ID דינאמית.")
+                    return
+
+            logging.warning("⚠️ לא נמצאו כפתורים עם ID דינאמי גלויים, מנסה לפי טקסט...")
 
         except TimeoutException:
-            logging.warning("⚠️ כפתור לפי ID לא נמצא, מנסה לפי טקסט...")
-
-            try:
-                button_by_text = WebDriverWait(self.driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='להזמנת חדר']"))
-                )
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_text)
-                time.sleep(0.3)
-                self.driver.execute_script("arguments[0].click();", button_by_text)
-                logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי טקסט.")
-
-            except Exception as fallback_error:
-                logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר' לפי טקסט: {fallback_error}")
-                self.take_screenshot("book_room_button_error_text")
-                raise
+            logging.warning("⚠️ כפתור לפי תבנית ID לא נמצא או לא היה זמין, מנסה לפי טקסט...")
 
         except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר' לפי ID: {e}")
-            self.take_screenshot("book_room_button_error_id")
+            logging.error(f"❌ שגיאה בעת ניסיון לחפש כפתור לפי תבנית ID: {e}")
+            self.take_screenshot("book_room_button_error_dynamic_id")
+            # ממשיכים לנסות לפי טקסט
+
+        # Fallback - try finding by exact text
+        try:
+            button_by_text = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='להזמנת חדר']"))
+            )
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button_by_text)
+            time.sleep(0.3)
+            self.driver.execute_script("arguments[0].click();", button_by_text)
+            logging.info("✅ נלחץ כפתור 'להזמנת חדר' לפי טקסט.")
+
+        except TimeoutException:
+            logging.error("⏰ Timeout: לא נמצא כפתור 'להזמנת חדר' לפי טקסט.")
+            self.take_screenshot("book_room_button_timeout_text")
             raise
 
-
-        except TimeoutException as te:
-            logging.error("⏰ Timeout waiting for 'להזמנת חדר' button to become visible.")
-            self.take_screenshot("book_room_button_timeout")
-            raise
-
-        except Exception as e:
-            logging.error(f"❌ שגיאה בלחיצה על 'להזמנת חדר': {e}")
-            self.take_screenshot("book_room_button_error")
+        except Exception as fallback_error:
+            logging.error(f"❌ שגיאה בלחיצה על כפתור לפי טקסט: {fallback_error}")
+            self.take_screenshot("book_room_button_error_text")
             raise
 
     def wait_for_prices_to_load(self):
@@ -310,6 +324,33 @@ class FattalSearchResultPageMobile:
         except Exception as e:
             logging.error(f"❌ נכשל בלחיצה על כפתור 'להזמנת חדר' לאחר ניסיון ב'מחירים': {e}")
             self.take_screenshot("book_room_fallback_fail")
+            raise
+
+    def is_no_results_found(self):
+        try:
+            element = self.driver.find_element(By.ID, "search-page-no-search-results-title")
+            return "לא נמצאו מלונות" in element.text
+        except NoSuchElementException:
+            return False
+
+    def click_view_more_deal_by_index(self, index=0):
+        try:
+            deals = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_all_elements_located(
+                    (By.XPATH, "//a[contains(@href, '/deals/') and contains(text(), 'להזמנה ופרטים נוספים')]")
+                )
+            )
+            if index >= len(deals):
+                raise IndexError(f"Requested deal index {index} is out of range (total: {len(deals)})")
+
+            logging.info(f"🔁 Selecting deal at index {index}")
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deals[index])
+            time.sleep(0.4)
+            deals[index].click()
+
+        except Exception as e:
+            logging.error(f"❌ Failed to click deal #{index}: {e}")
+            self.take_screenshot("click_deal_retry_fail")
             raise
     def handle_no_search_results_and_choose_alternative(self):
         try:
