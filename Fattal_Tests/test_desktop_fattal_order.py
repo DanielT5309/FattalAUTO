@@ -161,6 +161,7 @@ class FattalDesktopTests(unittest.TestCase):
         return run_folder, now
 
     @staticmethod
+    @staticmethod
     def generate_dashboard_html(runs_base_dir: str):
         import os
         import json
@@ -191,10 +192,9 @@ class FattalDesktopTests(unittest.TestCase):
                 mobile = sum(1 for t in data if t.get("test_type") == "mobile")
                 desktop = sum(1 for t in data if t.get("test_type") == "desktop")
 
-                # New: Format day and full datetime
                 run_timestamp_str = run_dir.replace("run_", "")  # e.g., '2025-06-17_14-33-12'
                 run_datetime = datetime.strptime(run_timestamp_str, "%Y-%m-%d_%H-%M-%S")
-                day_label = run_datetime.strftime("%A")  # e.g., 'Tuesday'
+                day_label = run_datetime.strftime("%A")
                 datetime_label = run_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
                 label = f"{day_label} {datetime_label} | {total} tests | ✅ {passed} | ❌ {failed}"
@@ -232,13 +232,26 @@ class FattalDesktopTests(unittest.TestCase):
                           return `<div><strong>${{label}}:</strong><br><img src="../Screenshots/${{short}}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
                       }}).join("");
 
+                    // ---- Log path robust logic ----
+                    const logPath = test.log || "";
+                    let logHref = "#";
+                    if (logPath) {{
+                      let parts = logPath.replace(/\\\\/g, '/').split('/');
+                      if (parts.length >= 2) {{
+                        logHref = "../" + parts.slice(-2).join('/');
+                      }} else {{
+                        logHref = logPath;
+                      }}
+                    }}
+                    // --------------------------------
+
                     div.innerHTML = `
                       <h3>${{test.name}} — <span style="color:${{test.status === 'PASSED' ? 'green' : 'red'}}">${{test.status}}</span></h3>
                       <p><strong>Description:</strong> ${{test.description || "—"}}</p>
                       <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
                       <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
                       <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
-                      <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
+                      <p><strong>Log:</strong> <a href="${{logHref}}" target="_blank">${{logPath.split(/[\\\\/]/).pop()}}</a></p>
                       ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
                       <div class="screenshot-grid">${{screenshots}}</div>
                       <hr>`;
@@ -271,14 +284,45 @@ class FattalDesktopTests(unittest.TestCase):
               margin: 20px;
               color: #333;
             }}
-            h1 {{
+            .dashboard-header {{
               display: flex;
               align-items: center;
-              font-size: 1.8em;
+              justify-content: space-between;
+              margin-bottom: 10px;
+              gap: 24px;
             }}
-            h1::before {{
+            .dashboard-header h1 {{
+              margin: 0;
+              font-size: 1.8em;
+              display: flex;
+              align-items: center;
+              white-space: nowrap;
+            }}
+            .dashboard-header h1::before {{
               content: '🧪';
               margin-right: 10px;
+            }}
+            .header-logo {{
+              height: 60px;
+              max-width: 200px;
+              object-fit: contain;
+              border-radius: 8px;
+              background: #fff;
+              padding: 6px 12px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }}
+            @media (max-width: 700px) {{
+              .dashboard-header {{
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+              }}
+              .header-logo {{
+                margin-left: 0;
+                margin-top: 6px;
+                height: 44px;
+                max-width: 150px;
+              }}
             }}
             select {{
               font-size: 14px;
@@ -332,7 +376,10 @@ class FattalDesktopTests(unittest.TestCase):
           {script}
         </head>
         <body onload="populateRun(document.getElementById('runSelect').value)">
-          <h1>Fattal Run Selector Dashboard</h1>
+          <div class="dashboard-header">
+            <h1>Fattal Run Selector Dashboard</h1>
+            <img src="https://d2nyvxq412w7ra.cloudfront.net/_fcb5f25e78.png" alt="Fattal Logo" class="header-logo" />
+          </div>
           <label>Choose Run:
             <select id="runSelect" onchange="populateRun(this.value)">
               {select_html}
@@ -355,6 +402,7 @@ class FattalDesktopTests(unittest.TestCase):
             f.write(html)
 
         logging.info(f"✅ Dashboard generated at: {dashboard_path}")
+
     def confirm_and_assert_order(self):
         # Ensure confirmation_result is assigned before checking it
         self.confirmation_result = self.confirm_page.verify_confirmation_and_extract_order(self.entered_email)

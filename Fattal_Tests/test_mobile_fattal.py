@@ -257,10 +257,9 @@ class FattalMobileTests(unittest.TestCase):
                 mobile = sum(1 for t in data if t.get("test_type") == "mobile")
                 desktop = sum(1 for t in data if t.get("test_type") == "desktop")
 
-                # New: Format day and full datetime
                 run_timestamp_str = run_dir.replace("run_", "")  # e.g., '2025-06-17_14-33-12'
                 run_datetime = datetime.strptime(run_timestamp_str, "%Y-%m-%d_%H-%M-%S")
-                day_label = run_datetime.strftime("%A")  # e.g., 'Tuesday'
+                day_label = run_datetime.strftime("%A")
                 datetime_label = run_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
                 label = f"{day_label} {datetime_label} | {total} tests | ✅ {passed} | ❌ {failed}"
@@ -290,6 +289,19 @@ class FattalMobileTests(unittest.TestCase):
 
                 const div = document.createElement("div");
                 div.classList.add("test-entry");
+
+                // Robust log path logic for working links:
+                const logPath = test.log || "";
+                let logHref = "#";
+                if (logPath) {{
+                  let parts = logPath.replace(/\\\\/g, '/').split('/');
+                  if (parts.length >= 2) {{
+                    logHref = "../" + parts.slice(-2).join('/');
+                  }} else {{
+                    logHref = logPath;
+                  }}
+                }}
+
                 const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
                   .map(label => {{
                       const path = test[label] || "";
@@ -304,7 +316,7 @@ class FattalMobileTests(unittest.TestCase):
                   <p><strong>Timestamp:</strong> ${{test.timestamp}} | <strong>Duration:</strong> ${{test.duration}}</p>
                   <p><strong>Guest:</strong> ${{test.full_name}} | <strong>Email:</strong> ${{test.email}}</p>
                   <p><strong>Order #:</strong> ${{test.order_number}} | <strong>ID:</strong> ${{test.id_number}}</p>
-                  <p><strong>Log:</strong> <a href="../${{test.log?.split('/').slice(-2).join('/')}}" target="_blank">${{test.log?.split('/').pop()}}</a></p>
+                  <p><strong>Log:</strong> <a href="${{logHref}}" target="_blank">${{logPath.split(/[\\\\/]/).pop()}}</a></p>
                   ${{test.error ? `<p style='color:red'><strong>Error:</strong> ${{test.error}}</p>` : ""}}
                   <div class="screenshot-grid">${{screenshots}}</div>
                   <hr>`;
@@ -329,7 +341,7 @@ class FattalMobileTests(unittest.TestCase):
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>🧪 Fattal Run Selector Dashboard</title>
+      <title>🧪 Fattal QA Automation Dashboard</title>
       <style>
         body {{
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -337,14 +349,45 @@ class FattalMobileTests(unittest.TestCase):
           margin: 20px;
           color: #333;
         }}
-        h1 {{
+        .dashboard-header {{
           display: flex;
           align-items: center;
-          font-size: 1.8em;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          gap: 24px;
         }}
-        h1::before {{
+        .dashboard-header h1 {{
+          margin: 0;
+          font-size: 1.8em;
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+        }}
+        .dashboard-header h1::before {{
           content: '🧪';
           margin-right: 10px;
+        }}
+        .header-logo {{
+          height: 60px;
+          max-width: 200px;
+          object-fit: contain;
+          border-radius: 8px;
+          background: #fff;
+          padding: 6px 12px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }}
+        @media (max-width: 700px) {{
+          .dashboard-header {{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }}
+          .header-logo {{
+            margin-left: 0;
+            margin-top: 6px;
+            height: 44px;
+            max-width: 150px;
+          }}
         }}
         select {{
           font-size: 14px;
@@ -398,7 +441,10 @@ class FattalMobileTests(unittest.TestCase):
       {script}
     </head>
     <body onload="populateRun(document.getElementById('runSelect').value)">
-      <h1>Fattal Run Selector Dashboard</h1>
+      <div class="dashboard-header">
+        <h1>Fattal QA Automation Dashboard</h1>
+        <img src="https://d2nyvxq412w7ra.cloudfront.net/_fcb5f25e78.png" alt="Fattal Logo" class="header-logo" />
+      </div>
       <label>Choose Run:
         <select id="runSelect" onchange="populateRun(this.value)">
           {select_html}
