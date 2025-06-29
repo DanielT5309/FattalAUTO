@@ -62,9 +62,9 @@ class FattalMobileToolBar:
         try:
             logging.info("Checking for post-login popup...")
 
-            # Updated selector: use the correct, current class from your DOM snippet
+            # Updated selector: use the new class names from your DOM
             close_btn = self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, "div.sc-1997491d-3"
+                By.CSS_SELECTOR, "div.sc-60b5ebd3-3.gMhFjt"
             )))
 
             self.driver.execute_script("arguments[0].click();", close_btn)
