@@ -1120,6 +1120,7 @@ class FattalMobileTests(unittest.TestCase):
             self.confirmation_screenshot_path = self.take_confirmation_screenshot_renew_membership(self._testMethodName,
                                                                                                    "success")
             setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
+            self.confirmation_result = self.mobile_confirm.verify_confirmation_and_extract_order_mobile()
 
         except Exception as e:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
