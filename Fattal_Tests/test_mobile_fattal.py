@@ -2332,8 +2332,10 @@ class FattalMobileTests(unittest.TestCase):
 
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
-        self.mobile_search_page.handle_no_search_results_and_choose_alternative()
-        self.mobile_search_page.handle_search_flow_with_fallback(self)
+        # Step 5: Choose Room and click it
+        self.mobile_search_page.click_show_prices_regional()
+        self.take_stage_screenshot("room_selection")
+        self.mobile_search_page.click_book_room_regional()
         #fix
         # Step 5: Choose Room and click it
 
