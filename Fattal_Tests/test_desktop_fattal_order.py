@@ -1116,6 +1116,7 @@ class FattalDesktopTests(unittest.TestCase):
         # 👇 Add ID back into confirmation result
         self.confirm_and_assert_order()
         logging.info("✔️ Club login test finished with confirmed order.")
+
     def test_desktop_booking_anonymous_join_fattal_and_friends(self):
         self.save_for_cancellation = True
         self.soft_assert_errors = []

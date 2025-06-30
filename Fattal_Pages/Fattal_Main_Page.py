@@ -570,7 +570,7 @@ class FattalMainPage:
                 # Wait until the svg inside the div is clickable
                 logging.info("Checking for post-login popup...")
                 close_btn = self.wait.until(EC.element_to_be_clickable((
-                    By.CSS_SELECTOR, "div.sc-c18678ea-3.iOzwib"
+                    By.CSS_SELECTOR, "sc-60b5ebd3-3.gMhFjt"
                 )))
 
                 # Scroll the svg into view before clicking, in case it's off-screen

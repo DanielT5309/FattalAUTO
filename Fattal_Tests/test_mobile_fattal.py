@@ -1672,7 +1672,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
+            self.mobile_toolbar.close_post_login_popup_expired()
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(
@@ -1681,7 +1681,6 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
         self.entered_email = user["email"]        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1748,7 +1747,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
+            self.mobile_toolbar.close_post_login_popup_expired()
 
             logging.info("Logged in successfully.")
         except Exception as e:
@@ -1758,7 +1757,6 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
         self.entered_email = user["email"]        # Step 1: City selection
-        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1825,7 +1823,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
+            self.mobile_toolbar.close_post_login_popup_expired()
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")

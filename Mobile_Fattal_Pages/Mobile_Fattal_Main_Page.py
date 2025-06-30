@@ -603,6 +603,7 @@ class FattalMainPageMobile:
 
         except Exception as e:
             logging.error(f"❌ Failed to click validation button: {e}")
+
     def is_promo_code_applied(self, expected_code: str = "FHVR") -> bool:
         """
         Verifies that the promo code input field contains the expected value.
