@@ -81,7 +81,7 @@ class FattalMobileToolBar:
 
             # 🆕 Updated selector: new class from the provided HTML
             close_btn = self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, ".sc-60b5ebd3-3.gMhFjt"
+                By.CSS_SELECTOR, ".sc-4642954a-3.lnXKWk"
             )))
 
             self.driver.execute_script("arguments[0].click();", close_btn)
