@@ -565,35 +565,27 @@ class FattalMainPage:
             self.driver.find_element(By.CSS_SELECTOR, 'button.sc-923ff82e-7.hVHcft').click()
 
         def close_post_login_popup(self):
-            """Closes the post-login popup/modal."""
+            """Closes the post-login popup/modal if it appears."""
             try:
-                # Wait until the svg inside the div is clickable
                 logging.info("Checking for post-login popup...")
+
+                # Correct CSS selector: must use '.' for classes
                 close_btn = self.wait.until(EC.element_to_be_clickable((
-                    By.CSS_SELECTOR, "sc-60b5ebd3-3.gMhFjt"
+                    By.CSS_SELECTOR, "div.sc-60b5ebd3-3.gMhFjt"
                 )))
 
-                # Scroll the svg into view before clicking, in case it's off-screen
-                self.driver.execute_script("arguments[0].scrollIntoView(true);", close_btn)
+                # Scroll into view (center)
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", close_btn)
+                time.sleep(0.2)  # Small pause for scroll
 
-                # Perform the click using JavaScript to ensure it works even if the element is covered
+                # Prefer JS click (SVGs sometimes block standard click)
                 self.driver.execute_script("arguments[0].click();", close_btn)
-
-                logging.info("Post-login popup closed.")
-
-            except TimeoutException:
-                logging.info("No post-login popup appeared.")
-            except Exception as e:
-                logging.warning(f"Failed to close post-login popup: {e}")
-
-
-            except TimeoutException:
-                logging.info("No post-login popup appeared.")
-
+                logging.info("✅ Post-login popup closed.")
 
             except TimeoutException:
                 logging.info("No post-login popup appeared — skipping.")
             except Exception as e:
+                self.take_screenshot("close_post_login_popup_fail")
                 logging.warning(f"Failed to close post-login popup: {e}")
 
         # Footer button methods (legal, accessibility, etc.)
