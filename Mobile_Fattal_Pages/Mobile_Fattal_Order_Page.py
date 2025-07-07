@@ -66,21 +66,28 @@ class FattalOrderPageMobile:
 
             el = elements[0]
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", el)
-            self.wait.until(lambda d: el.is_displayed() and el.is_enabled())
+            time.sleep(0.2)  # Let scroll settle (important on mobile)
 
+            # Extra scroll up to clear any sticky header/footer overlays
+            self.driver.execute_script("window.scrollBy(0, -90);")
+
+            # Wait for clickable (will also wait for visible & enabled)
+            self.wait.until(EC.element_to_be_clickable((by, value)))
+
+            # Try click + clear + send_keys, then JS fallback if *any* fails
             try:
-                # Try traditional way first
                 el.click()
+                time.sleep(0.07)  # Sometimes helps with virtual keyboards
                 el.clear()
-                for _ in range(10):
+                for _ in range(10):  # Clear any leftovers
                     el.send_keys("\ue003")
-                    time.sleep(0.02)
+                    time.sleep(0.01)
                 el.send_keys(text)
                 logging.info(f" [Mobile] {label} filled correctly with send_keys().")
+            except Exception as click_exc:
+                logging.warning(f"⚠️ Element click/send_keys failed for '{label}': {click_exc}, trying JS fallback.")
 
-            except ElementNotInteractableException:
-                logging.warning(f"⚠ Element not interactable: '{label}'. Using JS React fallback.")
-
+                # Fallback to JS input (handles React fields)
                 react_fallback = """
                     var el = arguments[0];
                     var value = arguments[1];
