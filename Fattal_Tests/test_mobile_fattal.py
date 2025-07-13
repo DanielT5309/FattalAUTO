@@ -1706,7 +1706,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_join_club_checkbox()
+        #self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
 
@@ -1782,7 +1782,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        self.mobile_order_page.click_join_club_checkbox()
+        #self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
 
