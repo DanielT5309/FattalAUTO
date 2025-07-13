@@ -79,16 +79,27 @@ class FattalMobileToolBar:
         try:
             logging.info("Checking for post-login popup...")
 
-            # 🆕 Updated selector: new class from the provided HTML
-            close_btn = self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, ".sc-4642954a-3.lnXKWk"
-            )))
+            # Try both selectors: new one (from your HTML), old one (existing code)
+            selectors = [
+                ".sc-e8baa4cf-3.exmeUH",  # 🆕 New button you pasted
+                ".sc-60b5ebd3-3.gMhFjt",  # 🏷️ Old selector
+            ]
 
-            self.driver.execute_script("arguments[0].click();", close_btn)
-            logging.info("✅ Post-login popup closed.")
+            close_btn = None
+            for selector in selectors:
+                try:
+                    close_btn = self.wait.until(EC.element_to_be_clickable((
+                        By.CSS_SELECTOR, selector
+                    )))
+                    if close_btn:
+                        self.driver.execute_script("arguments[0].click();", close_btn)
+                        logging.info(f"✅ Post-login popup closed with selector: {selector}")
+                        return
+                except TimeoutException:
+                    continue  # Try the next selector
 
-        except TimeoutException:
-            logging.info("ℹ️ No post-login popup appeared.")
+            logging.info("ℹ️ No post-login popup appeared with any known selector.")
+
         except Exception as e:
             logging.error(f"❌ Failed to close popup: {e}")
 
