@@ -130,15 +130,18 @@ class FattalMobileTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.run_folder, cls.run_id = cls.get_static_run_folder()
+
     def setUp(self):
+        import os, sys, io, logging
+        from selenium import webdriver
+        from dotenv import load_dotenv
+        from datetime import datetime
+
         self.run_folder = self.__class__.run_folder
         load_dotenv()
         self.log_stream = io.StringIO()
-        self.run_folder = self.__class__.run_folder
-        # Reset logging configuration
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
-
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(message)s",
@@ -147,42 +150,49 @@ class FattalMobileTests(unittest.TestCase):
                 logging.StreamHandler(sys.stdout)
             ]
         )
-
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Use a valid built-in Chrome emulation device (Pixel 2)
+        # Mobile emulation config
         mobile_emulation = {
-            "deviceMetrics": {"width": 411, "height": 800, "pixelRatio": 3.0},
-            "userAgent": "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+            "deviceMetrics": {"width": 411, "height": 950, "pixelRatio": 3.0},
+            "userAgent": (
+                "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+            )
         }
-
         options = webdriver.ChromeOptions()
         options.add_experimental_option("mobileEmulation", mobile_emulation)
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        # options.add_argument("--disable-infobars")
-        # options.add_argument("--headless")
-        # options.add_argument("--no-sandbox")
-        # options.add_argument("--disable-dev-shm-usage")
+
+        # *** Add these options for universal compatibility ***
+        options.add_argument("--window-size=411,950")  # for headless and stability
+        options.add_argument("--force-device-scale-factor=1")
+
+        # Optional: for 100% clean state
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-popup-blocking")
+        # options.add_argument("--headless=new")  # Only if you want headless mode
 
         self.driver = webdriver.Chrome(options=options)
 
-        # Override window size manually to make it taller 📸
-        # Pixel 2 is normally 411x731, so let's go 411x1200
-        self.driver.set_window_rect(x=620, y=0, width=411, height=950)
+        # Set the window size again to force Chrome to correct physical size
+        self.driver.set_window_rect(x=0, y=0, width=411, height=950)
 
         self.test_start_time = datetime.now()
         self.driver.implicitly_wait(10)
 
-        # Optional — force touch emulation for some mobile interactions
+        # Optional: force touch emulation for some mobile interactions
         self.driver.execute_cdp_cmd("Emulation.setTouchEmulationEnabled", {
             "enabled": True,
             "configuration": "mobile"
         })
+
         active_key = os.getenv("ENV_ACTIVE")
         self.driver.get(active_key)
         logging.info(f"Opened environment URL: {active_key}")
-        # Load defaults from .env
+
+        # ... The rest of your environment variable code ...
         self.default_guest = {
             "email": os.getenv("DEFAULT_EMAIL"),
             "phone": os.getenv("DEFAULT_PHONE"),
@@ -216,7 +226,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_flight_page = FattalFlightPageMobile(self.driver)
         self.mobile_customer_support = FattalMobileCustomerSupport(self.driver)
         self.mobile_club_join_page = FattalMobileClubJoinPage(self.driver)
-
 
     @classmethod
     def get_static_run_folder(cls):
