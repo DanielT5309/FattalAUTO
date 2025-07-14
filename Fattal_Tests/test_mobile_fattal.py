@@ -154,10 +154,10 @@ class FattalMobileTests(unittest.TestCase):
 
         # Mobile emulation config
         mobile_emulation = {
-            "deviceMetrics": {"width": 411, "height": 950, "pixelRatio": 3.0},
+            "deviceMetrics": {"width": 411, "height": 950},
             "userAgent": (
                 "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
             )
         }
         options = webdriver.ChromeOptions()
