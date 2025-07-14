@@ -152,11 +152,22 @@ class FattalOrderPageMobile:
                 except TimeoutException:
                     continue
 
-            raise TimeoutException("❌ Join Club checkbox not found with fallback XPaths.")
+            # Fallback: try to click the input directly
+            input_xpath = "//input[contains(@class, 'PrivateSwitchBase-input') and @type='checkbox' and (contains(@id,'membershipCheckbox') or contains(@aria-label,'true'))]"
+            try:
+                checkbox = self.wait.until(EC.presence_of_element_located((By.XPATH, input_xpath)))
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", checkbox)
+                time.sleep(0.3)
+                self.driver.execute_script("arguments[0].click();", checkbox)
+                logging.info(f"✅ Clicked 'Join Club' checkbox directly using INPUT XPath: {input_xpath}")
+                return
+            except TimeoutException:
+                pass
+
+            raise TimeoutException("❌ Join Club checkbox not found with fallback XPaths or direct input click.")
 
         except Exception as e:
-            self.take_screenshot("join_club_checkbox_fail")
-            logging.error(f"❌ Failed to click 'Join Club' checkbox: {e}")
+            logging.error(f"Error clicking 'Join Club' checkbox: {e}")
             raise
 
     # ✅ USER AGREEMENT CHECKBOX

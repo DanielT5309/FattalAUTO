@@ -1770,7 +1770,6 @@ class FattalMobileTests(unittest.TestCase):
         self.mobile_main_page.click_mobile_room_selection()
         self.mobile_main_page.set_mobile_room_occupants(adults=2, children=1, infants=0)
         self.mobile_main_page.click_room_continue_button()
-
         # Step 4: Perform the search
         self.mobile_main_page.click_mobile_search_button()
         self.mobile_toolbar.handle_membership_renewal_popup()
