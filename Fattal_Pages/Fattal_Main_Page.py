@@ -689,21 +689,34 @@ class FattalMainPage:
 
         def close_war_popup(self):
             """
-            Attempts to close the popup with id='ex-popup-modal-close-btn'.
+            Attempts to close the WAR popup modal on mobile.
+            Tries both by ID (#ex-popup-modal-close-btn) and by close button class (.u-close-button).
+            If not found, skips gracefully.
             """
             try:
-                # Wait until the close button is clickable
-                close_button = WebDriverWait(self.driver, 3).until(
-                    EC.element_to_be_clickable(
-                        (By.CSS_SELECTOR, "#ex-popup-modal-close-btn")
-                    )
+                # Try by ID first
+                close_button = WebDriverWait(self.driver, 2).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "#ex-popup-modal-close-btn"))
                 )
-
-                # Click using JS for reliability (covers overlays/obscured elements)
                 self.driver.execute_script("arguments[0].click();", close_button)
-                logging.info("WAR popup closed.")
-            except Exception as e:
-                logging.info(f"WAR popup not found or failed to click — continuing without closing. Error: {e}")
+                logging.info("WAR popup closed (by id).")
+                return
+            except Exception as e_id:
+                logging.info(f"WAR popup close by ID failed: {e_id}")
+
+            try:
+                # Try by class 'u-close-button' (generic modal close, fallback)
+                close_button_alt = WebDriverWait(self.driver, 2).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u-close-button"))
+                )
+                self.driver.execute_script("arguments[0].click();", close_button_alt)
+                logging.info("WAR popup closed (by class 'u-close-button').")
+                return
+            except Exception as e_class:
+                logging.info(f"WAR popup close by class failed: {e_class}")
+
+            # Not found — skip silently
+            logging.info("No WAR popup found, or already closed. Continuing test flow.")
 
         def accessibility_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(1)').click()
         def customer_support_button(self): self.driver.find_element(By.CSS_SELECTOR, 'a.sc-d3198970-0.MBsfR:nth-of-type(2)').click()
