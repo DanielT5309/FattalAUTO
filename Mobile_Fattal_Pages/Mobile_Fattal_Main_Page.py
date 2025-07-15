@@ -687,16 +687,34 @@ class FattalMainPageMobile:
 
     def close_war_popup(self):
         """
-        Closes the 'WAR' popup modal on mobile using its unique button ID.
+        Closes the 'WAR' popup modal on mobile using its unique button ID
+        OR the <a class="u-close-button"> element.
+        Skips gracefully if popup is not present.
         """
         try:
-            close_button = WebDriverWait(self.driver, 3).until(
+            # Try by unique ID first
+            close_button = WebDriverWait(self.driver, 2).until(
                 EC.element_to_be_clickable((By.ID, "ex-popup-modal-close-btn"))
             )
             self.driver.execute_script("arguments[0].click();", close_button)
-            logging.info("WAR popup (mobile) closed.")
+            logging.info("WAR popup closed via ID button.")
+            return
         except Exception as e:
-            logging.info(f"WAR popup (mobile) not found or failed to click — continuing. Error: {e}")
+            logging.info("WAR popup ID button not found, trying class selector...")
+
+        try:
+            # Try by class, in case the ID is missing
+            close_button = WebDriverWait(self.driver, 2).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u-close-button"))
+            )
+            self.driver.execute_script("arguments[0].click();", close_button)
+            logging.info("WAR popup closed via class selector (u-close-button).")
+            return
+        except Exception as e:
+            logging.info("WAR popup class button not found — skipping close_war_popup.")
+
+        # If both fail, just continue (no exception raised)
+        return
 
     def select_date_range_months_ahead(self, months_ahead=2, stay_length=3):
         """

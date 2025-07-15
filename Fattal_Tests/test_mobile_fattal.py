@@ -1669,7 +1669,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
+        self.mobile_main_page.close_war_popup()
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_RENEW_ID"),
@@ -1744,7 +1744,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-
+        self.mobile_main_page.close_war_popup()
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
