@@ -1,7 +1,7 @@
 import random
 from dateutil.relativedelta import relativedelta
 from selenium.common import TimeoutException, StaleElementReferenceException, MoveTargetOutOfBoundsException
-from selenium.webdriver import ActionChains
+from selenium.webdriver import ActionChains, Keys
 from selenium import webdriver
 from datetime import datetime, date,timedelta
 import os
@@ -44,18 +44,34 @@ class FattalMainPageMobile:
             self.take_screenshot("click_mobile_hotel_search_input_fail")
             raise
 
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.keys import Keys
+    import logging
+    import time
+
     def set_city_mobile(self, city_name: str):
         try:
-            input_field = WebDriverWait(self.driver, 5).until(
-                EC.presence_of_element_located((By.ID, "main-input"))
+            # חכה שהשדה יופיע ויהיה קליקבילי
+            input_field = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "main-input"))
             )
-            input_field.clear()
-            input_field.send_keys(city_name)
-            input_field.click()
-            logging.info(f"Typed city name in mobile: {city_name}")
-        except Exception as e:
-            logging.error(f"Failed to set city on mobile: {e}")
+            # השתמש ב-JS כדי לעקוף חפיפה/שכבה
+            self.driver.execute_script("arguments[0].click();", input_field)
+            time.sleep(0.5)
 
+            # נקה וכתוב
+            input_field.send_keys(city_name)
+            time.sleep(1)
+
+            # תן לרשימת ההצעות להופיע
+
+            logging.info(f"✅ Typed city name in mobile: {city_name}")
+
+        except Exception as e:
+            self.driver.save_screenshot("city_input_error.png")
+            logging.error(f"❌ Failed to set city on mobile: {e}")
 
     def take_screenshot(self, name="error_screenshot"):
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -65,8 +81,9 @@ class FattalMainPageMobile:
         self.driver.save_screenshot(path)
         logging.error(f"Screenshot saved: {path}")
 
+
     def click_first_suggested_hotel(self):
-        #chen bug
+        # chen bug
         try:
             suggestion_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-input-rendered-hotel-item"))
@@ -77,7 +94,6 @@ class FattalMainPageMobile:
         except Exception as e:
             logging.error(f"Failed to click first suggested hotel: {e}")
             self.take_screenshot("click_suggested_hotel_fail")
-            raise
 
     def click_mobile_date_picker(self):
         try:

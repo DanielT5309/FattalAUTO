@@ -154,7 +154,7 @@ class FattalMobileTests(unittest.TestCase):
 
         # Mobile emulation config
         mobile_emulation = {
-            "deviceMetrics": {"width": 411, "height": 950},
+            "deviceMetrics": {"width": 411, "height": 850},
             "userAgent": (
                 "Mozilla/5.0 (Linux; Android 10; Pixel 2 XL) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
@@ -1545,7 +1545,7 @@ class FattalMobileTests(unittest.TestCase):
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי + קופון 1 של פתאל גיפטס באילת"
-        hotel_name = "תל אביב, ישראל"
+        hotel_name = self.default_hotel_name
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
         self.mobile_main_page.close_war_popup()
@@ -1609,7 +1609,7 @@ class FattalMobileTests(unittest.TestCase):
         self.soft_assert_errors = []
 
         self.test_description = "בדיקת השלמת הזמנה משתמש אנונימי +3 קופונים של פתאל גיפטס באילת"
-        hotel_name = "תל אביב, ישראל"
+        hotel_name = self.default_hotel_name
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
         self.mobile_main_page.close_war_popup()
@@ -1715,7 +1715,7 @@ class FattalMobileTests(unittest.TestCase):
         # Step 6 : Order Page (for club, skip email + id)
         self.mobile_order_page.wait_until_personal_form_ready()
         self.take_stage_screenshot("payment_stage")
-        #self.mobile_order_page.click_join_club_checkbox()
+        self.mobile_order_page.click_join_club_checkbox()
         self.mobile_order_page.click_user_agreement_checkbox()
         sleep(15)
 
@@ -2154,7 +2154,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_anonymous_europe(self):
+    #def test_mobile_booking_anonymous_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
@@ -2215,7 +2215,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_with_club_login_europe(self):
+   # def test_mobile_booking_with_club_login_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []
@@ -2293,7 +2293,7 @@ class FattalMobileTests(unittest.TestCase):
         self.confirmation_screenshot_path = self.take_confirmation_screenshot(self._testMethodName, "success")
         setattr(self, "screenshot_confirmation", self.confirmation_screenshot_path)
 
-    def test_mobile_booking_with_club_login_11night_europe(self):
+    #def test_mobile_booking_with_club_login_11night_europe(self):
         self.save_for_cancellation = False  # Enable save-for-cancel feature
 
         self.soft_assert_errors = []

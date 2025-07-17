@@ -77,31 +77,34 @@ class FattalMobileToolBar:
 
     def close_post_login_popup_expired(self):
         try:
-            logging.info("Checking for post-login popup...")
+            logging.info("📍 Checking for post-login popup...")
 
-            # Try both selectors: new one (from your HTML), old one (existing code)
             selectors = [
-                ".sc-e8baa4cf-3.exmeUH",  # 🆕 New button you pasted
+                ".sc-e8baa4cf-3.exmeUH",  # 🆕 New selector
                 ".sc-60b5ebd3-3.gMhFjt",  # 🏷️ Old selector
             ]
 
-            close_btn = None
             for selector in selectors:
                 try:
-                    close_btn = self.wait.until(EC.element_to_be_clickable((
-                        By.CSS_SELECTOR, selector
-                    )))
-                    if close_btn:
-                        self.driver.execute_script("arguments[0].click();", close_btn)
-                        logging.info(f"✅ Post-login popup closed with selector: {selector}")
-                        return
-                except TimeoutException:
-                    continue  # Try the next selector
+                    logging.info(f"🔍 Trying selector: {selector}")
+                    close_btn = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
 
-            logging.info("ℹ️ No post-login popup appeared with any known selector.")
+                    if close_btn.is_displayed() and close_btn.is_enabled():
+                        self.driver.execute_script("arguments[0].click();", close_btn)
+                        logging.info(f"✅ Post-login popup closed using selector: {selector}")
+
+                        # Optional: wait until popup is gone
+                        self.wait.until_not(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
+                        return
+
+                except (TimeoutException, ElementClickInterceptedException, StaleElementReferenceException) as e:
+                    logging.debug(f"❌ Selector failed: {selector} -> {type(e).__name__}")
+                    continue
+
+            logging.info("ℹ️ No post-login popup appeared or could not be closed.")
 
         except Exception as e:
-            logging.error(f"❌ Failed to close popup: {e}")
+            logging.error(f"🔥 Unexpected error during popup close: {e}")
 
     def handle_membership_renewal_popup(self):
         """Handles the optional 'membership renewal' popup by clicking the renewal button if it appears."""
