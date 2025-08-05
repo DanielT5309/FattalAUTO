@@ -1,0 +1,74 @@
+2025-07-18 18:14:26,371 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-18 18:14:26,371 - INFO - Starting mobile booking test for Eilat including flights...
+2025-07-18 18:14:26,371 - INFO - Opening personal zone (mobile login)...
+2025-07-18 18:14:26,386 - INFO - Login menu opened via JavaScript interaction.
+2025-07-18 18:14:26,386 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-18 18:14:27,122 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-18 18:14:27,544 - INFO - Clicking login button (mobile)...
+2025-07-18 18:14:28,236 - INFO - Login button clicked.
+2025-07-18 18:14:28,236 - INFO - Checking for post-login popup...
+2025-07-18 18:14:30,164 - INFO - ✅ Post-login popup closed.
+2025-07-18 18:14:30,164 - INFO - Logged in successfully.
+2025-07-18 18:14:40,176 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-18 18:14:50,208 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-18 18:14:50,208 - INFO - Searching for hotel input container (mobile)...
+2025-07-18 18:14:50,312 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-18 18:14:52,490 - INFO - ✅ Typed city name in mobile: אילת, ישראל
+2025-07-18 18:14:52,685 - INFO - Clicked first suggested region from list.
+2025-07-18 18:14:52,872 - INFO - Opened mobile calendar (date picker).
+2025-07-18 18:14:52,873 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-18 18:14:54,922 - INFO - Attempting to select: 26 בספטמבר 2025 to 1 באוקטובר 2025 (5 לילות)
+2025-07-18 18:14:57,951 - INFO - Calendar still open after selection – continuing.
+2025-07-18 18:14:58,531 - INFO - Selected check-in: 26 בספטמבר 2025 → check-out: 1 באוקטובר 2025
+2025-07-18 18:14:58,531 - INFO - Confirmed calendar selection.
+2025-07-18 18:14:58,537 - INFO - Room modal already open — skip clicking.
+2025-07-18 18:14:58,537 - INFO - Room modal already open — did not click again.
+2025-07-18 18:14:58,537 - INFO - Adjusting room occupants...
+2025-07-18 18:14:58,543 - INFO - Room modal confirmed present.
+2025-07-18 18:14:58,543 - INFO - Setting adults to 2...
+2025-07-18 18:14:58,564 - INFO - Adults set to: 2
+2025-07-18 18:14:58,564 - INFO - Setting children to 0...
+2025-07-18 18:14:58,581 - INFO - Children set to: 0
+2025-07-18 18:14:58,581 - INFO - Setting infants to 0...
+2025-07-18 18:14:58,600 - INFO - Infants set to: 0
+2025-07-18 18:14:58,600 - INFO - Room occupant adjustment completed.
+2025-07-18 18:14:58,600 - INFO - Searching for 'המשך' room continue button...
+2025-07-18 18:14:58,603 - INFO - Room modal is visible and ready.
+2025-07-18 18:14:59,039 - INFO - Clicked room continue button (native click).
+2025-07-18 18:14:59,039 - INFO - Opening flight dropdown and selecting 'מכל שדות התעופה'...
+2025-07-18 18:14:59,859 - INFO - Selected 'מכל שדות התעופה' for flights.
+2025-07-18 18:14:59,859 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-18 18:15:04,951 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-18 18:15:04,959 - INFO - Found button with text: 'חפש חופשה'
+2025-07-18 18:15:05,435 - INFO - Clicked search button (JS click).
+2025-07-18 18:15:05,435 - INFO - 🔎 Checking if search returned no results...
+2025-07-18 18:15:36,528 - INFO - ✅ Search results exist — no 'no results' message.
+2025-07-18 18:15:46,580 - INFO - ✅ Hotel results found — executing standard booking flow.
+2025-07-18 18:15:46,580 - INFO - 📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-07-18 18:15:56,584 - WARNING - ⚠️ כפתור לפי תבנית ID לא נמצא או לא היה זמין, מנסה לפי טקסט...
+2025-07-18 18:16:06,607 - ERROR - ⏰ Timeout: לא נמצא כפתור 'להזמנת חדר' לפי טקסט.
+2025-07-18 18:16:06,669 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\book_room_button_timeout_text_2025-07-18_18-16-06.png
+2025-07-18 18:16:06,670 - ERROR - ❌ Error during hotel search flow: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c7e7e925+77845]
+	GetHandleVerifier [0x0x7ff7c7e7e980+77936]
+	(No symbol) [0x0x7ff7c7c39cda]
+	(No symbol) [0x0x7ff7c7c906aa]
+	(No symbol) [0x0x7ff7c7c9095c]
+	(No symbol) [0x0x7ff7c7ce3d07]
+	(No symbol) [0x0x7ff7c7cb890f]
+	(No symbol) [0x0x7ff7c7ce0b07]
+	(No symbol) [0x0x7ff7c7cb86a3]
+	(No symbol) [0x0x7ff7c7c81791]
+	(No symbol) [0x0x7ff7c7c82523]
+	GetHandleVerifier [0x0x7ff7c815683d+3059501]
+	GetHandleVerifier [0x0x7ff7c8150bfd+3035885]
+	GetHandleVerifier [0x0x7ff7c81703f0+3164896]
+	GetHandleVerifier [0x0x7ff7c7e98c2e+185118]
+	GetHandleVerifier [0x0x7ff7c7ea053f+216111]
+	GetHandleVerifier [0x0x7ff7c7e872d4+113092]
+	GetHandleVerifier [0x0x7ff7c7e87489+113529]
+	GetHandleVerifier [0x0x7ff7c7e6e288+10616]
+	BaseThreadInitThunk [0x0x7fff0a91e8d7+23]
+	RtlUserThreadStart [0x0x7fff0b57c34c+44]
+

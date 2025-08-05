@@ -1,0 +1,90 @@
+2025-07-18 18:21:04,139 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-18 18:21:04,139 - INFO - Starting test: Join Fattal Club
+2025-07-18 18:21:04,139 - INFO - Generated ID for club registration: 268668993
+2025-07-18 18:21:14,155 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-18 18:21:24,214 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-18 18:21:24,214 - INFO - Trying to click on 'עוד' (More) tab in footer (mobile)...
+2025-07-18 18:21:24,302 - INFO -  Clicked 'עוד' (More) footer tab successfully.
+2025-07-18 18:21:24,303 - INFO - Clicking 'מועדון פתאל וחברים' tab in mobile footer...
+2025-07-18 18:21:24,742 - INFO - 'מועדון פתאל וחברים' tab clicked successfully.
+2025-07-18 18:21:24,742 - INFO - Scrolling to and clicking 'להצטרפות למועדון' button...
+2025-07-18 18:21:26,257 - INFO - 'להצטרפות למועדון' button clicked successfully.
+2025-07-18 18:21:26,257 - INFO - Filling Fattal Friends club join form...
+2025-07-18 18:21:26,257 - INFO - Using ID Number: 268668993
+2025-07-18 18:21:26,560 - INFO - Filled input: שם פרטי
+2025-07-18 18:21:26,611 - INFO - Filled input: שם משפחה
+2025-07-18 18:21:26,717 - INFO - Filled input: כתובת דוא״ל
+2025-07-18 18:21:26,822 - INFO - Filled input: מספר טלפון נייד
+2025-07-18 18:21:26,921 - INFO - Filled input: תאריך לידה
+2025-07-18 18:21:26,983 - INFO - Filled input: מספר תעודת זהות
+2025-07-18 18:21:27,048 - INFO - Filled input: בחרו סיסמא
+2025-07-18 18:21:27,048 - INFO - All club form fields filled successfully.
+2025-07-18 18:21:27,104 - INFO - Fattal Club form filled and validated successfully.
+2025-07-18 18:21:27,104 - INFO - Clicking the terms acceptance checkbox...
+2025-07-18 18:21:27,521 - INFO - Checkbox clicked successfully.
+2025-07-18 18:21:42,522 - INFO - Using credit card details from config.json
+2025-07-18 18:21:52,568 - ERROR - Failed to apply credit card details from config: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="paymentIframe"]"}
+  (Session info: chrome=138.0.7204.101); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c7e7e925+77845]
+	GetHandleVerifier [0x0x7ff7c7e7e980+77936]
+	(No symbol) [0x0x7ff7c7c39cda]
+	(No symbol) [0x0x7ff7c7c906aa]
+	(No symbol) [0x0x7ff7c7c9095c]
+	(No symbol) [0x0x7ff7c7ce3d07]
+	(No symbol) [0x0x7ff7c7cb890f]
+	(No symbol) [0x0x7ff7c7ce0b07]
+	(No symbol) [0x0x7ff7c7cb86a3]
+	(No symbol) [0x0x7ff7c7c81791]
+	(No symbol) [0x0x7ff7c7c82523]
+	GetHandleVerifier [0x0x7ff7c815683d+3059501]
+	GetHandleVerifier [0x0x7ff7c8150bfd+3035885]
+	GetHandleVerifier [0x0x7ff7c81703f0+3164896]
+	GetHandleVerifier [0x0x7ff7c7e98c2e+185118]
+	GetHandleVerifier [0x0x7ff7c7ea053f+216111]
+	GetHandleVerifier [0x0x7ff7c7e872d4+113092]
+	GetHandleVerifier [0x0x7ff7c7e87489+113529]
+	GetHandleVerifier [0x0x7ff7c7e6e288+10616]
+	BaseThreadInitThunk [0x0x7fff0a91e8d7+23]
+	RtlUserThreadStart [0x0x7fff0b57c34c+44]
+
+2025-07-18 18:21:52,651 - ERROR - Join Fattal Club test failed. Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\join_club_test_fail_2025-07-18_18-21-52.png
+Traceback (most recent call last):
+  File "C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\test_mobile_fattal.py", line 1123, in test_mobile_join_fattal_and_friends_form
+    self.fill_payment_details_from_config()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\test_mobile_fattal.py", line 947, in fill_payment_details_from_config
+    iframe = self.driver.find_element(By.ID, "paymentIframe")
+  File "C:\Users\chene\PycharmProjects\FattalAUTO\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 898, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chene\PycharmProjects\FattalAUTO\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 429, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\chene\PycharmProjects\FattalAUTO\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="paymentIframe"]"}
+  (Session info: chrome=138.0.7204.101); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c7e7e925+77845]
+	GetHandleVerifier [0x0x7ff7c7e7e980+77936]
+	(No symbol) [0x0x7ff7c7c39cda]
+	(No symbol) [0x0x7ff7c7c906aa]
+	(No symbol) [0x0x7ff7c7c9095c]
+	(No symbol) [0x0x7ff7c7ce3d07]
+	(No symbol) [0x0x7ff7c7cb890f]
+	(No symbol) [0x0x7ff7c7ce0b07]
+	(No symbol) [0x0x7ff7c7cb86a3]
+	(No symbol) [0x0x7ff7c7c81791]
+	(No symbol) [0x0x7ff7c7c82523]
+	GetHandleVerifier [0x0x7ff7c815683d+3059501]
+	GetHandleVerifier [0x0x7ff7c8150bfd+3035885]
+	GetHandleVerifier [0x0x7ff7c81703f0+3164896]
+	GetHandleVerifier [0x0x7ff7c7e98c2e+185118]
+	GetHandleVerifier [0x0x7ff7c7ea053f+216111]
+	GetHandleVerifier [0x0x7ff7c7e872d4+113092]
+	GetHandleVerifier [0x0x7ff7c7e87489+113529]
+	GetHandleVerifier [0x0x7ff7c7e6e288+10616]
+	BaseThreadInitThunk [0x0x7fff0a91e8d7+23]
+	RtlUserThreadStart [0x0x7fff0b57c34c+44]
+

@@ -1,0 +1,30 @@
+2025-07-09 14:44:31,498 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-09 14:44:31,498 - INFO - Starting test: hotel search and booking flow
+2025-07-09 14:44:31,498 - INFO - Generated Israeli ID: 120386776
+2025-07-09 14:44:41,522 - INFO - WAR popup (mobile) not found or failed to click — continuing. Error: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff784346f75+76917]
+	GetHandleVerifier [0x0x7ff784346fd0+77008]
+	(No symbol) [0x0x7ff7840f9dea]
+	(No symbol) [0x0x7ff784150256]
+	(No symbol) [0x0x7ff78415050c]
+	(No symbol) [0x0x7ff7841a3887]
+	(No symbol) [0x0x7ff7841784af]
+	(No symbol) [0x0x7ff7841a065c]
+	(No symbol) [0x0x7ff784178243]
+	(No symbol) [0x0x7ff784141431]
+	(No symbol) [0x0x7ff7841421c3]
+	GetHandleVerifier [0x0x7ff78461d2ad+3051437]
+	GetHandleVerifier [0x0x7ff784617903+3028483]
+	GetHandleVerifier [0x0x7ff78463589d+3151261]
+	GetHandleVerifier [0x0x7ff78436183e+185662]
+	GetHandleVerifier [0x0x7ff7843696ff+218111]
+	GetHandleVerifier [0x0x7ff78434faf4+112628]
+	GetHandleVerifier [0x0x7ff78434fca9+113065]
+	GetHandleVerifier [0x0x7ff784336c78+10616]
+	BaseThreadInitThunk [0x0x7fff0896e8d7+23]
+	RtlUserThreadStart [0x0x7fff09a9c34c+44]
+
+2025-07-09 14:44:41,522 - INFO - Searching for hotel input container (mobile)...
+2025-07-09 14:44:41,591 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-09 14:44:41,880 - INFO - Typed city name in mobile: לאונרדו נגב, באר שבע

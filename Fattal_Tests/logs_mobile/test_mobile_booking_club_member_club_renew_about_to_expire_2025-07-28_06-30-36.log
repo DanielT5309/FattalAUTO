@@ -1,0 +1,97 @@
+2025-07-28 06:30:03,123 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-28 06:30:03,123 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-07-28 06:30:13,178 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-28 06:30:13,207 - INFO - WAR popup closed via class selector (u-close-button).
+2025-07-28 06:30:13,207 - INFO - Opening personal zone (mobile login)...
+2025-07-28 06:30:13,231 - INFO - Login menu opened via JavaScript interaction.
+2025-07-28 06:30:13,231 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-28 06:30:13,895 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-28 06:30:14,354 - INFO - Clicking login button (mobile)...
+2025-07-28 06:30:14,519 - INFO - Login button clicked.
+2025-07-28 06:30:14,520 - INFO - 📍 Checking for post-login popup...
+2025-07-28 06:30:14,520 - INFO - 🔍 Trying selector: .sc-e8baa4cf-3.exmeUH
+2025-07-28 06:30:24,554 - ERROR - 🔥 Unexpected error during popup close: name 'ElementClickInterceptedException' is not defined
+2025-07-28 06:30:24,555 - INFO - Logged in successfully.
+2025-07-28 06:30:24,555 - INFO - Searching for hotel input container (mobile)...
+2025-07-28 06:30:24,609 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-28 06:30:25,277 - ERROR - ❌ Failed to set city on mobile: Message: element not interactable
+  (Session info: chrome=138.0.7204.169)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff609cee935+77845]
+	GetHandleVerifier [0x0x7ff609cee990+77936]
+	(No symbol) [0x0x7ff609aa9b0c]
+	(No symbol) [0x0x7ff609af9d72]
+	(No symbol) [0x0x7ff609af7aee]
+	(No symbol) [0x0x7ff609b288ca]
+	(No symbol) [0x0x7ff609af2f76]
+	(No symbol) [0x0x7ff609b28ae0]
+	(No symbol) [0x0x7ff609b50b07]
+	(No symbol) [0x0x7ff609b286a3]
+	(No symbol) [0x0x7ff609af1791]
+	(No symbol) [0x0x7ff609af2523]
+	GetHandleVerifier [0x0x7ff609fc684d+3059501]
+	GetHandleVerifier [0x0x7ff609fc0c0d+3035885]
+	GetHandleVerifier [0x0x7ff609fe0400+3164896]
+	GetHandleVerifier [0x0x7ff609d08c3e+185118]
+	GetHandleVerifier [0x0x7ff609d1054f+216111]
+	GetHandleVerifier [0x0x7ff609cf72e4+113092]
+	GetHandleVerifier [0x0x7ff609cf7499+113529]
+	GetHandleVerifier [0x0x7ff609cde298+10616]
+	BaseThreadInitThunk [0x0x7ff9686ee8d7+23]
+	RtlUserThreadStart [0x0x7ff969e3c34c+44]
+
+2025-07-28 06:30:35,281 - ERROR - Failed to click first suggested hotel: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff609cee935+77845]
+	GetHandleVerifier [0x0x7ff609cee990+77936]
+	(No symbol) [0x0x7ff609aa9cda]
+	(No symbol) [0x0x7ff609b006aa]
+	(No symbol) [0x0x7ff609b0095c]
+	(No symbol) [0x0x7ff609b53d07]
+	(No symbol) [0x0x7ff609b2890f]
+	(No symbol) [0x0x7ff609b50b07]
+	(No symbol) [0x0x7ff609b286a3]
+	(No symbol) [0x0x7ff609af1791]
+	(No symbol) [0x0x7ff609af2523]
+	GetHandleVerifier [0x0x7ff609fc684d+3059501]
+	GetHandleVerifier [0x0x7ff609fc0c0d+3035885]
+	GetHandleVerifier [0x0x7ff609fe0400+3164896]
+	GetHandleVerifier [0x0x7ff609d08c3e+185118]
+	GetHandleVerifier [0x0x7ff609d1054f+216111]
+	GetHandleVerifier [0x0x7ff609cf72e4+113092]
+	GetHandleVerifier [0x0x7ff609cf7499+113529]
+	GetHandleVerifier [0x0x7ff609cde298+10616]
+	BaseThreadInitThunk [0x0x7ff9686ee8d7+23]
+	RtlUserThreadStart [0x0x7ff969e3c34c+44]
+
+2025-07-28 06:30:35,360 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\click_suggested_hotel_fail_2025-07-28_06-30-35.png
+2025-07-28 06:30:36,454 - ERROR - Failed to open date picker: Message: element click intercepted: Element <div id="search-engine-date-picker-month-button" class="sc-1dd632c9-1 knEGAN">...</div> is not clickable at point (205, 232). Other element would receive the click: <div class="sc-e8baa4cf-1 hgGcBX">...</div>
+  (Session info: chrome=138.0.7204.169)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff609cee935+77845]
+	GetHandleVerifier [0x0x7ff609cee990+77936]
+	(No symbol) [0x0x7ff609aa9cda]
+	(No symbol) [0x0x7ff609b086a9]
+	(No symbol) [0x0x7ff609b06042]
+	(No symbol) [0x0x7ff609b03081]
+	(No symbol) [0x0x7ff609b01f81]
+	(No symbol) [0x0x7ff609af36c8]
+	(No symbol) [0x0x7ff609b288ca]
+	(No symbol) [0x0x7ff609af2f76]
+	(No symbol) [0x0x7ff609b28ae0]
+	(No symbol) [0x0x7ff609b50b07]
+	(No symbol) [0x0x7ff609b286a3]
+	(No symbol) [0x0x7ff609af1791]
+	(No symbol) [0x0x7ff609af2523]
+	GetHandleVerifier [0x0x7ff609fc684d+3059501]
+	GetHandleVerifier [0x0x7ff609fc0c0d+3035885]
+	GetHandleVerifier [0x0x7ff609fe0400+3164896]
+	GetHandleVerifier [0x0x7ff609d08c3e+185118]
+	GetHandleVerifier [0x0x7ff609d1054f+216111]
+	GetHandleVerifier [0x0x7ff609cf72e4+113092]
+	GetHandleVerifier [0x0x7ff609cf7499+113529]
+	GetHandleVerifier [0x0x7ff609cde298+10616]
+	BaseThreadInitThunk [0x0x7ff9686ee8d7+23]
+	RtlUserThreadStart [0x0x7ff969e3c34c+44]
+
+2025-07-28 06:30:36,507 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\open_calendar_fail_2025-07-28_06-30-36.png

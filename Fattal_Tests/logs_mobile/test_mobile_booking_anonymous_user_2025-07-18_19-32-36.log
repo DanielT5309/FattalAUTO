@@ -1,0 +1,65 @@
+2025-07-18 19:31:25,386 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-18 19:31:25,386 - INFO - Starting test: hotel search and booking flow
+2025-07-18 19:31:25,387 - INFO - Generated Israeli ID: 782136816
+2025-07-18 19:31:35,414 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-18 19:31:45,477 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-18 19:31:45,477 - INFO - Searching for hotel input container (mobile)...
+2025-07-18 19:31:45,566 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-18 19:31:47,236 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-18 19:31:47,456 - INFO - Clicked first suggested hotel from list.
+2025-07-18 19:31:47,634 - INFO - Opened mobile calendar (date picker).
+2025-07-18 19:31:47,634 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-18 19:31:50,198 - INFO - Attempting to select: 29 באוקטובר 2025 to 1 בנובמבר 2025 (3 לילות)
+2025-07-18 19:31:53,555 - INFO - Calendar still open after selection – continuing.
+2025-07-18 19:31:54,306 - INFO - Selected check-in: 29 באוקטובר 2025 → check-out: 1 בנובמבר 2025
+2025-07-18 19:31:54,306 - INFO - Confirmed calendar selection.
+2025-07-18 19:31:54,311 - INFO - Room modal already open — skip clicking.
+2025-07-18 19:31:54,311 - INFO - Room modal already open — did not click again.
+2025-07-18 19:31:54,311 - INFO - Adjusting room occupants...
+2025-07-18 19:31:54,317 - INFO - Room modal confirmed present.
+2025-07-18 19:31:54,317 - INFO - Setting adults to 2...
+2025-07-18 19:31:54,332 - INFO - Adults set to: 2
+2025-07-18 19:31:54,332 - INFO - Setting children to 1...
+2025-07-18 19:31:54,628 - INFO - Children set to: 1
+2025-07-18 19:31:54,628 - INFO - Setting infants to 0...
+2025-07-18 19:31:54,642 - INFO - Infants set to: 0
+2025-07-18 19:31:54,642 - INFO - Room occupant adjustment completed.
+2025-07-18 19:31:54,642 - INFO - Searching for 'המשך' room continue button...
+2025-07-18 19:31:54,645 - INFO - Room modal is visible and ready.
+2025-07-18 19:31:55,097 - INFO - Clicked room continue button (native click).
+2025-07-18 19:31:55,097 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-18 19:32:00,234 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-18 19:32:00,246 - INFO - Found button with text: 'חפש חופשה'
+2025-07-18 19:32:00,715 - INFO - Clicked search button (JS click).
+2025-07-18 19:32:00,715 - INFO - 📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...
+2025-07-18 19:32:04,196 - INFO - ✅ נלחץ כפתור 'הצג מחירים' עם ID דינאמי.
+2025-07-18 19:32:04,306 - INFO - 📸 Screenshot 'room_selection' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\room_selection_2025-07-18_19-32-04.png
+2025-07-18 19:32:04,306 - INFO - 📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-07-18 19:32:04,668 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' לפי תבנית ID דינאמית.
+2025-07-18 19:32:04,668 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-07-18 19:32:06,030 - INFO - ✅ Email input is visible.
+2025-07-18 19:32:06,106 - INFO - 📸 Screenshot 'payment_stage' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\payment_stage_2025-07-18_19-32-06.png
+2025-07-18 19:32:06,667 - INFO - ✅ Email field is ready for input.
+2025-07-18 19:32:06,667 - INFO - 📝 Trying to fill Email with 'chenttedgui@gmail.com'
+2025-07-18 19:32:07,346 - INFO -  [Mobile] Email filled correctly with send_keys().
+2025-07-18 19:32:07,346 - INFO - 📝 Trying to fill Phone with '0544531600'
+2025-07-18 19:32:08,036 - INFO -  [Mobile] Phone filled correctly with send_keys().
+2025-07-18 19:32:08,036 - INFO - 📝 Trying to fill First Name with 'חן'
+2025-07-18 19:32:08,650 - INFO -  [Mobile] First Name filled correctly with send_keys().
+2025-07-18 19:32:08,651 - INFO - 📝 Trying to fill Last Name with 'טסט'
+2025-07-18 19:32:09,301 - INFO -  [Mobile] Last Name filled correctly with send_keys().
+2025-07-18 19:32:09,301 - INFO - 📝 Trying to fill ID Number with '782136816'
+2025-07-18 19:32:10,004 - INFO -  [Mobile] ID Number filled correctly with send_keys().
+2025-07-18 19:32:10,005 - INFO - Clicking 'User Agreement' checkbox...
+2025-07-18 19:32:10,034 - INFO - Clicked 'User Agreement' checkbox.
+2025-07-18 19:32:25,035 - INFO - Using credit card details from config.json
+2025-07-18 19:32:25,290 - INFO - Credit card details from config applied successfully
+2025-07-18 19:32:25,290 - INFO -  Trying to click the payment submit button inside iframe...
+2025-07-18 19:32:26,345 - INFO -  Payment submit button clicked successfully via JS.
+2025-07-18 19:32:26,345 - INFO - 🔙 Switched back to main content after payment submission.
+2025-07-18 19:32:26,346 - INFO - Waiting for mobile confirmation page to load...
+2025-07-18 19:32:35,049 - INFO - ✅ Confirmation root detected.
+2025-07-18 19:32:35,236 - INFO - Screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-07-18_19-32-35.png
+2025-07-18 19:32:35,236 - INFO - 📸 Confirmation screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-07-18_19-32-35.png
+2025-07-18 19:32:35,236 - INFO - 🎉 Order Number (mobile): 980025390
+2025-07-18 19:32:36,388 - INFO -  Screenshot anchored with manual scroll saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\confirmation_success_2025-07-18_19-32-35.png

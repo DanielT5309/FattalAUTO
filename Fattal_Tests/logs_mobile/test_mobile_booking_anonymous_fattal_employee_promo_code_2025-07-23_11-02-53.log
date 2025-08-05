@@ -1,0 +1,43 @@
+2025-07-23 11:01:54,100 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-23 11:01:54,100 - INFO - Starting test: hotel search and booking flow
+2025-07-23 11:02:04,116 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-23 11:02:14,167 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-23 11:02:14,167 - INFO - Searching for hotel input container (mobile)...
+2025-07-23 11:02:14,221 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-23 11:02:16,499 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-23 11:02:16,666 - INFO - Clicked first suggested hotel from list.
+2025-07-23 11:02:16,819 - INFO - Opened mobile calendar (date picker).
+2025-07-23 11:02:16,819 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-23 11:02:19,269 - INFO - Attempting to select: 13 באוקטובר 2025 to 16 באוקטובר 2025 (3 לילות)
+2025-07-23 11:02:22,783 - INFO - Calendar still open after selection – continuing.
+2025-07-23 11:02:23,620 - INFO - Selected check-in: 13 באוקטובר 2025 → check-out: 16 באוקטובר 2025
+2025-07-23 11:02:23,620 - INFO - Confirmed calendar selection.
+2025-07-23 11:02:23,627 - INFO - Room modal already open — skip clicking.
+2025-07-23 11:02:23,628 - INFO - Room modal already open — did not click again.
+2025-07-23 11:02:23,628 - INFO - Adjusting room occupants...
+2025-07-23 11:02:23,634 - INFO - Room modal confirmed present.
+2025-07-23 11:02:23,634 - INFO - Setting adults to 2...
+2025-07-23 11:02:23,657 - INFO - Adults set to: 2
+2025-07-23 11:02:23,658 - INFO - Setting children to 1...
+2025-07-23 11:02:23,985 - INFO - Children set to: 1
+2025-07-23 11:02:23,985 - INFO - Setting infants to 0...
+2025-07-23 11:02:24,023 - INFO - Infants set to: 0
+2025-07-23 11:02:24,023 - INFO - Room occupant adjustment completed.
+2025-07-23 11:02:24,023 - INFO - Searching for 'המשך' room continue button...
+2025-07-23 11:02:24,029 - INFO - Room modal is visible and ready.
+2025-07-23 11:02:24,519 - INFO - Clicked room continue button (native click).
+2025-07-23 11:02:25,087 - INFO - Clicked 'יש לי קוד ארגון' to reveal promo input.
+2025-07-23 11:02:25,206 - INFO - Promo code 'EMP23FA' entered successfully.
+2025-07-23 11:02:25,479 - INFO - Clicked outside to close promo input.
+2025-07-23 11:02:25,487 - INFO - Promo input contains: EMP23FA
+2025-07-23 11:02:25,488 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-23 11:02:30,678 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-23 11:02:30,691 - INFO - Found button with text: 'חפש חופשה'
+2025-07-23 11:02:31,258 - INFO - Clicked search button (JS click).
+2025-07-23 11:02:32,382 - INFO - ID '032345589' entered successfully.
+2025-07-23 11:02:32,538 - INFO - Clicked outside to trigger input validation.
+2025-07-23 11:02:32,695 - INFO - ✅ Validation button clicked successfully.
+2025-07-23 11:02:32,695 - INFO - 📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...
+2025-07-23 11:02:53,288 - ERROR - ❌ שגיאה בלחיצה על כפתור 'הצג מחירים': Message: 
+
+2025-07-23 11:02:53,392 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\show_prices_button_not_clicked_2025-07-23_11-02-53.png

@@ -1,0 +1,59 @@
+2025-07-28 06:42:00,267 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-28 06:42:00,267 - INFO - Starting test: Join Fattal Club
+2025-07-28 06:42:00,267 - INFO - Generated ID for club registration: 297825747
+2025-07-28 06:42:10,323 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-28 06:42:10,345 - INFO - WAR popup closed via class selector (u-close-button).
+2025-07-28 06:42:10,345 - INFO - Trying to click on 'עוד' (More) tab in footer (mobile)...
+2025-07-28 06:42:10,415 - INFO -  Clicked 'עוד' (More) footer tab successfully.
+2025-07-28 06:42:10,415 - INFO - Clicking 'מועדון פתאל וחברים' tab in mobile footer...
+2025-07-28 06:42:10,834 - INFO - 'מועדון פתאל וחברים' tab clicked successfully.
+2025-07-28 06:42:10,834 - INFO - Scrolling to and clicking 'להצטרפות למועדון' button...
+2025-07-28 06:42:11,922 - INFO - 'להצטרפות למועדון' button clicked successfully.
+2025-07-28 06:42:11,922 - INFO - Filling Fattal Friends club join form...
+2025-07-28 06:42:11,922 - INFO - Using ID Number: 297825747
+2025-07-28 06:42:12,314 - INFO - Filled input: שם פרטי
+2025-07-28 06:42:12,368 - INFO - Filled input: שם משפחה
+2025-07-28 06:42:12,461 - INFO - Filled input: כתובת דוא״ל
+2025-07-28 06:42:12,530 - INFO - Filled input: מספר טלפון נייד
+2025-07-28 06:42:12,590 - INFO - Filled input: תאריך לידה
+2025-07-28 06:42:12,647 - INFO - Filled input: מספר תעודת זהות
+2025-07-28 06:42:12,704 - INFO - Filled input: בחרו סיסמא
+2025-07-28 06:42:12,704 - INFO - All club form fields filled successfully.
+2025-07-28 06:42:12,751 - INFO - Fattal Club form filled and validated successfully.
+2025-07-28 06:42:12,751 - INFO - Clicking the terms acceptance checkbox...
+2025-07-28 06:42:13,205 - INFO - Checkbox clicked successfully.
+2025-07-28 06:42:28,205 - INFO - Using credit card details from config.json
+2025-07-28 06:42:28,469 - INFO - Credit card details from config applied successfully
+2025-07-28 06:42:28,470 - INFO -  Trying to click the payment submit button inside iframe...
+2025-07-28 06:42:29,533 - INFO -  Payment submit button clicked successfully via JS.
+2025-07-28 06:42:29,534 - INFO - 🔙 Switched back to main content after payment submission.
+2025-07-28 06:42:29,535 - INFO - Trying to close popup with selector: div.sc-c18678ea-3.iOzwib
+2025-07-28 06:42:39,571 - INFO - Trying to close popup with selector: div[class^='sc-c18678ea-3']
+2025-07-28 06:42:49,605 - INFO - ℹ️ No club-related popup appeared.
+2025-07-28 06:42:54,726 - INFO -  Screenshot anchored to confirmation container saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\confirmation_success_2025-07-28_06-42-52.png
+2025-07-28 06:42:54,726 - INFO - Waiting for mobile confirmation page to load...
+2025-07-28 06:43:15,306 - INFO - Screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_FAIL_2025-07-28_06-43-15.png
+2025-07-28 06:43:15,307 - ERROR - ❌ Failed to extract confirmation (mobile): Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff609cee935+77845]
+	GetHandleVerifier [0x0x7ff609cee990+77936]
+	(No symbol) [0x0x7ff609aa9cda]
+	(No symbol) [0x0x7ff609b006aa]
+	(No symbol) [0x0x7ff609b0095c]
+	(No symbol) [0x0x7ff609b53d07]
+	(No symbol) [0x0x7ff609b2890f]
+	(No symbol) [0x0x7ff609b50b07]
+	(No symbol) [0x0x7ff609b286a3]
+	(No symbol) [0x0x7ff609af1791]
+	(No symbol) [0x0x7ff609af2523]
+	GetHandleVerifier [0x0x7ff609fc684d+3059501]
+	GetHandleVerifier [0x0x7ff609fc0c0d+3035885]
+	GetHandleVerifier [0x0x7ff609fe0400+3164896]
+	GetHandleVerifier [0x0x7ff609d08c3e+185118]
+	GetHandleVerifier [0x0x7ff609d1054f+216111]
+	GetHandleVerifier [0x0x7ff609cf72e4+113092]
+	GetHandleVerifier [0x0x7ff609cf7499+113529]
+	GetHandleVerifier [0x0x7ff609cde298+10616]
+	BaseThreadInitThunk [0x0x7ff9686ee8d7+23]
+	RtlUserThreadStart [0x0x7ff969e3c34c+44]
+

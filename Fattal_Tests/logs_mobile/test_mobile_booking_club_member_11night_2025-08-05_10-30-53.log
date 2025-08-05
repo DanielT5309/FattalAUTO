@@ -1,0 +1,76 @@
+2025-08-05 10:30:25,792 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-08-05 10:30:25,792 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-08-05 10:30:25,793 - INFO - Opening personal zone (mobile login)...
+2025-08-05 10:30:26,352 - INFO - Login menu opened via JavaScript interaction.
+2025-08-05 10:30:26,352 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-08-05 10:30:28,130 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-08-05 10:30:28,576 - INFO - Clicking login button (mobile)...
+2025-08-05 10:30:28,749 - INFO - Login button clicked.
+2025-08-05 10:30:28,749 - INFO - Logged in successfully.
+2025-08-05 10:30:28,749 - INFO - Checking for post-login popup...
+2025-08-05 10:30:38,800 - INFO - ℹ️ No post-login popup appeared.
+2025-08-05 10:30:48,869 - INFO - WAR popup ID button not found, trying class selector...
+2025-08-05 10:30:48,893 - INFO - WAR popup closed via class selector (u-close-button).
+2025-08-05 10:30:48,893 - INFO - Searching for hotel input container (mobile)...
+2025-08-05 10:30:48,938 - INFO - ✅ Clicked mobile hotel search input container.
+2025-08-05 10:30:50,689 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-08-05 10:30:51,757 - ERROR - Failed to click first suggested hotel: Message: element click intercepted: Element <button id="search-engine-input-rendered-hotel-item" class="sc-9755aed2-7 cTzryX">...</button> is not clickable at point (205, 253). Other element would receive the click: <h1 class="sc-fa09a5ed-1 eaFtsY">...</h1>
+  (Session info: chrome=138.0.7204.184)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c381e415+77285]
+	GetHandleVerifier [0x0x7ff7c381e470+77376]
+	(No symbol) [0x0x7ff7c35e9a6a]
+	(No symbol) [0x0x7ff7c36483e9]
+	(No symbol) [0x0x7ff7c3645d8b]
+	(No symbol) [0x0x7ff7c3642dd1]
+	(No symbol) [0x0x7ff7c3641ce1]
+	(No symbol) [0x0x7ff7c3633458]
+	(No symbol) [0x0x7ff7c366860a]
+	(No symbol) [0x0x7ff7c3632d06]
+	(No symbol) [0x0x7ff7c3668820]
+	(No symbol) [0x0x7ff7c369087f]
+	(No symbol) [0x0x7ff7c36683e3]
+	(No symbol) [0x0x7ff7c3631521]
+	(No symbol) [0x0x7ff7c36322b3]
+	GetHandleVerifier [0x0x7ff7c3b01efd+3107021]
+	GetHandleVerifier [0x0x7ff7c3afc29d+3083373]
+	GetHandleVerifier [0x0x7ff7c3b1bedd+3213485]
+	GetHandleVerifier [0x0x7ff7c383884e+184862]
+	GetHandleVerifier [0x0x7ff7c384055f+216879]
+	GetHandleVerifier [0x0x7ff7c3827084+113236]
+	GetHandleVerifier [0x0x7ff7c3827239+113673]
+	GetHandleVerifier [0x0x7ff7c380e298+11368]
+	BaseThreadInitThunk [0x0x7ffe4d32e8d7+23]
+	RtlUserThreadStart [0x0x7ffe4f3fc34c+44]
+
+2025-08-05 10:30:51,813 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\click_suggested_hotel_fail_2025-08-05_10-30-51.png
+2025-08-05 10:30:52,897 - ERROR - Failed to open date picker: Message: element click intercepted: Element <div id="search-engine-date-picker-month-button" class="sc-1dd632c9-1 knEGAN">...</div> is not clickable at point (205, 232). Other element would receive the click: <div class="sc-fa09a5ed-0 beFqAv">...</div>
+  (Session info: chrome=138.0.7204.184)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c381e415+77285]
+	GetHandleVerifier [0x0x7ff7c381e470+77376]
+	(No symbol) [0x0x7ff7c35e9a6a]
+	(No symbol) [0x0x7ff7c36483e9]
+	(No symbol) [0x0x7ff7c3645d8b]
+	(No symbol) [0x0x7ff7c3642dd1]
+	(No symbol) [0x0x7ff7c3641ce1]
+	(No symbol) [0x0x7ff7c3633458]
+	(No symbol) [0x0x7ff7c366860a]
+	(No symbol) [0x0x7ff7c3632d06]
+	(No symbol) [0x0x7ff7c3668820]
+	(No symbol) [0x0x7ff7c369087f]
+	(No symbol) [0x0x7ff7c36683e3]
+	(No symbol) [0x0x7ff7c3631521]
+	(No symbol) [0x0x7ff7c36322b3]
+	GetHandleVerifier [0x0x7ff7c3b01efd+3107021]
+	GetHandleVerifier [0x0x7ff7c3afc29d+3083373]
+	GetHandleVerifier [0x0x7ff7c3b1bedd+3213485]
+	GetHandleVerifier [0x0x7ff7c383884e+184862]
+	GetHandleVerifier [0x0x7ff7c384055f+216879]
+	GetHandleVerifier [0x0x7ff7c3827084+113236]
+	GetHandleVerifier [0x0x7ff7c3827239+113673]
+	GetHandleVerifier [0x0x7ff7c380e298+11368]
+	BaseThreadInitThunk [0x0x7ffe4d32e8d7+23]
+	RtlUserThreadStart [0x0x7ffe4f3fc34c+44]
+
+2025-08-05 10:30:52,956 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\open_calendar_fail_2025-08-05_10-30-52.png

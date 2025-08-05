@@ -1,0 +1,47 @@
+2025-07-23 11:43:56,503 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-23 11:43:56,503 - INFO - Starting test: Club renew expired form (mobile)
+2025-07-23 11:43:56,503 - INFO - Opening personal zone (mobile login)...
+2025-07-23 11:43:56,517 - INFO - Login menu opened via JavaScript interaction.
+2025-07-23 11:43:56,517 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-23 11:43:57,281 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-23 11:43:58,289 - INFO - Clicking login button (mobile)...
+2025-07-23 11:43:58,470 - INFO - Login button clicked.
+2025-07-23 11:43:58,470 - INFO - 📍 Checking for post-login popup...
+2025-07-23 11:43:58,470 - INFO - 🔍 Trying selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 11:44:00,513 - INFO - ✅ Post-login popup closed using selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 11:44:10,533 - INFO - Logged in successfully.
+2025-07-23 11:44:10,533 - INFO - Trying to click on 'עוד' (More) tab in footer (mobile)...
+2025-07-23 11:44:10,604 - INFO -  Clicked 'עוד' (More) footer tab successfully.
+2025-07-23 11:44:10,605 - INFO - Clicking 'מועדון פתאל וחברים' tab in mobile footer...
+2025-07-23 11:44:11,033 - INFO - 'מועדון פתאל וחברים' tab clicked successfully.
+2025-07-23 11:44:11,033 - INFO - Scrolling to and clicking 'להצטרפות למועדון' button...
+2025-07-23 11:44:15,613 - INFO - 'להצטרפות למועדון' button clicked successfully.
+2025-07-23 11:44:15,613 - INFO - 📜 Clicking User Agreement checkbox by label ID (with scroll)...
+2025-07-23 11:44:16,196 - INFO - ✅ Checkbox clicked via label ID.
+2025-07-23 11:44:31,268 - INFO - 📸 Screenshot 'payment_stage' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\payment_stage_2025-07-23_11-44-31.png
+2025-07-23 11:44:31,268 - INFO - Using credit card details from config.json
+2025-07-23 11:44:41,304 - ERROR - Failed to apply credit card details from config: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="paymentIframe"]"}
+  (Session info: chrome=138.0.7204.159); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7ab63e935+77845]
+	GetHandleVerifier [0x0x7ff7ab63e990+77936]
+	(No symbol) [0x0x7ff7ab3f9cda]
+	(No symbol) [0x0x7ff7ab4506aa]
+	(No symbol) [0x0x7ff7ab45095c]
+	(No symbol) [0x0x7ff7ab4a3d07]
+	(No symbol) [0x0x7ff7ab47890f]
+	(No symbol) [0x0x7ff7ab4a0b07]
+	(No symbol) [0x0x7ff7ab4786a3]
+	(No symbol) [0x0x7ff7ab441791]
+	(No symbol) [0x0x7ff7ab442523]
+	GetHandleVerifier [0x0x7ff7ab91684d+3059501]
+	GetHandleVerifier [0x0x7ff7ab910c0d+3035885]
+	GetHandleVerifier [0x0x7ff7ab930400+3164896]
+	GetHandleVerifier [0x0x7ff7ab658c3e+185118]
+	GetHandleVerifier [0x0x7ff7ab66054f+216111]
+	GetHandleVerifier [0x0x7ff7ab6472e4+113092]
+	GetHandleVerifier [0x0x7ff7ab647499+113529]
+	GetHandleVerifier [0x0x7ff7ab62e298+10616]
+	BaseThreadInitThunk [0x0x7ff846a7e8d7+23]
+	RtlUserThreadStart [0x0x7ff8481fc34c+44]
+

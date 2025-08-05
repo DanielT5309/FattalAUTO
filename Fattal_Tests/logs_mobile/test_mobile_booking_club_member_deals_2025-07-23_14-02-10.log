@@ -1,0 +1,52 @@
+2025-07-23 14:01:38,581 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-23 14:01:38,581 - INFO - Opening personal zone (mobile login)...
+2025-07-23 14:01:39,625 - INFO - Login menu opened via JavaScript interaction.
+2025-07-23 14:01:39,626 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-23 14:01:40,743 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-23 14:01:41,500 - INFO - Clicking login button (mobile)...
+2025-07-23 14:01:41,669 - INFO - Login button clicked.
+2025-07-23 14:01:41,669 - INFO - Checking for post-login popup...
+2025-07-23 14:01:43,688 - INFO - ✅ Post-login popup closed.
+2025-07-23 14:01:43,694 - INFO - Logged in successfully.
+2025-07-23 14:01:43,694 - INFO - Clicking on 'דילים וחבילות' tab using ID...
+2025-07-23 14:01:44,542 - INFO - ✅ Clicked on 'דילים וחבילות' tab successfully.
+2025-07-23 14:01:44,546 - INFO - Waiting for 'לכל הדילים והחבילות' link to be clickable...
+2025-07-23 14:01:44,883 - INFO - ✅ Clicked 'לכל הדילים והחבילות' link successfully.
+2025-07-23 14:01:44,884 - INFO - Waiting for 'להזמנה ופרטים נוספים' deal button to appear...
+2025-07-23 14:01:46,269 - INFO - Deal button is visible — waiting a moment for UI to stabilize...
+2025-07-23 14:01:46,976 - INFO - Clicked on 'להזמנה ופרטים נוספים' successfully.
+2025-07-23 14:01:46,976 - INFO - Waiting for 'הזמן עכשיו' (Book Now) button to become visible...
+2025-07-23 14:01:48,668 - INFO - Clicked 'הזמן עכשיו' button successfully.
+2025-07-23 14:01:48,668 - INFO - 📲 מנסה ללחוץ על כפתור 'המשך' הראשי במובייל...
+2025-07-23 14:01:49,064 - INFO - ✅ כפתור 'המשך' נלחץ לפי ID.
+2025-07-23 14:01:49,064 - INFO - 🔍 Looking for 'המשך' button in room selection...
+2025-07-23 14:01:49,418 - INFO - ✅ Clicked 'המשך' button in room selection.
+2025-07-23 14:01:49,418 - INFO - מנסה ללחוץ על כפתור 'חפש חופשה' הראשי במובייל...
+2025-07-23 14:01:49,432 - INFO - כפתור 'חפש חופשה' נמצא לפי ID
+2025-07-23 14:01:49,481 - INFO - נלחץ כפתור 'חפש חופשה' (main search button במובייל)
+2025-07-23 14:01:49,622 - INFO - 📸 Screenshot 'room_selection' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\room_selection_2025-07-23_14-01-49.png
+2025-07-23 14:01:49,623 - INFO - מחפש ולוחץ על כפתור 'הצג מחירים' במובייל...
+2025-07-23 14:02:10,158 - ERROR - שגיאה בלחיצה על כפתור 'הצג מחירים': Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff64df0e935+77845]
+	GetHandleVerifier [0x0x7ff64df0e990+77936]
+	(No symbol) [0x0x7ff64dcc9cda]
+	(No symbol) [0x0x7ff64dd206aa]
+	(No symbol) [0x0x7ff64dd2095c]
+	(No symbol) [0x0x7ff64dd73d07]
+	(No symbol) [0x0x7ff64dd4890f]
+	(No symbol) [0x0x7ff64dd70b07]
+	(No symbol) [0x0x7ff64dd486a3]
+	(No symbol) [0x0x7ff64dd11791]
+	(No symbol) [0x0x7ff64dd12523]
+	GetHandleVerifier [0x0x7ff64e1e684d+3059501]
+	GetHandleVerifier [0x0x7ff64e1e0c0d+3035885]
+	GetHandleVerifier [0x0x7ff64e200400+3164896]
+	GetHandleVerifier [0x0x7ff64df28c3e+185118]
+	GetHandleVerifier [0x0x7ff64df3054f+216111]
+	GetHandleVerifier [0x0x7ff64df172e4+113092]
+	GetHandleVerifier [0x0x7ff64df17499+113529]
+	GetHandleVerifier [0x0x7ff64defe298+10616]
+	BaseThreadInitThunk [0x0x7ff846a7e8d7+23]
+	RtlUserThreadStart [0x0x7ff8481fc34c+44]
+

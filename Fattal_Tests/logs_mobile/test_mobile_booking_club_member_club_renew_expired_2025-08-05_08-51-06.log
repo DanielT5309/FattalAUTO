@@ -1,0 +1,89 @@
+2025-08-05 08:49:12,963 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-08-05 08:49:12,963 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-08-05 08:49:22,985 - INFO - WAR popup ID button not found, trying class selector...
+2025-08-05 08:49:23,009 - INFO - WAR popup closed via class selector (u-close-button).
+2025-08-05 08:49:23,009 - INFO - Opening personal zone (mobile login)...
+2025-08-05 08:49:23,031 - INFO - Login menu opened via JavaScript interaction.
+2025-08-05 08:49:23,031 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-08-05 08:49:23,680 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-08-05 08:49:24,147 - INFO - Clicking login button (mobile)...
+2025-08-05 08:49:24,329 - INFO - Login button clicked.
+2025-08-05 08:49:24,329 - INFO - 📍 Checking for post-login popup...
+2025-08-05 08:49:24,329 - INFO - 🔍 Trying selector: .sc-e8baa4cf-3.exmeUH
+2025-08-05 08:49:26,869 - INFO - ✅ Post-login popup closed using selector: .sc-e8baa4cf-3.exmeUH
+2025-08-05 08:49:36,872 - INFO - Logged in successfully.
+2025-08-05 08:49:36,873 - INFO - Searching for hotel input container (mobile)...
+2025-08-05 08:49:36,929 - INFO - ✅ Clicked mobile hotel search input container.
+2025-08-05 08:49:39,183 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-08-05 08:49:39,351 - INFO - Clicked first suggested hotel from list.
+2025-08-05 08:49:39,530 - INFO - Opened mobile calendar (date picker).
+2025-08-05 08:49:39,530 - INFO - Scrolling and selecting date range (real clicks)...
+2025-08-05 08:49:41,993 - INFO - Attempting to select: 9 בנובמבר 2025 to 12 בנובמבר 2025 (3 לילות)
+2025-08-05 08:49:45,062 - INFO - Calendar still open after selection – continuing.
+2025-08-05 08:49:45,703 - INFO - Selected check-in: 9 בנובמבר 2025 → check-out: 12 בנובמבר 2025
+2025-08-05 08:49:45,703 - INFO - Confirmed calendar selection.
+2025-08-05 08:49:45,711 - INFO - Room modal already open — skip clicking.
+2025-08-05 08:49:45,711 - INFO - Room modal already open — did not click again.
+2025-08-05 08:49:45,711 - INFO - Adjusting room occupants...
+2025-08-05 08:49:45,718 - INFO - Room modal confirmed present.
+2025-08-05 08:49:45,718 - INFO - Setting adults to 2...
+2025-08-05 08:49:45,737 - INFO - Adults set to: 2
+2025-08-05 08:49:45,737 - INFO - Setting children to 1...
+2025-08-05 08:49:46,046 - INFO - Children set to: 1
+2025-08-05 08:49:46,046 - INFO - Setting infants to 0...
+2025-08-05 08:49:46,068 - INFO - Infants set to: 0
+2025-08-05 08:49:46,068 - INFO - Room occupant adjustment completed.
+2025-08-05 08:49:46,069 - INFO - Searching for 'המשך' room continue button...
+2025-08-05 08:49:46,072 - INFO - Room modal is visible and ready.
+2025-08-05 08:49:46,492 - INFO - Clicked room continue button (native click).
+2025-08-05 08:49:46,492 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-08-05 08:49:51,533 - WARNING - Room modal may still be open — click might be blocked.
+2025-08-05 08:49:51,544 - INFO - Found button with text: 'חפש חופשה'
+2025-08-05 08:49:52,101 - INFO - Clicked search button (JS click).
+2025-08-05 08:49:52,101 - INFO - 📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...
+2025-08-05 08:49:54,612 - INFO - ✅ נלחץ כפתור 'הצג מחירים' עם ID דינאמי.
+2025-08-05 08:49:54,683 - INFO - 📸 Screenshot 'room_selection' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\room_selection_2025-08-05_08-49-54.png
+2025-08-05 08:49:54,684 - INFO - 📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-08-05 08:49:55,038 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' לפי תבנית ID דינאמית.
+2025-08-05 08:49:55,038 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-08-05 08:49:56,270 - INFO - ✅ Email input is visible.
+2025-08-05 08:49:56,368 - INFO - 📸 Screenshot 'payment_stage' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\payment_stage_2025-08-05_08-49-56.png
+2025-08-05 08:49:56,368 - INFO -  Clicking 'Join Club' checkbox (Mobile)...
+2025-08-05 08:50:26,868 - INFO - ✅ Clicked 'Join Club' checkbox directly using INPUT XPath: //input[contains(@class, 'PrivateSwitchBase-input') and @type='checkbox' and (contains(@id,'membershipCheckbox') or contains(@aria-label,'true'))]
+2025-08-05 08:50:26,868 - INFO - Clicking 'User Agreement' checkbox...
+2025-08-05 08:50:26,901 - INFO - Clicked 'User Agreement' checkbox.
+2025-08-05 08:50:41,902 - INFO - Using credit card details from config.json
+2025-08-05 08:50:42,189 - INFO - Credit card details from config applied successfully
+2025-08-05 08:50:42,191 - INFO -  Trying to click the payment submit button inside iframe...
+2025-08-05 08:50:43,241 - INFO -  Payment submit button clicked successfully via JS.
+2025-08-05 08:50:43,243 - INFO - 🔙 Switched back to main content after payment submission.
+2025-08-05 08:50:43,243 - INFO - Waiting for mobile confirmation page to load...
+2025-08-05 08:51:03,872 - INFO - Screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_FAIL_2025-08-05_08-51-03.png
+2025-08-05 08:51:03,872 - ERROR - ❌ Failed to extract confirmation (mobile): Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff632b5e415+77285]
+	GetHandleVerifier [0x0x7ff632b5e470+77376]
+	(No symbol) [0x0x7ff632929a6a]
+	(No symbol) [0x0x7ff632980406]
+	(No symbol) [0x0x7ff6329806bc]
+	(No symbol) [0x0x7ff6329d3ac7]
+	(No symbol) [0x0x7ff6329a864f]
+	(No symbol) [0x0x7ff6329d087f]
+	(No symbol) [0x0x7ff6329a83e3]
+	(No symbol) [0x0x7ff632971521]
+	(No symbol) [0x0x7ff6329722b3]
+	GetHandleVerifier [0x0x7ff632e41efd+3107021]
+	GetHandleVerifier [0x0x7ff632e3c29d+3083373]
+	GetHandleVerifier [0x0x7ff632e5bedd+3213485]
+	GetHandleVerifier [0x0x7ff632b7884e+184862]
+	GetHandleVerifier [0x0x7ff632b8055f+216879]
+	GetHandleVerifier [0x0x7ff632b67084+113236]
+	GetHandleVerifier [0x0x7ff632b67239+113673]
+	GetHandleVerifier [0x0x7ff632b4e298+11368]
+	BaseThreadInitThunk [0x0x7ff88ee1e8d7+23]
+	RtlUserThreadStart [0x0x7ff89003c34c+44]
+
+2025-08-05 08:51:03,872 - ERROR - Soft Assertion Failed: Booking failed — no order number found.
+2025-08-05 08:51:03,872 - ERROR - Soft assertions encountered:
+Booking failed — no order number found.
+2025-08-05 08:51:06,222 - INFO -  Screenshot anchored with manual scroll saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\confirmation_success_2025-08-05_08-51-03.png

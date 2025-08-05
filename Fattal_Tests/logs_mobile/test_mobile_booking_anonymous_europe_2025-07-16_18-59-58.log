@@ -1,0 +1,8 @@
+2025-07-16 18:59:17,155 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-16 18:59:17,155 - INFO - Starting test: hotel search and booking flow
+2025-07-16 18:59:17,155 - INFO - Generated Israeli ID: 954880613
+2025-07-16 18:59:27,178 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-16 18:59:37,191 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-16 18:59:37,191 - INFO - Searching for hotel input container (mobile)...
+2025-07-16 18:59:37,284 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-16 18:59:37,502 - INFO - Typed city name in mobile: ניקס NYX מדריד

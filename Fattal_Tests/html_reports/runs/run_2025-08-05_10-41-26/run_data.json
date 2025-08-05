@@ -1,0 +1,22 @@
+[
+  {
+    "name": "test_mobile_booking_club_member_11night",
+    "description": "בדיקת השלמת הזמנה משתמש מחובר חבר מועדון פעיל + הטבת לילה 11 מתנה",
+    "status": "PASSED",
+    "timestamp": "2025-08-05 10:42:31",
+    "duration": "63.35s",
+    "browser": "Chrome",
+    "os": "windows",
+    "full_name": "Club User",
+    "email": "chenttedgui@gmail.com",
+    "order_number": "980025551",
+    "id_number": "999425861",
+    "confirmation_screenshot": "C:\\Users\\chene\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_success_2025-08-05_10-42-30.png",
+    "error_screenshot": "",
+    "room_selection": "C:\\Users\\chene\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\room_selection_2025-08-05_10-42-01.png",
+    "payment_stage": "C:\\Users\\chene\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\payment_stage_2025-08-05_10-42-02.png",
+    "log": "C:\\Users\\chene\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs_mobile\\test_mobile_booking_club_member_11night_2025-08-05_10-42-31.log",
+    "error": "",
+    "test_type": "mobile"
+  }
+]

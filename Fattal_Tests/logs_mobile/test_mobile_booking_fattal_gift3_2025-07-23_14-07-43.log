@@ -1,0 +1,36 @@
+2025-07-23 14:06:58,817 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-23 14:06:58,817 - INFO - Generated Israeli ID: 591264726
+2025-07-23 14:07:08,876 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-23 14:07:08,902 - INFO - WAR popup closed via class selector (u-close-button).
+2025-07-23 14:07:08,903 - INFO - Searching for hotel input container (mobile)...
+2025-07-23 14:07:08,959 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-23 14:07:10,638 - INFO - ✅ Typed city name in mobile: באר שבע, ישראל
+2025-07-23 14:07:10,804 - INFO - Clicked first suggested region from list.
+2025-07-23 14:07:10,959 - INFO - Opened mobile calendar (date picker).
+2025-07-23 14:07:10,960 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-23 14:07:13,002 - INFO - Attempting to select: 2 באוקטובר 2025 to 7 באוקטובר 2025 (5 לילות)
+2025-07-23 14:07:15,906 - INFO - Calendar still open after selection – continuing.
+2025-07-23 14:07:16,429 - INFO - Selected check-in: 2 באוקטובר 2025 → check-out: 7 באוקטובר 2025
+2025-07-23 14:07:16,429 - INFO - Confirmed calendar selection.
+2025-07-23 14:07:16,435 - INFO - Room modal already open — skip clicking.
+2025-07-23 14:07:16,435 - INFO - Room modal already open — did not click again.
+2025-07-23 14:07:16,435 - INFO - Adjusting room occupants...
+2025-07-23 14:07:16,441 - INFO - Room modal confirmed present.
+2025-07-23 14:07:16,441 - INFO - Setting adults to 2...
+2025-07-23 14:07:16,457 - INFO - Adults set to: 2
+2025-07-23 14:07:16,458 - INFO - Setting children to 0...
+2025-07-23 14:07:16,474 - INFO - Children set to: 0
+2025-07-23 14:07:16,474 - INFO - Setting infants to 0...
+2025-07-23 14:07:16,491 - INFO - Infants set to: 0
+2025-07-23 14:07:16,491 - INFO - Room occupant adjustment completed.
+2025-07-23 14:07:16,491 - INFO - Searching for 'המשך' room continue button...
+2025-07-23 14:07:16,494 - INFO - Room modal is visible and ready.
+2025-07-23 14:07:16,916 - INFO - Clicked room continue button (native click).
+2025-07-23 14:07:16,916 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-23 14:07:21,961 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-23 14:07:21,975 - INFO - Found button with text: 'חפש חופשה'
+2025-07-23 14:07:22,421 - INFO - Clicked search button (JS click).
+2025-07-23 14:07:22,421 - INFO - 📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-07-23 14:07:32,485 - WARNING - ⚠️ כפתור לפי תבנית ID לא נמצא או לא היה זמין, מנסה לפי טקסט...
+2025-07-23 14:07:42,534 - ERROR - ⏰ Timeout: לא נמצא כפתור 'להזמנת חדר' לפי טקסט.
+2025-07-23 14:07:42,621 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\book_room_button_timeout_text_2025-07-23_14-07-42.png

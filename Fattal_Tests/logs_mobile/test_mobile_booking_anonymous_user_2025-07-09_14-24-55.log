@@ -1,0 +1,80 @@
+2025-07-09 14:24:26,073 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-09 14:24:26,073 - INFO - Starting test: hotel search and booking flow
+2025-07-09 14:24:26,073 - INFO - Generated Israeli ID: 510255896
+2025-07-09 14:24:36,125 - INFO - WAR popup (mobile) not found or failed to click — continuing. Error: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff784346f75+76917]
+	GetHandleVerifier [0x0x7ff784346fd0+77008]
+	(No symbol) [0x0x7ff7840f9dea]
+	(No symbol) [0x0x7ff784150256]
+	(No symbol) [0x0x7ff78415050c]
+	(No symbol) [0x0x7ff7841a3887]
+	(No symbol) [0x0x7ff7841784af]
+	(No symbol) [0x0x7ff7841a065c]
+	(No symbol) [0x0x7ff784178243]
+	(No symbol) [0x0x7ff784141431]
+	(No symbol) [0x0x7ff7841421c3]
+	GetHandleVerifier [0x0x7ff78461d2ad+3051437]
+	GetHandleVerifier [0x0x7ff784617903+3028483]
+	GetHandleVerifier [0x0x7ff78463589d+3151261]
+	GetHandleVerifier [0x0x7ff78436183e+185662]
+	GetHandleVerifier [0x0x7ff7843696ff+218111]
+	GetHandleVerifier [0x0x7ff78434faf4+112628]
+	GetHandleVerifier [0x0x7ff78434fca9+113065]
+	GetHandleVerifier [0x0x7ff784336c78+10616]
+	BaseThreadInitThunk [0x0x7fff0896e8d7+23]
+	RtlUserThreadStart [0x0x7fff09a9c34c+44]
+
+2025-07-09 14:24:36,125 - INFO - Searching for hotel input container (mobile)...
+2025-07-09 14:24:36,187 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-09 14:24:37,614 - ERROR - Failed to set city on mobile: Message: element click intercepted: Element <input role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" id="main-input" placeholder="הזינו שם מלון, עיר או מדינה" value="לאונרדו נגב, באר שבע"> is not clickable at point (162, 355). Other element would receive the click: <div id="search-engine-wrapper" class="sc-6337cc24-8 dAwBJM">...</div>
+  (Session info: chrome=138.0.7204.100)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff784346f75+76917]
+	GetHandleVerifier [0x0x7ff784346fd0+77008]
+	(No symbol) [0x0x7ff7840f9dea]
+	(No symbol) [0x0x7ff784158269]
+	(No symbol) [0x0x7ff784155c02]
+	(No symbol) [0x0x7ff784152c41]
+	(No symbol) [0x0x7ff784151b31]
+	(No symbol) [0x0x7ff784143368]
+	(No symbol) [0x0x7ff78417846a]
+	(No symbol) [0x0x7ff784142c16]
+	(No symbol) [0x0x7ff784178680]
+	(No symbol) [0x0x7ff7841a065c]
+	(No symbol) [0x0x7ff784178243]
+	(No symbol) [0x0x7ff784141431]
+	(No symbol) [0x0x7ff7841421c3]
+	GetHandleVerifier [0x0x7ff78461d2ad+3051437]
+	GetHandleVerifier [0x0x7ff784617903+3028483]
+	GetHandleVerifier [0x0x7ff78463589d+3151261]
+	GetHandleVerifier [0x0x7ff78436183e+185662]
+	GetHandleVerifier [0x0x7ff7843696ff+218111]
+	GetHandleVerifier [0x0x7ff78434faf4+112628]
+	GetHandleVerifier [0x0x7ff78434fca9+113065]
+	GetHandleVerifier [0x0x7ff784336c78+10616]
+	BaseThreadInitThunk [0x0x7fff0896e8d7+23]
+	RtlUserThreadStart [0x0x7fff09a9c34c+44]
+
+2025-07-09 14:24:45,404 - INFO - Clicked first suggested hotel from list.
+2025-07-09 14:24:45,579 - INFO - Opened mobile calendar (date picker).
+2025-07-09 14:24:45,579 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-09 14:24:48,041 - INFO - Attempting to select: 5 באוקטובר 2025 to 8 באוקטובר 2025 (3 לילות)
+2025-07-09 14:24:51,103 - INFO - Calendar still open after selection – continuing.
+2025-07-09 14:24:51,625 - INFO - Selected check-in: 5 באוקטובר 2025 → check-out: 8 באוקטובר 2025
+2025-07-09 14:24:51,625 - INFO - Confirmed calendar selection.
+2025-07-09 14:24:51,631 - INFO - Room modal already open — skip clicking.
+2025-07-09 14:24:51,631 - INFO - Room modal already open — did not click again.
+2025-07-09 14:24:51,631 - INFO - Adjusting room occupants...
+2025-07-09 14:24:51,636 - INFO - Room modal confirmed present.
+2025-07-09 14:24:51,637 - INFO - Setting adults to 2...
+2025-07-09 14:24:51,655 - INFO - Adults set to: 2
+2025-07-09 14:24:51,655 - INFO - Setting children to 1...
+2025-07-09 14:24:51,950 - INFO - Children set to: 1
+2025-07-09 14:24:51,950 - INFO - Setting infants to 0...
+2025-07-09 14:24:51,969 - INFO - Infants set to: 0
+2025-07-09 14:24:51,969 - INFO - Room occupant adjustment completed.
+2025-07-09 14:24:51,969 - INFO - Searching for 'המשך' room continue button...
+2025-07-09 14:24:51,972 - INFO - Room modal is visible and ready.
+2025-07-09 14:24:52,390 - INFO - Clicked room continue button (native click).
+2025-07-09 14:24:52,390 - INFO - Attempting to click main 'חפש חופשה' search button...

@@ -1,0 +1,32 @@
+2025-07-18 18:16:56,239 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-18 18:16:56,239 - INFO - Generated Israeli ID: 148759707
+2025-07-18 18:17:06,269 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-18 18:17:16,289 - INFO - WAR popup class button not found — skipping close_war_popup.
+2025-07-18 18:17:16,289 - INFO - Searching for hotel input container (mobile)...
+2025-07-18 18:17:16,343 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-18 18:17:17,997 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-18 18:17:28,001 - ERROR - Failed to click first suggested region: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c7e7e925+77845]
+	GetHandleVerifier [0x0x7ff7c7e7e980+77936]
+	(No symbol) [0x0x7ff7c7c39cda]
+	(No symbol) [0x0x7ff7c7c906aa]
+	(No symbol) [0x0x7ff7c7c9095c]
+	(No symbol) [0x0x7ff7c7ce3d07]
+	(No symbol) [0x0x7ff7c7cb890f]
+	(No symbol) [0x0x7ff7c7ce0b07]
+	(No symbol) [0x0x7ff7c7cb86a3]
+	(No symbol) [0x0x7ff7c7c81791]
+	(No symbol) [0x0x7ff7c7c82523]
+	GetHandleVerifier [0x0x7ff7c815683d+3059501]
+	GetHandleVerifier [0x0x7ff7c8150bfd+3035885]
+	GetHandleVerifier [0x0x7ff7c81703f0+3164896]
+	GetHandleVerifier [0x0x7ff7c7e98c2e+185118]
+	GetHandleVerifier [0x0x7ff7c7ea053f+216111]
+	GetHandleVerifier [0x0x7ff7c7e872d4+113092]
+	GetHandleVerifier [0x0x7ff7c7e87489+113529]
+	GetHandleVerifier [0x0x7ff7c7e6e288+10616]
+	BaseThreadInitThunk [0x0x7fff0a91e8d7+23]
+	RtlUserThreadStart [0x0x7fff0b57c34c+44]
+
+2025-07-18 18:17:28,071 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\click_suggested_region_fail_2025-07-18_18-17-28.png

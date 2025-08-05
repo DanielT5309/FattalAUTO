@@ -1,0 +1,86 @@
+2025-08-05 10:56:04,989 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-08-05 10:56:04,990 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-08-05 10:56:04,990 - INFO - Opening personal zone (mobile login)...
+2025-08-05 10:56:05,578 - INFO - Login menu opened via JavaScript interaction.
+2025-08-05 10:56:05,578 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-08-05 10:56:06,655 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-08-05 10:56:07,634 - INFO - Clicking login button (mobile)...
+2025-08-05 10:56:07,829 - INFO - Login button clicked.
+2025-08-05 10:56:07,829 - INFO - 🔍 Checking for post-login popup...
+2025-08-05 10:56:28,439 - INFO - ℹ️ No post-login popup appeared.
+2025-08-05 10:56:28,547 - INFO - Logged in successfully.
+2025-08-05 10:56:38,609 - INFO - WAR popup ID button not found, trying class selector...
+2025-08-05 10:56:38,627 - INFO - WAR popup closed via class selector (u-close-button).
+2025-08-05 10:56:38,628 - INFO - Searching for hotel input container (mobile)...
+2025-08-05 10:56:38,680 - INFO - ✅ Clicked mobile hotel search input container.
+2025-08-05 10:56:40,502 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-08-05 10:56:40,684 - INFO - Clicked first suggested hotel from list.
+2025-08-05 10:56:40,855 - INFO - Opened mobile calendar (date picker).
+2025-08-05 10:56:40,855 - INFO - Scrolling and selecting date range (real clicks)...
+2025-08-05 10:56:42,901 - INFO - Attempting to select: 7 בנובמבר 2025 to 10 בנובמבר 2025 (3 לילות)
+2025-08-05 10:56:45,964 - INFO - Calendar still open after selection – continuing.
+2025-08-05 10:56:46,520 - INFO - Selected check-in: 7 בנובמבר 2025 → check-out: 10 בנובמבר 2025
+2025-08-05 10:56:46,520 - INFO - Confirmed calendar selection.
+2025-08-05 10:56:46,528 - INFO - Room modal already open — skip clicking.
+2025-08-05 10:56:46,528 - INFO - Room modal already open — did not click again.
+2025-08-05 10:56:46,528 - INFO - Adjusting room occupants...
+2025-08-05 10:56:46,535 - INFO - Room modal confirmed present.
+2025-08-05 10:56:46,535 - INFO - Setting adults to 2...
+2025-08-05 10:56:46,556 - INFO - Adults set to: 2
+2025-08-05 10:56:46,556 - INFO - Setting children to 0...
+2025-08-05 10:56:46,595 - INFO - Children set to: 0
+2025-08-05 10:56:46,595 - INFO - Setting infants to 0...
+2025-08-05 10:56:46,619 - INFO - Infants set to: 0
+2025-08-05 10:56:46,619 - INFO - Room occupant adjustment completed.
+2025-08-05 10:56:46,619 - INFO - Searching for 'המשך' room continue button...
+2025-08-05 10:56:46,624 - INFO - Room modal is visible and ready.
+2025-08-05 10:56:47,068 - INFO - Clicked room continue button (native click).
+2025-08-05 10:56:47,068 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-08-05 10:56:52,134 - WARNING - Room modal may still be open — click might be blocked.
+2025-08-05 10:56:52,145 - INFO - Found button with text: 'חפש חופשה'
+2025-08-05 10:56:52,710 - INFO - Clicked search button (JS click).
+2025-08-05 10:56:52,710 - INFO - [REGIONAL] מחפש כפתור 'הצג מחירים'...
+2025-08-05 10:56:56,330 - INFO - נלחץ כפתור 'הצג מחירים' בהצלחה.
+2025-08-05 10:56:56,402 - INFO - 📸 Screenshot 'room_selection' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\room_selection_2025-08-05_10-56-56.png
+2025-08-05 10:56:56,402 - INFO - [REGIONAL] Trying to click 'להזמנת חדר' from regional price container...
+2025-08-05 10:56:57,433 - WARNING - [REGIONAL] Failed to click button #0: Message: element click intercepted: Element <button id="room-price-button-choose-room_ShClub 10_3" class="sc-d693c595-20 gQAJhU">...</button> is not clickable at point (205, 670). Other element would receive the click: <div class="sc-60b5ebd3-0 jmxNvH">...</div>
+  (Session info: chrome=138.0.7204.184)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff7c381e415+77285]
+	GetHandleVerifier [0x0x7ff7c381e470+77376]
+	(No symbol) [0x0x7ff7c35e9a6a]
+	(No symbol) [0x0x7ff7c36483e9]
+	(No symbol) [0x0x7ff7c3645d8b]
+	(No symbol) [0x0x7ff7c3642dd1]
+	(No symbol) [0x0x7ff7c3641ce1]
+	(No symbol) [0x0x7ff7c3633458]
+	(No symbol) [0x0x7ff7c366860a]
+	(No symbol) [0x0x7ff7c3632d06]
+	(No symbol) [0x0x7ff7c3668820]
+	(No symbol) [0x0x7ff7c369087f]
+	(No symbol) [0x0x7ff7c36683e3]
+	(No symbol) [0x0x7ff7c3631521]
+	(No symbol) [0x0x7ff7c36322b3]
+	GetHandleVerifier [0x0x7ff7c3b01efd+3107021]
+	GetHandleVerifier [0x0x7ff7c3afc29d+3083373]
+	GetHandleVerifier [0x0x7ff7c3b1bedd+3213485]
+	GetHandleVerifier [0x0x7ff7c383884e+184862]
+	GetHandleVerifier [0x0x7ff7c384055f+216879]
+	GetHandleVerifier [0x0x7ff7c3827084+113236]
+	GetHandleVerifier [0x0x7ff7c3827239+113673]
+	GetHandleVerifier [0x0x7ff7c380e298+11368]
+	BaseThreadInitThunk [0x0x7ffe4d32e8d7+23]
+	RtlUserThreadStart [0x0x7ffe4f3fc34c+44]
+
+2025-08-05 10:57:02,490 - WARNING - [REGIONAL] Failed to click button #1: Message: 
+
+2025-08-05 10:57:07,550 - WARNING - [REGIONAL] Failed to click button #2: Message: 
+
+2025-08-05 10:57:12,637 - WARNING - [REGIONAL] Failed to click button #3: Message: 
+
+2025-08-05 10:57:17,713 - WARNING - [REGIONAL] Failed to click button #4: Message: 
+
+2025-08-05 10:57:22,766 - WARNING - [REGIONAL] Failed to click button #5: Message: 
+
+2025-08-05 10:57:22,810 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\click_book_room_regional_fail_2025-08-05_10-57-22.png
+2025-08-05 10:57:22,810 - ERROR - [REGIONAL] Failed to click regional 'להזמנת חדר': [REGIONAL] Couldn't click any 'להזמנת חדר' button after loop.

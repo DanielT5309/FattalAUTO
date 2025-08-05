@@ -1,0 +1,62 @@
+2025-07-23 14:09:11,624 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-23 14:09:11,629 - INFO - Starting test: Club renew expired form (mobile)
+2025-07-23 14:09:21,683 - INFO - WAR popup ID button not found, trying class selector...
+2025-07-23 14:09:21,706 - INFO - WAR popup closed via class selector (u-close-button).
+2025-07-23 14:09:21,706 - INFO - Opening personal zone (mobile login)...
+2025-07-23 14:09:21,730 - INFO - Login menu opened via JavaScript interaction.
+2025-07-23 14:09:21,730 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-23 14:09:22,369 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-23 14:09:23,137 - INFO - Clicking login button (mobile)...
+2025-07-23 14:09:23,463 - INFO - Login button clicked.
+2025-07-23 14:09:23,464 - INFO - 📍 Checking for post-login popup...
+2025-07-23 14:09:23,464 - INFO - 🔍 Trying selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 14:09:26,248 - INFO - ✅ Post-login popup closed using selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 14:09:36,270 - INFO - Logged in successfully.
+2025-07-23 14:09:36,270 - INFO - Trying to click on 'עוד' (More) tab in footer (mobile)...
+2025-07-23 14:09:36,343 - INFO -  Clicked 'עוד' (More) footer tab successfully.
+2025-07-23 14:09:36,343 - INFO - Clicking 'מועדון פתאל וחברים' tab in mobile footer...
+2025-07-23 14:09:36,765 - INFO - 'מועדון פתאל וחברים' tab clicked successfully.
+2025-07-23 14:09:36,766 - INFO - Scrolling to and clicking 'להצטרפות למועדון' button...
+2025-07-23 14:09:38,017 - INFO - 'להצטרפות למועדון' button clicked successfully.
+2025-07-23 14:09:38,017 - INFO - 📜 Clicking User Agreement checkbox by label ID (with scroll)...
+2025-07-23 14:09:38,421 - INFO - ✅ Checkbox clicked via label ID.
+2025-07-23 14:09:53,489 - INFO - 📸 Screenshot 'payment_stage' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\payment_stage_2025-07-23_14-09-53.png
+2025-07-23 14:09:53,489 - INFO - Using credit card details from config.json
+2025-07-23 14:09:53,729 - INFO - Credit card details from config applied successfully
+2025-07-23 14:09:53,731 - INFO -  Trying to click the payment submit button inside iframe...
+2025-07-23 14:09:54,770 - INFO -  Payment submit button clicked successfully via JS.
+2025-07-23 14:09:54,771 - INFO - 🔙 Switched back to main content after payment submission.
+2025-07-23 14:09:54,771 - INFO - Waiting for confirmation price element...
+2025-07-23 14:09:54,787 - INFO - Found price text: '150 ₪'
+2025-07-23 14:09:54,787 - INFO - Final price matches one of the expected values.
+2025-07-23 14:09:54,788 - INFO - Trying to close popup with selector: div.sc-c18678ea-3.iOzwib
+2025-07-23 14:10:04,845 - INFO - Trying to close popup with selector: div[class^='sc-c18678ea-3']
+2025-07-23 14:10:14,885 - INFO - ℹ️ No club-related popup appeared.
+2025-07-23 14:10:14,885 - INFO - Waiting for mobile confirmation page to load...
+2025-07-23 14:10:35,529 - INFO - Screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_FAIL_2025-07-23_14-10-35.png
+2025-07-23 14:10:35,529 - ERROR - ❌ Failed to extract confirmation (mobile): Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff64df0e935+77845]
+	GetHandleVerifier [0x0x7ff64df0e990+77936]
+	(No symbol) [0x0x7ff64dcc9cda]
+	(No symbol) [0x0x7ff64dd206aa]
+	(No symbol) [0x0x7ff64dd2095c]
+	(No symbol) [0x0x7ff64dd73d07]
+	(No symbol) [0x0x7ff64dd4890f]
+	(No symbol) [0x0x7ff64dd70b07]
+	(No symbol) [0x0x7ff64dd486a3]
+	(No symbol) [0x0x7ff64dd11791]
+	(No symbol) [0x0x7ff64dd12523]
+	GetHandleVerifier [0x0x7ff64e1e684d+3059501]
+	GetHandleVerifier [0x0x7ff64e1e0c0d+3035885]
+	GetHandleVerifier [0x0x7ff64e200400+3164896]
+	GetHandleVerifier [0x0x7ff64df28c3e+185118]
+	GetHandleVerifier [0x0x7ff64df3054f+216111]
+	GetHandleVerifier [0x0x7ff64df172e4+113092]
+	GetHandleVerifier [0x0x7ff64df17499+113529]
+	GetHandleVerifier [0x0x7ff64defe298+10616]
+	BaseThreadInitThunk [0x0x7ff846a7e8d7+23]
+	RtlUserThreadStart [0x0x7ff8481fc34c+44]
+
+2025-07-23 14:10:35,529 - INFO - ℹ️ Confirmation page loaded. Skipping order number check.
+2025-07-23 14:10:36,597 - INFO -  Screenshot anchored to confirmation container saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\confirmation_success_2025-07-23_14-10-35.png

@@ -1,0 +1,47 @@
+2025-07-23 11:12:00,025 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-23 11:12:00,025 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-07-23 11:12:00,025 - INFO - Opening personal zone (mobile login)...
+2025-07-23 11:12:00,538 - INFO - Login menu opened via JavaScript interaction.
+2025-07-23 11:12:00,538 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-23 11:12:01,320 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-23 11:12:01,503 - INFO - Clicking login button (mobile)...
+2025-07-23 11:12:02,290 - INFO - Login button clicked.
+2025-07-23 11:12:02,290 - INFO - 📍 Checking for post-login popup...
+2025-07-23 11:12:02,290 - INFO - 🔍 Trying selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 11:12:04,323 - INFO - ✅ Post-login popup closed using selector: .sc-e8baa4cf-3.exmeUH
+2025-07-23 11:12:14,342 - INFO - Logged in successfully.
+2025-07-23 11:12:14,342 - INFO - Searching for hotel input container (mobile)...
+2025-07-23 11:12:14,397 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-23 11:12:16,649 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-23 11:12:16,838 - INFO - Clicked first suggested hotel from list.
+2025-07-23 11:12:16,988 - INFO - Opened mobile calendar (date picker).
+2025-07-23 11:12:16,989 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-23 11:12:19,418 - INFO - Attempting to select: 4 באוקטובר 2025 to 7 באוקטובר 2025 (3 לילות)
+2025-07-23 11:12:22,462 - INFO - Calendar still open after selection – continuing.
+2025-07-23 11:12:22,976 - INFO - Selected check-in: 4 באוקטובר 2025 → check-out: 7 באוקטובר 2025
+2025-07-23 11:12:22,976 - INFO - Confirmed calendar selection.
+2025-07-23 11:12:22,982 - INFO - Room modal already open — skip clicking.
+2025-07-23 11:12:22,982 - INFO - Room modal already open — did not click again.
+2025-07-23 11:12:22,982 - INFO - Adjusting room occupants...
+2025-07-23 11:12:22,988 - INFO - Room modal confirmed present.
+2025-07-23 11:12:22,988 - INFO - Setting adults to 2...
+2025-07-23 11:12:23,004 - INFO - Adults set to: 2
+2025-07-23 11:12:23,005 - INFO - Setting children to 1...
+2025-07-23 11:12:23,301 - INFO - Children set to: 1
+2025-07-23 11:12:23,301 - INFO - Setting infants to 0...
+2025-07-23 11:12:23,318 - INFO - Infants set to: 0
+2025-07-23 11:12:23,318 - INFO - Room occupant adjustment completed.
+2025-07-23 11:12:23,318 - INFO - Searching for 'המשך' room continue button...
+2025-07-23 11:12:23,321 - INFO - Room modal is visible and ready.
+2025-07-23 11:12:23,737 - INFO - Clicked room continue button (native click).
+2025-07-23 11:12:23,737 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-23 11:12:28,851 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-23 11:12:28,867 - INFO - Found button with text: 'חפש חופשה'
+2025-07-23 11:12:29,368 - INFO - Clicked search button (JS click).
+2025-07-23 11:12:29,368 - INFO - Checking for membership renewal popup...
+2025-07-23 11:12:30,044 - INFO - Membership renewal popup is displayed.
+2025-07-23 11:12:30,224 - INFO - Clicked on 'לחידוש המועדון בתהליך ההזמנה' button.
+2025-07-23 11:12:30,224 - INFO - 📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...
+2025-07-23 11:12:50,794 - ERROR - ❌ שגיאה בלחיצה על כפתור 'הצג מחירים': Message: 
+
+2025-07-23 11:12:50,860 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\show_prices_button_not_clicked_2025-07-23_11-12-50.png

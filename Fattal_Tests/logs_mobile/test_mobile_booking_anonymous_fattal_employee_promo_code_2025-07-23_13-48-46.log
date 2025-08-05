@@ -1,0 +1,40 @@
+2025-07-23 13:48:34,505 - INFO - Opened environment URL: https://www.fattal.co.il/
+2025-07-23 13:48:34,505 - INFO - Starting test: hotel search and booking flow
+2025-07-23 13:48:34,505 - INFO - Searching for hotel input container (mobile)...
+2025-07-23 13:48:35,178 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-23 13:48:38,333 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-23 13:48:38,492 - INFO - Clicked first suggested hotel from list.
+2025-07-23 13:48:39,031 - INFO - Opened mobile calendar (date picker).
+2025-07-23 13:48:39,031 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-23 13:48:41,075 - INFO - Attempting to select: 17 באוקטובר 2025 to 20 באוקטובר 2025 (3 לילות)
+2025-07-23 13:48:45,249 - INFO - Calendar still open after selection – continuing.
+2025-07-23 13:48:46,750 - ERROR - Date selection failed: Message: element click intercepted: Element <button class="sc-6bedb0b9-0 fVeeuB" id="search-engine-search-button-mobile-button-next-field">...</button> is not clickable at point (205, 810). Other element would receive the click: <div class="u-popup-overlay"></div>
+  (Session info: chrome=138.0.7204.159)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff64df0e935+77845]
+	GetHandleVerifier [0x0x7ff64df0e990+77936]
+	(No symbol) [0x0x7ff64dcc9cda]
+	(No symbol) [0x0x7ff64dd286a9]
+	(No symbol) [0x0x7ff64dd26042]
+	(No symbol) [0x0x7ff64dd23081]
+	(No symbol) [0x0x7ff64dd21f81]
+	(No symbol) [0x0x7ff64dd136c8]
+	(No symbol) [0x0x7ff64dd488ca]
+	(No symbol) [0x0x7ff64dd12f76]
+	(No symbol) [0x0x7ff64dd48ae0]
+	(No symbol) [0x0x7ff64dd70b07]
+	(No symbol) [0x0x7ff64dd486a3]
+	(No symbol) [0x0x7ff64dd11791]
+	(No symbol) [0x0x7ff64dd12523]
+	GetHandleVerifier [0x0x7ff64e1e684d+3059501]
+	GetHandleVerifier [0x0x7ff64e1e0c0d+3035885]
+	GetHandleVerifier [0x0x7ff64e200400+3164896]
+	GetHandleVerifier [0x0x7ff64df28c3e+185118]
+	GetHandleVerifier [0x0x7ff64df3054f+216111]
+	GetHandleVerifier [0x0x7ff64df172e4+113092]
+	GetHandleVerifier [0x0x7ff64df17499+113529]
+	GetHandleVerifier [0x0x7ff64defe298+10616]
+	BaseThreadInitThunk [0x0x7ff846a7e8d7+23]
+	RtlUserThreadStart [0x0x7ff8481fc34c+44]
+
+2025-07-23 13:48:46,858 - ERROR - Screenshot saved: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\calendar_selection_fail_2025-07-23_13-48-46.png

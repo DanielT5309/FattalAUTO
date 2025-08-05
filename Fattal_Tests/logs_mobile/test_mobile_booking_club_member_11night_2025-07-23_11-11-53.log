@@ -1,0 +1,60 @@
+2025-07-23 11:11:03,079 - INFO - Opened environment URL: https://fe.stage.fattal.kimaia.dev/
+2025-07-23 11:11:03,079 - INFO - Starting test: CLUB user hotel search and booking flow (mobile)
+2025-07-23 11:11:03,079 - INFO - Opening personal zone (mobile login)...
+2025-07-23 11:11:03,092 - INFO - Login menu opened via JavaScript interaction.
+2025-07-23 11:11:03,092 - INFO - Trying to click 'כניסה באמצעות ת.ז וסיסמה' footer button...
+2025-07-23 11:11:03,756 - INFO - ✅ Clicked 'כניסה באמצעות ת.ז וסיסמה' footer button successfully.
+2025-07-23 11:11:04,520 - INFO - Clicking login button (mobile)...
+2025-07-23 11:11:05,252 - INFO - Login button clicked.
+2025-07-23 11:11:05,252 - INFO - Checking for post-login popup...
+2025-07-23 11:11:06,668 - INFO - ✅ Post-login popup closed.
+2025-07-23 11:11:06,668 - INFO - Logged in successfully.
+2025-07-23 11:11:06,668 - INFO - Searching for hotel input container (mobile)...
+2025-07-23 11:11:06,714 - INFO - ✅ Clicked mobile hotel search input container.
+2025-07-23 11:11:08,958 - INFO - ✅ Typed city name in mobile: לאונרדו נגב, באר שבע
+2025-07-23 11:11:09,116 - INFO - Clicked first suggested hotel from list.
+2025-07-23 11:11:09,277 - INFO - Opened mobile calendar (date picker).
+2025-07-23 11:11:09,277 - INFO - Scrolling and selecting date range (real clicks)...
+2025-07-23 11:11:11,728 - INFO - Attempting to select: 17 באוקטובר 2025 to 20 באוקטובר 2025 (3 לילות)
+2025-07-23 11:11:14,781 - INFO - Calendar still open after selection – continuing.
+2025-07-23 11:11:15,308 - INFO - Selected check-in: 17 באוקטובר 2025 → check-out: 20 באוקטובר 2025
+2025-07-23 11:11:15,308 - INFO - Confirmed calendar selection.
+2025-07-23 11:11:15,313 - INFO - Room modal already open — skip clicking.
+2025-07-23 11:11:15,313 - INFO - Room modal already open — did not click again.
+2025-07-23 11:11:15,313 - INFO - Adjusting room occupants...
+2025-07-23 11:11:15,319 - INFO - Room modal confirmed present.
+2025-07-23 11:11:15,319 - INFO - Setting adults to 2...
+2025-07-23 11:11:15,335 - INFO - Adults set to: 2
+2025-07-23 11:11:15,335 - INFO - Setting children to 1...
+2025-07-23 11:11:15,629 - INFO - Children set to: 1
+2025-07-23 11:11:15,629 - INFO - Setting infants to 0...
+2025-07-23 11:11:15,648 - INFO - Infants set to: 0
+2025-07-23 11:11:15,648 - INFO - Room occupant adjustment completed.
+2025-07-23 11:11:15,648 - INFO - Searching for 'המשך' room continue button...
+2025-07-23 11:11:15,652 - INFO - Room modal is visible and ready.
+2025-07-23 11:11:16,070 - INFO - Clicked room continue button (native click).
+2025-07-23 11:11:16,071 - INFO - Attempting to click main 'חפש חופשה' search button...
+2025-07-23 11:11:21,131 - WARNING - Room modal may still be open — click might be blocked.
+2025-07-23 11:11:21,142 - INFO - Found button with text: 'חפש חופשה'
+2025-07-23 11:11:21,648 - INFO - Clicked search button (JS click).
+2025-07-23 11:11:21,648 - INFO - 📍 מחפש ולוחץ על כפתור 'הצג מחירים' (דינאמי)...
+2025-07-23 11:11:24,527 - INFO - ✅ נלחץ כפתור 'הצג מחירים' עם ID דינאמי.
+2025-07-23 11:11:24,627 - INFO - 📸 Screenshot 'room_selection' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\room_selection_2025-07-23_11-11-24.png
+2025-07-23 11:11:24,627 - INFO - 📍 מחפש ולוחץ על כפתור 'להזמנת חדר'...
+2025-07-23 11:11:24,970 - INFO - ✅ נלחץ כפתור 'להזמנת חדר' לפי תבנית ID דינאמית.
+2025-07-23 11:11:24,970 - INFO - 🕐 Waiting for personal details form (mobile)...
+2025-07-23 11:11:26,652 - INFO - ✅ Email input is visible.
+2025-07-23 11:11:26,719 - INFO - 📸 Screenshot 'payment_stage' saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\payment_stage_2025-07-23_11-11-26.png
+2025-07-23 11:11:26,719 - INFO - Clicking 'User Agreement' checkbox...
+2025-07-23 11:11:26,749 - INFO - Clicked 'User Agreement' checkbox.
+2025-07-23 11:11:41,749 - INFO - Using credit card details from config.json
+2025-07-23 11:11:41,995 - INFO - Credit card details from config applied successfully
+2025-07-23 11:11:41,997 - INFO -  Trying to click the payment submit button inside iframe...
+2025-07-23 11:11:43,055 - INFO -  Payment submit button clicked successfully via JS.
+2025-07-23 11:11:43,057 - INFO - 🔙 Switched back to main content after payment submission.
+2025-07-23 11:11:43,057 - INFO - Waiting for mobile confirmation page to load...
+2025-07-23 11:11:52,263 - INFO - ✅ Confirmation root detected.
+2025-07-23 11:11:52,399 - INFO - Screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-07-23_11-11-52.png
+2025-07-23 11:11:52,399 - INFO - 📸 Confirmation screenshot saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Fattal_Tests\Screenshots\confirmation_PASS_2025-07-23_11-11-52.png
+2025-07-23 11:11:52,399 - INFO - 🎉 Order Number (mobile): 980025436
+2025-07-23 11:11:53,579 - INFO -  Screenshot anchored with manual scroll saved at: C:\Users\chene\PycharmProjects\FattalAUTO\Fattal_Tests\Screenshots\confirmation_success_2025-07-23_11-11-52.png
