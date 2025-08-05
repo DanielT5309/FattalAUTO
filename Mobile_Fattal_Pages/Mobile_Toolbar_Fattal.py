@@ -60,20 +60,39 @@ class FattalMobileToolBar:
 
     def close_post_login_popup(self):
         try:
-            logging.info("Checking for post-login popup...")
+            logging.info("🔍 Checking for post-login popup...")
 
-            # Updated selector: use the new class names from your DOM
-            close_btn = self.wait.until(EC.element_to_be_clickable((
-                By.CSS_SELECTOR, "div.sc-60b5ebd3-3.gMhFjt"
-            )))
+            # Wait up to 15 seconds for the close button to become clickable
+            close_btn = WebDriverWait(self.driver, 15).until(
+                EC.element_to_be_clickable((
+                    By.CSS_SELECTOR, "[data-testid='popup-close-button'], .sc-e8baa4cf-3.exmeUH"
+                ))
+            )
 
-            self.driver.execute_script("arguments[0].click();", close_btn)
+            # Scroll into view before clicking
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", close_btn)
+
+            # Retry click in case of stale element
+            try:
+                self.driver.execute_script("arguments[0].click();", close_btn)
+            except StaleElementReferenceException:
+                logging.warning("⚠️ Stale element, retrying...")
+                close_btn = WebDriverWait(self.driver, 5).until(
+                    EC.element_to_be_clickable((
+                        By.CSS_SELECTOR, "[data-testid='popup-close-button'], .sc-e8baa4cf-3.exmeUH"
+                    ))
+                )
+                self.driver.execute_script("arguments[0].click();", close_btn)
+
             logging.info("✅ Post-login popup closed.")
 
         except TimeoutException:
             logging.info("ℹ️ No post-login popup appeared.")
+            self.driver.save_screenshot("no_popup_detected.png")
+
         except Exception as e:
             logging.error(f"❌ Failed to close popup: {e}")
+            self.driver.save_screenshot("popup_close_failed.png")
 
     def close_post_login_popup_expired(self):
         try:

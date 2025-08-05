@@ -1088,7 +1088,7 @@ class FattalMobileTests(unittest.TestCase):
             id_number = self.mobile_order_page.generate_israeli_id()
             self.entered_id_number = id_number
             logging.info(f"Generated ID for club registration: {id_number}")
-            #self.mobile_main_page.close_war_popup()
+            self.mobile_main_page.close_war_popup()
 
             # Step 2: Navigate to club join screen
             self.mobile_toolbar.click_more_tab_mobile()
@@ -1242,7 +1242,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_last_name = "User"
         self.entered_email = user["email"]
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1297,7 +1297,7 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1360,7 +1360,7 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1437,7 +1437,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_last_name = "User"
         self.entered_email = user["email"]
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
@@ -1496,7 +1496,7 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
@@ -1548,7 +1548,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = "באר שבע, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
@@ -1612,7 +1612,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = "באר שבע, ישראל"
         random_id = self.mobile_order_page.generate_israeli_id()
         logging.info(f"Generated Israeli ID: {random_id}")
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_region()
@@ -1669,7 +1669,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-        ##self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_RENEW_ID"),
@@ -1744,7 +1744,7 @@ class FattalMobileTests(unittest.TestCase):
         hotel_name = self.default_hotel_name
 
         logging.info("Starting test: CLUB user hotel search and booking flow (mobile)")
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         # Step 0: Club Login
         user = {
             "id": os.getenv("CLUB_ABOUT_EXPIRE_ID"),
@@ -1817,7 +1817,7 @@ class FattalMobileTests(unittest.TestCase):
         self.test_description = "חידוש מועדון דרך טופס"
         hotel_name = self.default_hotel_name
         logging.info("Starting test: Club renew expired form (mobile)")
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
 
         # Step 0: Club Login
         user = {
@@ -1909,7 +1909,7 @@ class FattalMobileTests(unittest.TestCase):
             self.mobile_toolbar.user_id_input().send_keys(user["id"])
             self.mobile_toolbar.user_password_input().send_keys(user["password"])
             self.mobile_toolbar.click_login_button()
-            self.mobile_toolbar.close_post_login_popup()
+
             logging.info("Logged in successfully.")
         except Exception as e:
             logging.warning(f"Login failed or already logged in: {e}")
@@ -1919,7 +1919,8 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_last_name = "User"
         self.entered_email = user["email"]
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_toolbar.close_post_login_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -1988,7 +1989,7 @@ class FattalMobileTests(unittest.TestCase):
         self.entered_first_name = "Club"
         self.entered_last_name = "User"
         self.entered_email = user["email"]
-
+        self.mobile_main_page.close_war_popup()
         self.mobile_toolbar.click_deals_and_packages_tab()
         self.mobile_deals_page.click_view_all_deals_link()
         self.mobile_deals_page.click_view_more_deal_button()
@@ -2030,7 +2031,7 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -2095,7 +2096,7 @@ class FattalMobileTests(unittest.TestCase):
         logging.info("Starting test: hotel search and booking flow")
 
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
@@ -2165,7 +2166,7 @@ class FattalMobileTests(unittest.TestCase):
         #     logging.info(f"Generated Israeli ID: {random_id}")
         #
         #     # Step 1: City selection
-        #     #self.mobile_main_page.close_war_popup()
+        #     self.mobile_main_page.close_war_popup()
         #     self.mobile_main_page.click_mobile_hotel_search_input()
         #     self.mobile_main_page.set_city_mobile(hotel_name)
         #     self.mobile_main_page.click_first_suggested_hotel()
@@ -2247,7 +2248,7 @@ class FattalMobileTests(unittest.TestCase):
         #     self.entered_email = user["email"]
         #
         #     # Step 1: City selection
-        #     #self.mobile_main_page.close_war_popup()
+        #     self.mobile_main_page.close_war_popup()
         #     self.mobile_main_page.click_mobile_hotel_search_input()
         #     self.mobile_main_page.set_city_mobile(hotel_name)
         #     self.mobile_main_page.click_first_suggested_hotel()
@@ -2326,7 +2327,7 @@ class FattalMobileTests(unittest.TestCase):
         #     self.entered_email = user["email"]
         #
         #     # Step 1: City selection
-        #     #self.mobile_main_page.close_war_popup()
+        #     self.mobile_main_page.close_war_popup()
         #     self.mobile_main_page.click_mobile_hotel_search_input()
         #     self.mobile_main_page.set_city_mobile(hotel_name)
         #     self.mobile_main_page.click_first_suggested_hotel()
@@ -2387,7 +2388,7 @@ class FattalMobileTests(unittest.TestCase):
         random_id = self.mobile_order_page.generate_israeli_id()  # Generate a valid Israeli ID
         logging.info(f"Generated Israeli ID: {random_id}")
         # Step 1: City selection
-        #self.mobile_main_page.close_war_popup()
+        self.mobile_main_page.close_war_popup()
         self.mobile_main_page.click_mobile_hotel_search_input()
         self.mobile_main_page.set_city_mobile(hotel_name)
         self.mobile_main_page.click_first_suggested_hotel()
