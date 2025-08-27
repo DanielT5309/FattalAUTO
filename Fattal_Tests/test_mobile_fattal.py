@@ -1122,7 +1122,7 @@ class FattalMobileTests(unittest.TestCase):
             # Step 5: Payment
             self.fill_payment_details_from_config()
             self.mobile_order_page.click_payment_submit_button()
-            self.mobile_toolbar.close_any_club_popup()
+            self.mobile_toolbar.close_post_login_popup()
 
             sleep(3)
             # Step 7: Take confirmation screenshot

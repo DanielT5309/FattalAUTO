@@ -62,33 +62,45 @@ class FattalMobileToolBar:
         try:
             logging.info("🔍 Checking for post-login popup...")
 
-            # Wait up to 15 seconds for the close button to become clickable
-            close_btn = WebDriverWait(self.driver, 15).until(
-                EC.element_to_be_clickable((
-                    By.CSS_SELECTOR, "[data-testid='popup-close-button'], .sc-e8baa4cf-3.exmeUH"
-                ))
-            )
+            # Define all fallback selectors
+            selectors = [
+                "[data-testid='popup-close-button'], .sc-e8baa4cf-3.exmeUH",
+                ".sc-60b5ebd3-3.gMhFjt"
+            ]
+
+            close_btn = None
+
+            for selector in selectors:
+                try:
+                    # Try to find the close button using current selector
+                    close_btn = WebDriverWait(self.driver, 7).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
+                    )
+                    if close_btn:
+                        logging.info(f"🆗 Popup close button found using selector: {selector}")
+                        break
+                except TimeoutException:
+                    logging.warning(f"⚠️ Selector failed: {selector}")
+
+            if not close_btn:
+                logging.info("ℹ️ No post-login popup appeared with any known selectors.")
+                self.driver.save_screenshot("no_popup_detected.png")
+                return
 
             # Scroll into view before clicking
             self.driver.execute_script("arguments[0].scrollIntoView(true);", close_btn)
 
-            # Retry click in case of stale element
+            # Try clicking, handle stale element
             try:
                 self.driver.execute_script("arguments[0].click();", close_btn)
             except StaleElementReferenceException:
-                logging.warning("⚠️ Stale element, retrying...")
+                logging.warning("⚠️ Stale element, retrying click...")
                 close_btn = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((
-                        By.CSS_SELECTOR, "[data-testid='popup-close-button'], .sc-e8baa4cf-3.exmeUH"
-                    ))
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
                 )
                 self.driver.execute_script("arguments[0].click();", close_btn)
 
             logging.info("✅ Post-login popup closed.")
-
-        except TimeoutException:
-            logging.info("ℹ️ No post-login popup appeared.")
-            self.driver.save_screenshot("no_popup_detected.png")
 
         except Exception as e:
             logging.error(f"❌ Failed to close popup: {e}")

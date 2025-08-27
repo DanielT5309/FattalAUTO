@@ -98,7 +98,7 @@ class FattalMainPageMobile:
     def click_mobile_date_picker(self):
         try:
             date_picker = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "search-engine-date-picker-month-button"))
+                EC.element_to_be_clickable((By.ID, "search-engine-date-picker-display-placeholder-container"))
             )
             self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", date_picker)
             date_picker.click()
