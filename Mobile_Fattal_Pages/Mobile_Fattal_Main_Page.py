@@ -24,6 +24,19 @@ logging.basicConfig(
     datefmt="%H:%M:%S"
 )
 
+class FattalMainPageMobile:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def close_war_popup(self):
+        try:
+            popup = WebDriverWait(self.driver, 5).until(
+                EC.element_to_be_clickable((By.ID, "war-popup-close-button"))
+            )
+            popup.click()
+            logging.info("WAR popup closed successfully.")
+        except:
+            logging.info("No WAR popup found.")
 
 class FattalMainPageMobile:
     def __init__(self, driver: webdriver.Chrome):
@@ -742,7 +755,7 @@ class FattalMainPageMobile:
             self.driver.execute_script("arguments[0].click();", close_button)
             logging.info("WAR popup closed via ID button.")
             return
-        except Exception as e:
+        except Exception:
             logging.info("WAR popup ID button not found, trying class selector...")
 
         try:
@@ -753,10 +766,10 @@ class FattalMainPageMobile:
             self.driver.execute_script("arguments[0].click();", close_button)
             logging.info("WAR popup closed via class selector (u-close-button).")
             return
-        except Exception as e:
+        except Exception:
             logging.info("WAR popup class button not found — skipping close_war_popup.")
 
-        # If both fail, just continue (no exception raised)
+        # If both fail, just continue silently
         return
 
     def select_date_range_months_ahead(self, months_ahead=2, stay_length=3):
