@@ -1,15 +1,23 @@
-import random
-from dateutil.relativedelta import relativedelta
-from selenium.common import TimeoutException, StaleElementReferenceException, MoveTargetOutOfBoundsException
-from selenium.webdriver import ActionChains, Keys
-from selenium import webdriver
-from datetime import datetime, date,timedelta
 import os
 import time
+import random
 import logging
+import calendar
+from datetime import datetime, date, timedelta
+
+from dateutil.relativedelta import relativedelta
+
+from selenium import webdriver
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import (
+    TimeoutException,
+    StaleElementReferenceException,
+    MoveTargetOutOfBoundsException,
+)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -108,48 +116,59 @@ class FattalMainPageMobile:
             self.take_screenshot("open_calendar_fail")
             raise
 
-    def select_date_range_two_months_ahead(self, stay_length=3):
+    def select_date_range_months_ahead(self, months_ahead=2, stay_length=3):
         """
-        Selects check-in and check-out dates from the 3rd calendar month shown (2 months ahead).
+        Selects check-in and check-out dates from a month X months ahead.
+        :param months_ahead: How many months forward to go (default = 2).
         :param stay_length: Optional integer for number of nights. If None, chooses randomly (3-5).
         """
         try:
-            logging.info("Scrolling and selecting date range (real clicks)...")
+            logging.info(f"Selecting date range ({months_ahead} months forward)...")
 
-            months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-            if len(months) < 5:
-                raise Exception("Less than 3 months available in calendar")
+            # ✅ Calculate target month/year
+            today = datetime.today()
+            target_month = (today.month + months_ahead - 1) % 12 + 1
+            target_year = today.year + ((today.month + months_ahead - 1) // 12)
 
-            target_month = months[3]
-            self.driver.execute_script(
-                "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", target_month)
-            time.sleep(2)
+            logging.info(f"Looking for dates in: {calendar.month_name[target_month]} {target_year}")
 
-            valid_buttons = target_month.find_elements(By.XPATH, ".//button[not(@disabled)]")
-            if len(valid_buttons) < 8:
-                raise Exception("Not enough active date buttons in target month")
+            # ✅ Get all active tiles
+            all_tiles = self.driver.find_elements(
+                By.XPATH,
+                "//div[starts-with(@id,'search-engine-date-picker-tile-inner') and not(@disabled)]"
+            )
+            if not all_tiles:
+                raise Exception("No date tiles found in calendar")
 
-            # ✅ Use passed value or randomize
+            # ✅ Filter only target month/year
+            target_tiles = []
+            for tile in all_tiles:
+                tile_id = tile.get_attribute("id")
+                try:
+                    date_str = tile_id.replace("search-engine-date-picker-tile-inner", "")
+                    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+                    if date_obj.month == target_month and date_obj.year == target_year:
+                        target_tiles.append((tile, date_obj))
+                except Exception as e:
+                    logging.warning(f"Could not parse ID '{tile_id}': {e}")
+
+            if len(target_tiles) < 2:
+                raise Exception(f"Not enough active date tiles for {calendar.month_name[target_month]} {target_year}")
+
+            # ✅ Choose stay length
             stay_length = stay_length or random.randint(3, 5)
-            start_idx = random.randint(0, len(valid_buttons) - stay_length - 1)
-            checkin = valid_buttons[start_idx]
-            checkout = valid_buttons[start_idx + stay_length]
+            start_idx = random.randint(0, len(target_tiles) - stay_length - 1)
+            checkin, checkin_date = target_tiles[start_idx]
+            checkout, checkout_date = target_tiles[start_idx + stay_length]
 
-            checkin_label = checkin.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-            checkout_label = checkout.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-            logging.info(f"Attempting to select: {checkin_label} to {checkout_label} ({stay_length} לילות)")
+            logging.info(f"Attempting to select: {checkin_date} to {checkout_date} ({stay_length} nights)")
 
+            # ✅ Click check-in and check-out
             actions = ActionChains(self.driver)
             actions.move_to_element(checkin).pause(0.5).click().pause(1.0)
             actions.move_to_element(checkout).pause(0.5).click().perform()
 
-            try:
-                self.driver.find_element(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-                logging.info("Calendar still open after selection – continuing.")
-            except:
-                raise Exception("Calendar closed before both dates were selected!")
-
-            # 🛠️ Here is the ONLY FIX applied:
+            # ✅ Continue button
             continue_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-next-field"))
             )
@@ -157,7 +176,7 @@ class FattalMainPageMobile:
             time.sleep(0.4)
             continue_btn.click()
 
-            logging.info(f"Selected check-in: {checkin_label} → check-out: {checkout_label}")
+            logging.info(f"Selected check-in: {checkin_date} → check-out: {checkout_date}")
             logging.info("Confirmed calendar selection.")
 
         except Exception as e:
@@ -165,48 +184,57 @@ class FattalMainPageMobile:
             self.take_screenshot("calendar_selection_fail")
             raise
 
-    def select_date_range_two_months_ahead_eilat(self, stay_length=5):
+    def select_date_range_months_ahead(self, months_ahead=3, stay_length=5):
         """
-        Selects check-in and check-out dates from the 3rd calendar month shown (2 months ahead).
-        :param stay_length: Optional integer for number of nights. If None, chooses randomly (3-5).
+        Selects check-in and check-out dates from a month X months ahead.
+        :param months_ahead: How many months forward to go (default = 3).
+        :param stay_length: Number of nights (default = 5).
         """
         try:
-            logging.info("Scrolling and selecting date range (real clicks)...")
+            logging.info(f"Selecting date range ({months_ahead} months forward)...")
 
-            months = self.driver.find_elements(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-            if len(months) < 3:
-                raise Exception("Less than 3 months available in calendar")
+            # ✅ Calculate target month/year
+            today = datetime.today()
+            target_month = (today.month + months_ahead - 1) % 12 + 1
+            target_year = today.year + ((today.month + months_ahead - 1) // 12)
 
-            target_month = months[2]
-            self.driver.execute_script(
-                "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", target_month)
-            time.sleep(2)
+            logging.info(f"Looking for dates in: {calendar.month_name[target_month]} {target_year}")
 
-            valid_buttons = target_month.find_elements(By.XPATH, ".//button[not(@disabled)]")
-            if len(valid_buttons) < 8:
-                raise Exception("Not enough active date buttons in target month")
+            # ✅ Get all active tiles
+            all_tiles = self.driver.find_elements(
+                By.XPATH,
+                "//div[starts-with(@id,'search-engine-date-picker-tile-inner') and not(@disabled)]"
+            )
+            if not all_tiles:
+                raise Exception("No date tiles found in calendar")
 
-            # ✅ Use passed value or randomize
-            stay_length = stay_length or random.randint(3, 5)
-            start_idx = random.randint(0, len(valid_buttons) - stay_length - 1)
-            checkin = valid_buttons[start_idx]
-            checkout = valid_buttons[start_idx + stay_length]
+            # ✅ Filter only target month/year
+            target_tiles = []
+            for tile in all_tiles:
+                tile_id = tile.get_attribute("id")
+                try:
+                    date_str = tile_id.replace("search-engine-date-picker-tile-inner", "")
+                    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+                    if date_obj.month == target_month and date_obj.year == target_year:
+                        target_tiles.append((tile, date_obj))
+                except Exception as e:
+                    logging.warning(f"Could not parse ID '{tile_id}': {e}")
 
-            checkin_label = checkin.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-            checkout_label = checkout.find_element(By.TAG_NAME, "abbr").get_attribute("aria-label")
-            logging.info(f"Attempting to select: {checkin_label} to {checkout_label} ({stay_length} לילות)")
+            if len(target_tiles) < stay_length + 1:
+                raise Exception(f"Not enough active date tiles for {calendar.month_name[target_month]} {target_year}")
 
+            # ✅ Pick check-in/out
+            checkin, checkin_date = target_tiles[0]
+            checkout, checkout_date = target_tiles[stay_length]
+
+            logging.info(f"Attempting to select: {checkin_date} → {checkout_date} ({stay_length} nights)")
+
+            # ✅ Clicks
             actions = ActionChains(self.driver)
             actions.move_to_element(checkin).pause(0.5).click().pause(1.0)
             actions.move_to_element(checkout).pause(0.5).click().perform()
 
-            try:
-                self.driver.find_element(By.ID, "search-engine-date-picker-mobile-month-wrapper")
-                logging.info("Calendar still open after selection – continuing.")
-            except:
-                raise Exception("Calendar closed before both dates were selected!")
-
-            # 🛠️ Here is the ONLY FIX applied:
+            # ✅ Continue button
             continue_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "search-engine-search-button-mobile-button-next-field"))
             )
@@ -214,14 +242,13 @@ class FattalMainPageMobile:
             time.sleep(0.4)
             continue_btn.click()
 
-            logging.info(f"Selected check-in: {checkin_label} → check-out: {checkout_label}")
+            logging.info(f"Selected check-in: {checkin_date} → check-out: {checkout_date}")
             logging.info("Confirmed calendar selection.")
 
         except Exception as e:
             logging.error(f"Date selection failed: {e}")
             self.take_screenshot("calendar_selection_fail")
             raise
-
 
     def get_valid_calendar_day_buttons(self):
         buttons = self.driver.find_elements(By.CSS_SELECTOR, ".react-calendar__month-view__days button")
