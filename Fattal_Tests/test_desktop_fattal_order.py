@@ -1104,7 +1104,12 @@ class FattalDesktopTests(unittest.TestCase):
         self.test_description = "בדיקת השלמת הזמנה מתשמש אנונימי"
         logging.info(" Starting test: hotel search and booking flow")
 
-        self.main_page.close_war_popup()
+        CLOSE_WAR_POPUP = int(os.getenv("CLOSE_WAR_POPUP", "0"))
+
+        def setup_method(self, method):
+            # this runs before every test
+            if CLOSE_WAR_POPUP == 1:
+                self.mobile_main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -1126,7 +1131,12 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info(" Starting test: hotel search and booking flow")
 
-        self.main_page.close_war_popup()
+        CLOSE_WAR_POPUP = int(os.getenv("CLOSE_WAR_POPUP", "0"))
+
+        def setup_method(self, method):
+            # this runs before every test
+            if CLOSE_WAR_POPUP == 1:
+                self.mobile_main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range()
@@ -1153,7 +1163,12 @@ class FattalDesktopTests(unittest.TestCase):
         try:
             logging.info("Starting test for Eilat zone with flight")
 
-            self.main_page.close_war_popup()
+            CLOSE_WAR_POPUP = int(os.getenv("CLOSE_WAR_POPUP", "0"))
+
+            def setup_method(self, method):
+                # this runs before every test
+                if CLOSE_WAR_POPUP == 1:
+                    self.mobile_main_page.close_war_popup()
             try:
                 self.toolbar.personal_zone()
                 self.toolbar.click_footer_login_with_id_and_password()
@@ -1166,7 +1181,6 @@ class FattalDesktopTests(unittest.TestCase):
                 logging.info("Logged in to club account successfully.")
             except Exception as e:
                 logging.warning(f"Login failed: {e}")
-            self.main_page.close_war_popup()
             self.main_page.click_clear_button_hotel()
             self.main_page.set_city(hotel_name)
             self.main_page.select_next_month_date_range_eilat()
@@ -1224,7 +1238,12 @@ class FattalDesktopTests(unittest.TestCase):
 
         logging.info("Starting test: hotel search and booking flow")
 
-        self.main_page.close_war_popup()
+        CLOSE_WAR_POPUP = int(os.getenv("CLOSE_WAR_POPUP", "0"))
+
+        def setup_method(self, method):
+            # this runs before every test
+            if CLOSE_WAR_POPUP == 1:
+                self.mobile_main_page.close_war_popup()
         self.main_page.click_clear_button_hotel()
         self.main_page.set_city(hotel_name)
         self.main_page.select_next_month_date_range_eilat()
@@ -1265,7 +1284,12 @@ class FattalDesktopTests(unittest.TestCase):
         self.entered_last_name = guest["last_name"]
         self.entered_phone = guest["phone"]
 
-        self.main_page.close_war_popup()
+        CLOSE_WAR_POPUP = int(os.getenv("CLOSE_WAR_POPUP", "0"))
+
+        def setup_method(self, method):
+            # this runs before every test
+            if CLOSE_WAR_POPUP == 1:
+                self.mobile_main_page.close_war_popup()
         try:
             self.toolbar.personal_zone()
             self.toolbar.click_footer_login_with_id_and_password()

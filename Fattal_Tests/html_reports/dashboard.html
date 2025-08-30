@@ -1,107 +1,118 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>🧪 Fattal QA Automation Dashboard</title>
-      <style>
-        body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background-color: #f9f9f9;
-          margin: 20px;
-          color: #333;
-        }
-        .dashboard-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 10px;
-          gap: 24px;
-        }
-        .dashboard-header h1 {
-          margin: 0;
-          font-size: 1.8em;
-          display: flex;
-          align-items: center;
-          white-space: nowrap;
-        }
-        .dashboard-header h1::before {
-          content: '🧪';
-          margin-right: 10px;
-        }
-        .header-logo {
-          height: 60px;
-          max-width: 200px;
-          object-fit: contain;
-          border-radius: 8px;
-          background: #fff;
-          padding: 6px 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        @media (max-width: 700px) {
-          .dashboard-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-          }
-          .header-logo {
-            margin-left: 0;
-            margin-top: 6px;
-            height: 44px;
-            max-width: 150px;
-          }
-        }
-        select {
-          font-size: 14px;
-          padding: 5px;
-          margin-left: 10px;
-        }
-        .test-entry {
-          background: #fff;
-          border-radius: 6px;
-          padding: 15px;
-          margin-bottom: 20px;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-          transition: background 0.3s ease;
-        }
-        .test-entry:hover {
-          background: #f0f8ff;
-        }
-        .screenshot-grid {
-          display: flex;
-          gap: 12px;
-          margin-top: 10px;
-          flex-wrap: wrap;
-        }
-        .screenshot-grid img {
-          border-radius: 4px;
-          border: 1px solid #ccc;
-        }
-        .modal {
-          display: none;
-          position: fixed;
-          z-index: 999;
-          left: 0; top: 0; width: 100%; height: 100%;
-          background-color: rgba(0,0,0,0.85);
-        }
-        .modal-content {
-          margin: 5% auto;
-          display: block;
-          max-width: 90vw;
-          max-height: 80vh;
-        }
-        .close {
-          position: absolute;
-          top: 15px;
-          right: 35px;
-          color: #fff;
-          font-size: 40px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-      </style>
-      
-        <script>
-        const runData = {
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>🧪 Fattal Run Selector Dashboard</title>
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f9f9f9;
+              margin: 20px;
+              color: #333;
+            }
+            .dashboard-header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 10px;
+              gap: 24px;
+            }
+            .dashboard-header h1 {
+              margin: 0;
+              font-size: 1.8em;
+              display: flex;
+              align-items: center;
+              white-space: nowrap;
+            }
+            .dashboard-header h1::before {
+              content: '🧪';
+              margin-right: 10px;
+            }
+            .header-logo {
+              height: 60px;
+              max-width: 200px;
+              object-fit: contain;
+              border-radius: 8px;
+              background: #fff;
+              padding: 6px 12px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            @media (max-width: 700px) {
+              .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+              }
+              .header-logo {
+                margin-left: 0;
+                margin-top: 6px;
+                height: 44px;
+                max-width: 150px;
+              }
+            }
+            select {
+              font-size: 14px;
+              padding: 5px;
+              margin-left: 10px;
+            }
+            .test-entry {
+              background: #fff;
+              border-radius: 6px;
+              padding: 15px;
+              margin-bottom: 20px;
+              box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+              transition: background 0.3s ease;
+            }
+            .test-entry:hover {
+              background: #f0f8ff;
+            }
+            .screenshot-grid {
+              display: flex;
+              gap: 12px;
+              margin-top: 10px;
+              flex-wrap: wrap;
+            }
+            .screenshot-grid img {
+              border-radius: 4px;
+              border: 1px solid #ccc;
+            }
+            .modal {
+              display: none;
+              position: fixed;
+              z-index: 999;
+              left: 0; top: 0; width: 100%; height: 100%;
+              background-color: rgba(0,0,0,0.85);
+            }
+            .modal-content {
+              margin: 5% auto;
+              display: block;
+              max-width: 90vw;
+              max-height: 80vh;
+            }
+            .close {
+              position: absolute;
+              top: 15px;
+              right: 35px;
+              color: #fff;
+              font-size: 40px;
+              font-weight: bold;
+              cursor: pointer;
+            }
+          </style>
+          
+            <script>
+            const runData = {
+"run_2025-08-30_21-21-24": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "PASSED", "timestamp": "2025-08-30 21:22:34", "duration": "69.46s", "browser": "chrome", "os": "Windows", "full_name": "חן טסט", "email": "restestfattal@gmail.com", "order_number": "980025889", "id_number": "435686373", "confirmation_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_PASS_2025-08-30_21-22-34.png", "error_screenshot": "", "room_selection": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\room_selection_2025-08-30_21-22-03.png", "payment_stage": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\payment_stage_2025-08-30_21-22-04.png", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-22-34.log", "error": "", "test_type": "desktop"}],
+"run_2025-08-30_21-15-43": [{"name": "test_desktop_booking_anonymous_region_eilat", "description": "בדיקת השלמת הזמנה משתמש אנונימי דרך אזור מלונות אילת", "status": "FAILED", "timestamp": "2025-08-30 21:17:29", "duration": "106.01s", "browser": "chrome", "os": "Windows", "full_name": "חן טסט", "email": "restestfattal@gmail.com", "order_number": "", "id_number": "794085886", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-17-29.png", "room_selection": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\room_selection_2025-08-30_21-16-44.png", "payment_stage": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\payment_stage_2025-08-30_21-16-45.png", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_booking_anonymous_region_eilat_2025-08-30_21-17-29.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1255, in test_desktop_booking_anonymous_region_eilat\n    self.entered_id_number = self.confirmation_result.get(\"id_number\", \"\")\n                             ^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'FattalDesktopTests' object has no attribute 'confirmation_result'\n", "test_type": "desktop"}],
+"run_2025-08-30_21-14-45": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:15:37", "duration": "52.71s", "browser": "chrome", "os": "Windows", "full_name": "חן טסט", "email": "restestfattal@gmail.com", "order_number": "", "id_number": "503517476", "confirmation_screenshot": "", "error_screenshot": "", "room_selection": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\room_selection_2025-08-30_21-15-24.png", "payment_stage": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\payment_stage_2025-08-30_21-15-26.png", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-15-37.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1119, in test_desktop_anonymous_booking\n    self.complete_booking_flow(hotel_name, adults, children, infants)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1029, in complete_booking_flow\n    self.order_page.click_terms_approval_checkbox_js()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Order_Page_ISR.py\", line 142, in click_terms_approval_checkbox_js\n    label = self.wait.until(EC.presence_of_element_located((By.XPATH,\n        \"//label[contains(., 'אני מאשר') and .//input[@type='checkbox']]\"\n    )))\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 137, in until\n    value = method(self._driver)\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\expected_conditions.py\", line 110, in _predicate\n    return driver.find_element(*locator)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\remote\\webdriver.py\", line 898, in find_element\n    return self.execute(Command.FIND_ELEMENT, {\"using\": by, \"value\": value})[\"value\"]\n           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\remote\\webdriver.py\", line 429, in execute\n    self.error_handler.check_response(response)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\remote\\errorhandler.py\", line 232, in check_response\n    raise exception_class(message, screen, stacktrace)\nselenium.common.exceptions.InvalidSessionIdException: Message: invalid session id: session deleted as the browser has closed the connection\nfrom disconnected: not connected to DevTools\n  (Session info: chrome=139.0.7258.139)\nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613d68355]\n\t(No symbol) [0x0x7ff613d8ceee]\n\t(No symbol) [0x0x7ff613e027c5]\n\t(No symbol) [0x0x7ff613e22c72]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_21-13-02": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:13:41", "duration": "38.18s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "888438629", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-13-41.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-13-41.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1119, in test_desktop_anonymous_booking\n    self.complete_booking_flow(hotel_name, adults, children, infants)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1001, in complete_booking_flow\n    self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 481, in set_room_occupants\n    WebDriverWait(self.driver, 10).until(\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        EC.visibility_of_element_located((By.ID, \"search-engine-room-selection-popover\"))\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \n\n", "test_type": "desktop"}],
+"run_2025-08-30_21-07-45": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:08:25", "duration": "39.39s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "256898768", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-08-25.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-08-25.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1119, in test_desktop_anonymous_booking\n    self.complete_booking_flow(hotel_name, adults, children, infants)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1001, in complete_booking_flow\n    self.main_page.set_room_occupants(adults=adults, children=children, infants=infants)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 481, in set_room_occupants\n    WebDriverWait(self.driver, 10).until(\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        EC.visibility_of_element_located((By.ID, \"search-engine-room-selection-popover\"))\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \n\n", "test_type": "desktop"}],
+"run_2025-08-30_21-06-38": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:07:08", "duration": "29.67s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-07-08.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-07-08.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1115, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 332, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 164, in open_calendar\n    calendar_div = WebDriverWait(self.driver, 10).until(\n        EC.presence_of_element_located((By.ID, \"search-engine-date-picker-display-container-2\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_21-04-52": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:05:38", "duration": "45.38s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-05-38.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-05-38.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1110, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 334, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 164, in open_calendar\n    calendar_btn = WebDriverWait(self.driver, 10).until(\n        EC.presence_of_element_located((By.ID, \"search-engine-date-picker-month-button\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_21-01-37": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 21:02:23", "duration": "45.85s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_21-02-23.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_21-02-23.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1110, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 333, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 162, in open_calendar\n    calendar_btn = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.ID, \"search-engine-date-picker-month-button\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_20-59-10": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 20:59:56", "duration": "46.07s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_20-59-56.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_20-59-56.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1110, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 328, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 158, in open_calendar\n    calendar_btn = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.ID, \"search-engine-date-picker-month-button\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_20-58-17": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 20:59:03", "duration": "45.53s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_20-59-03.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_20-59-03.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1110, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 328, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 158, in open_calendar\n    calendar_btn = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.ID, \"search-engine-date-picker-display-container-2\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
+"run_2025-08-30_20-56-00": [{"name": "test_desktop_anonymous_booking", "description": "בדיקת השלמת הזמנה מתשמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 20:56:47", "duration": "46.64s", "browser": "chrome", "os": "Windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_FAIL_2025-08-30_20-56-46.png", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs\\test_desktop_anonymous_booking_2025-08-30_20-56-46.log", "error": "Unrecognized exception format: Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_desktop_fattal_order.py\", line 1110, in test_desktop_anonymous_booking\n    self.main_page.select_next_month_date_range()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 328, in select_next_month_date_range\n    self.open_calendar()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Pages\\Fattal_Main_Page.py\", line 158, in open_calendar\n    calendar_btn = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.ID, \"search-engine-date-picker-display-container-2\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "desktop"}],
 "run_2025-08-30_20-53-22": [{"name": "test_mobile_booking_anonymous_user", "description": "בדיקת השלמת הזמנה משתמש אנונימי", "status": "FAILED", "timestamp": "2025-08-30 20:54:04", "duration": "39.31s", "browser": "Chrome", "os": "windows", "full_name": "", "email": "", "order_number": "", "id_number": "", "confirmation_screenshot": "", "error_screenshot": "", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs_mobile\\test_mobile_booking_anonymous_user_2025-08-30_20-54-04.log", "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_mobile_fattal.py\", line 1332, in test_mobile_booking_anonymous_user\n    self.mobile_search_page.click_show_prices_button()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Mobile_Fattal_Pages\\Mobile_Fattal_Search_Result_Page.py\", line 64, in click_show_prices_button\n    WebDriverWait(self.driver, 20).until(\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        EC.presence_of_all_elements_located((\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n        ))\n        ^^\n    )\n    ^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \n\n", "test_type": "mobile"}],
 "run_2025-08-30_20-35-42": [{"name": "test_mobile_booking_club_member_eilat_with_flight", "description": "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות", "status": "FAILED", "timestamp": "2025-08-30 20:37:36", "duration": "111.12s", "browser": "Chrome", "os": "windows", "full_name": "Club User", "email": "restestfattal@gmail.com", "order_number": "", "id_number": "999318330", "confirmation_screenshot": "", "error_screenshot": "", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs_mobile\\test_mobile_booking_club_member_eilat_with_flight_2025-08-30_20-37-36.log", "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_mobile_fattal.py\", line 1460, in test_mobile_booking_club_member_eilat_with_flight\n    self.mobile_search_page.handle_search_flow_with_fallback(self)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Mobile_Fattal_Pages\\Mobile_Fattal_Search_Result_Page.py\", line 404, in handle_search_flow_with_fallback\n    self.click_book_room_button()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Mobile_Fattal_Pages\\Mobile_Fattal_Search_Result_Page.py\", line 157, in click_book_room_button\n    button_by_text = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.XPATH, \"//button[normalize-space()='להזמנת חדר']\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "mobile"}],
 "run_2025-08-30_20-33-39": [{"name": "test_mobile_booking_club_member_eilat_with_flight", "description": "בדיקת השלמת הזמנה משתמש מחובר עם מועדון פעיל + טיסות", "status": "FAILED", "timestamp": "2025-08-30 20:35:33", "duration": "112.50s", "browser": "Chrome", "os": "windows", "full_name": "Club User", "email": "restestfattal@gmail.com", "order_number": "", "id_number": "999318330", "confirmation_screenshot": "", "error_screenshot": "", "room_selection": "", "payment_stage": "", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs_mobile\\test_mobile_booking_club_member_eilat_with_flight_2025-08-30_20-35-33.log", "error": "Traceback (most recent call last):\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\test_mobile_fattal.py\", line 1460, in test_mobile_booking_club_member_eilat_with_flight\n    self.mobile_search_page.handle_search_flow_with_fallback(self)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Mobile_Fattal_Pages\\Mobile_Fattal_Search_Result_Page.py\", line 404, in handle_search_flow_with_fallback\n    self.click_book_room_button()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Mobile_Fattal_Pages\\Mobile_Fattal_Search_Result_Page.py\", line 157, in click_book_room_button\n    button_by_text = WebDriverWait(self.driver, 10).until(\n        EC.element_to_be_clickable((By.XPATH, \"//button[normalize-space()='להזמנת חדר']\"))\n    )\n  File \"C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\.venv\\Lib\\site-packages\\selenium\\webdriver\\support\\wait.py\", line 146, in until\n    raise TimeoutException(message, screen, stacktrace)\nselenium.common.exceptions.TimeoutException: Message: \nStacktrace:\n\tGetHandleVerifier [0x0x7ff613fd3d85+79397]\n\tGetHandleVerifier [0x0x7ff613fd3de0+79488]\n\t(No symbol) [0x0x7ff613d7c0fa]\n\t(No symbol) [0x0x7ff613dd2fd6]\n\t(No symbol) [0x0x7ff613dd328c]\n\t(No symbol) [0x0x7ff613e26537]\n\t(No symbol) [0x0x7ff613dfb1df]\n\t(No symbol) [0x0x7ff613e23344]\n\t(No symbol) [0x0x7ff613dfaf73]\n\t(No symbol) [0x0x7ff613dc41b1]\n\t(No symbol) [0x0x7ff613dc4f43]\n\tGetHandleVerifier [0x0x7ff61429e1ed+3005069]\n\tGetHandleVerifier [0x0x7ff61429831d+2980797]\n\tGetHandleVerifier [0x0x7ff6142b7e0d+3110573]\n\tGetHandleVerifier [0x0x7ff613fed6de+184190]\n\tGetHandleVerifier [0x0x7ff613ff516f+215567]\n\tGetHandleVerifier [0x0x7ff613fdc974+115220]\n\tGetHandleVerifier [0x0x7ff613fdcb29+115657]\n\tGetHandleVerifier [0x0x7ff613fc3268+11016]\n\tBaseThreadInitThunk [0x0x7ffb53cbe8d7+23]\n\tRtlUserThreadStart [0x0x7ffb551fc34c+44]\n\n", "test_type": "mobile"}],
@@ -127,73 +138,84 @@
 "run_2025-08-26_11-04-04": [{"name": "test_mobile_booking_with_club_login", "description": "בדיקת השלמת הזמנה משתמש מועדון", "status": "PASSED", "timestamp": "2025-08-26 11:05:43", "duration": "89.29s", "browser": "Chrome", "os": "windows", "full_name": "Club User", "email": "restestfattal@gmail.com", "order_number": "980025857", "id_number": "999318330", "confirmation_screenshot": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\confirmation_success_2025-08-26_11-05-42.png", "error_screenshot": "", "room_selection": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\room_selection_2025-08-26_11-05-11.png", "payment_stage": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\Screenshots\\payment_stage_2025-08-26_11-05-15.png", "log": "C:\\Users\\Chen Ettedgui\\PycharmProjects\\FattalAUTO\\Fattal_Tests\\logs_mobile\\test_mobile_booking_with_club_login_2025-08-26_11-05-43.log", "error": "", "test_type": "mobile"}]
 };
 
-        function populateRun(runId) {
-            const container = document.getElementById("results");
-            container.innerHTML = "";
-            const showPassed = document.getElementById("filterPassed").checked;
-            const showFailed = document.getElementById("filterFailed").checked;
-            const data = runData[runId] || [];
-            data.forEach(test => {
-                if ((test.status === "PASSED" && !showPassed) || (test.status === "FAILED" && !showFailed)) return;
+            function populateRun(runId) {
+                const container = document.getElementById("results");
+                container.innerHTML = "";
+                const showPassed = document.getElementById("filterPassed").checked;
+                const showFailed = document.getElementById("filterFailed").checked;
+                const data = runData[runId] || [];
+                data.forEach(test => {
+                    if ((test.status === "PASSED" && !showPassed) || (test.status === "FAILED" && !showFailed)) return;
 
-                const div = document.createElement("div");
-                div.classList.add("test-entry");
+                    const div = document.createElement("div");
+                    div.classList.add("test-entry");
+                    const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
+                      .map(label => {
+                          const path = test[label] || "";
+                          if (!path) return "";
+                          const short = path.split(/[/\\]/).pop();
+                          return `<div><strong>${label}:</strong><br><img src="../Screenshots/${short}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
+                      }).join("");
 
-                // Robust log path logic for working links:
-                const logPath = test.log || "";
-                let logHref = "#";
-                if (logPath) {
-                  let parts = logPath.replace(/\\/g, '/').split('/');
-                  if (parts.length >= 2) {
-                    logHref = "../" + parts.slice(-2).join('/');
-                  } else {
-                    logHref = logPath;
-                  }
-                }
+                    // ---- Log path robust logic ----
+                    const logPath = test.log || "";
+                    let logHref = "#";
+                    if (logPath) {
+                      let parts = logPath.replace(/\\/g, '/').split('/');
+                      if (parts.length >= 2) {
+                        logHref = "../" + parts.slice(-2).join('/');
+                      } else {
+                        logHref = logPath;
+                      }
+                    }
+                    // --------------------------------
 
-                const screenshots = ["room_selection", "payment_stage", test.status === "FAILED" ? "error_screenshot" : "confirmation_screenshot"]
-                  .map(label => {
-                      const path = test[label] || "";
-                      if (!path) return "";
-                      const short = path.split(/[/\\]/).pop();
-                      return `<div><strong>${label}:</strong><br><img src="../Screenshots/${short}" style="max-height:120px;cursor:pointer;" onclick="openModal(this.src)" /></div>`;
-                  }).join("");
+                    div.innerHTML = `
+                      <h3>${test.name} — <span style="color:${test.status === 'PASSED' ? 'green' : 'red'}">${test.status}</span></h3>
+                      <p><strong>Description:</strong> ${test.description || "—"}</p>
+                      <p><strong>Timestamp:</strong> ${test.timestamp} | <strong>Duration:</strong> ${test.duration}</p>
+                      <p><strong>Guest:</strong> ${test.full_name} | <strong>Email:</strong> ${test.email}</p>
+                      <p><strong>Order #:</strong> ${test.order_number} | <strong>ID:</strong> ${test.id_number}</p>
+                      <p><strong>Log:</strong> <a href="${logHref}" target="_blank">${logPath.split(/[\\/]/).pop()}</a></p>
+                      ${test.error ? `<p style='color:red'><strong>Error:</strong> ${test.error}</p>` : ""}
+                      <div class="screenshot-grid">${screenshots}</div>
+                      <hr>`;
+                    container.appendChild(div);
+                });
+            }
 
-                div.innerHTML = `
-                  <h3>${test.name} — <span style="color:${test.status === 'PASSED' ? 'green' : 'red'}">${test.status}</span></h3>
-                  <p><strong>Description:</strong> ${test.description || "—"}</p>
-                  <p><strong>Timestamp:</strong> ${test.timestamp} | <strong>Duration:</strong> ${test.duration}</p>
-                  <p><strong>Guest:</strong> ${test.full_name} | <strong>Email:</strong> ${test.email}</p>
-                  <p><strong>Order #:</strong> ${test.order_number} | <strong>ID:</strong> ${test.id_number}</p>
-                  <p><strong>Log:</strong> <a href="${logHref}" target="_blank">${logPath.split(/[\\/]/).pop()}</a></p>
-                  ${test.error ? `<p style='color:red'><strong>Error:</strong> ${test.error}</p>` : ""}
-                  <div class="screenshot-grid">${screenshots}</div>
-                  <hr>`;
-                container.appendChild(div);
-            });
-        }
+            function openModal(src) {
+                const modal = document.getElementById("screenshotModal");
+                const modalImg = document.getElementById("modalImage");
+                modal.style.display = "block";
+                modalImg.src = src;
+            }
 
-        function openModal(src) {
-            const modal = document.getElementById("screenshotModal");
-            const modalImg = document.getElementById("modalImage");
-            modal.style.display = "block";
-            modalImg.src = src;
-        }
-
-        function closeModal() {
-            document.getElementById("screenshotModal").style.display = "none";
-        }
-        </script>
-        
-    </head>
-    <body onload="populateRun(document.getElementById('runSelect').value)">
-      <div class="dashboard-header">
-        <h1>Fattal QA Automation Dashboard</h1>
-        <img src="https://d2nyvxq412w7ra.cloudfront.net/_fcb5f25e78.png" alt="Fattal Logo" class="header-logo" />
-      </div>
-      <label>Choose Run:
-        <select id="runSelect" onchange="populateRun(this.value)">
-          <option value="run_2025-08-30_20-53-22" selected>Saturday 2025-08-30 20:53:22 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
+            function closeModal() {
+                document.getElementById("screenshotModal").style.display = "none";
+            }
+            </script>
+            
+        </head>
+        <body onload="populateRun(document.getElementById('runSelect').value)">
+          <div class="dashboard-header">
+            <h1>Fattal Run Selector Dashboard</h1>
+            <img src="https://d2nyvxq412w7ra.cloudfront.net/_fcb5f25e78.png" alt="Fattal Logo" class="header-logo" />
+          </div>
+          <label>Choose Run:
+            <select id="runSelect" onchange="populateRun(this.value)">
+              <option value="run_2025-08-30_21-21-24" >Saturday 2025-08-30 21:21:24 | 1 tests | ✅ 1 | ❌ 0 | 💻 1</option>
+<option value="run_2025-08-30_21-15-43" >Saturday 2025-08-30 21:15:43 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-14-45" >Saturday 2025-08-30 21:14:45 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-13-02" >Saturday 2025-08-30 21:13:02 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-07-45" >Saturday 2025-08-30 21:07:45 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-06-38" >Saturday 2025-08-30 21:06:38 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-04-52" >Saturday 2025-08-30 21:04:52 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_21-01-37" >Saturday 2025-08-30 21:01:37 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_20-59-10" >Saturday 2025-08-30 20:59:10 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_20-58-17" >Saturday 2025-08-30 20:58:17 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_20-56-00" >Saturday 2025-08-30 20:56:00 | 1 tests | ✅ 0 | ❌ 1 | 💻 1</option>
+<option value="run_2025-08-30_20-53-22" >Saturday 2025-08-30 20:53:22 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
 <option value="run_2025-08-30_20-35-42" >Saturday 2025-08-30 20:35:42 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
 <option value="run_2025-08-30_20-33-39" >Saturday 2025-08-30 20:33:39 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
 <option value="run_2025-08-30_20-31-59" >Saturday 2025-08-30 20:31:59 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
@@ -216,16 +238,16 @@
 <option value="run_2025-08-27_16-39-40" >Wednesday 2025-08-27 16:39:40 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
 <option value="run_2025-08-26_11-11-46" >Tuesday 2025-08-26 11:11:46 | 1 tests | ✅ 0 | ❌ 1 | 📱 1</option>
 <option value="run_2025-08-26_11-04-04" >Tuesday 2025-08-26 11:04:04 | 1 tests | ✅ 1 | ❌ 0 | 📱 1</option>
-        </select>
-      </label>
-      <div style="margin-top: 10px;">
-        <label><input type="checkbox" id="filterPassed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Passed</label>
-        <label><input type="checkbox" id="filterFailed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Failed</label>
-      </div>
-      <div id="results" style="margin-top: 20px;"></div>
-      <div id="screenshotModal" class="modal" onclick="closeModal()">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-      </div>
-    </body>
-    </html>
+            </select>
+          </label>
+          <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="filterPassed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Passed</label>
+            <label><input type="checkbox" id="filterFailed" checked onchange="populateRun(document.getElementById('runSelect').value)"> Show Failed</label>
+          </div>
+          <div id="results" style="margin-top: 20px;"></div>
+          <div id="screenshotModal" class="modal" onclick="closeModal()">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modalImage">
+          </div>
+        </body>
+        </html>

@@ -153,29 +153,36 @@ class FattalMainPage:
                 raise
         # Open calendar widget
         def open_calendar(self):
+            """
+            Opens the calendar by clicking the display container <div>.
+            Supports dynamic IDs like search-engine-date-picker-display-container-1 / -2 / -3.
+            Always uses JS click since it's a <div>.
+            """
             try:
-                # Wait for the calendar toggle button to become clickable
-                calendar_btn = WebDriverWait(self.driver, 10).until(
-                    EC.element_to_be_clickable((By.ID, "search-engine-date-picker-display-container-2"))
+                logging.info("Trying to open calendar...")
+
+                # ✅ Find by partial match instead of exact ID
+                calendar_div = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((
+                        By.XPATH, "//*[starts-with(@id, 'search-engine-date-picker-display-container')]"
+                    ))
                 )
+                logging.info(f"Calendar display container located: id={calendar_div.get_attribute('id')}")
 
-                try:
-                    calendar_btn.click()
-                    logging.info("Clicked calendar button using ID.")
-                except Exception as click_error:
-                    logging.warning(f"Normal click failed: {click_error} — trying JS fallback.")
-                    self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", calendar_btn)
-                    self.driver.execute_script("arguments[0].click();", calendar_btn)
-                    logging.info("Clicked calendar button using JS fallback.")
+                # ✅ Ensure visible before clicking
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", calendar_div)
+                self.driver.execute_script("arguments[0].click();", calendar_div)
+                logging.info("Clicked calendar <div> via JS.")
 
-                # Wait for the calendar container or the day grid to appear
+                # ✅ Wait for the actual calendar to appear
                 WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.ID, "search-engine-date-picker-container"))
                 )
-                logging.info("Calendar is now visible and ready for selection.")
+                logging.info("Calendar opened successfully.")
 
             except Exception as e:
                 logging.error(f"Failed to open calendar: {e}")
+                self.take_screenshot("calendar_open_fail")
                 raise
 
         # Switch to the arrival tab in the calendar (if not already active)
@@ -453,31 +460,32 @@ class FattalMainPage:
             try:
                 logging.info("Opening room selection modal...")
 
-                # ⚡️ Updated ID!
+                # Locate the <div> "button" by XPath (using ID)
                 button = WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_element_located((By.ID, "main-search-rooms-select"))
+                    EC.presence_of_element_located((By.XPATH, "//*[@id='main-search-rooms-select']"))
                 )
+
+                # Scroll into view (helps if hidden under sticky headers)
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", button)
                 time.sleep(0.3)
 
-                try:
-                    WebDriverWait(self.driver, 5).until(
-                        EC.element_to_be_clickable((By.ID, "main-search-rooms-select"))
-                    ).click()
-                    logging.info("Clicked room selection button normally.")
-                except Exception as click_error:
-                    logging.warning(f"Normal click failed: {click_error}. Trying JS fallback...")
-                    self.driver.execute_script("arguments[0].click();", button)
-                    logging.info("Clicked room selection button via JS fallback.")
+                # ⚡ Always force JS click since it's a <div>, not a <button>
+                self.driver.execute_script("arguments[0].click();", button)
+                logging.info("Clicked room selection <div> button via JS.")
 
-                # Wait for room selection modal to appear
+                # Wait for the room selection modal to appear
                 WebDriverWait(self.driver, 10).until(
-                    EC.visibility_of_element_located((By.ID, "search-engine-room-selection-popover"))
+                    EC.visibility_of_element_located((By.XPATH, "//*[@id='search-engine-room-selection-popover']"))
                 )
                 logging.info("Room selection modal is now visible.")
                 time.sleep(0.5)
 
-                # ⬇️ Inner function to select guests
+                # ⬇️ Continue with setting guests here...
+
+            except Exception as e:
+                logging.error(f"Failed to open room selection modal: {e}")
+                raise
+
                 def select_guest(cell_id, value):
                     try:
                         container = WebDriverWait(self.driver, 5).until(
